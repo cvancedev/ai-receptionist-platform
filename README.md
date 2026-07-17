@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-The project is in Sprint 0: Foundation. Milestone 0.2 establishes the initial project structure and governing documentation. Product features have not been implemented.
+The project is in Sprint 0: Foundation. Milestone 0.3 centralizes the temporary brand configuration and application metadata. Product features have not been implemented.
 
 Version 1 is intentionally small and focused. It will not be developed as an all-in-one business platform.
 
@@ -52,6 +52,10 @@ npm run build
 - [Product roadmap](ROADMAP.md)
 - [Changelog](CHANGELOG.md)
 
+## Branding Configuration
+
+Branding is centralized in [`config/branding.ts`](config/branding.ts). The current names and contact details are temporary. Future rebranding should begin by updating that file instead of scattering brand values throughout the application.
+
 ## Current Milestone
 
-Sprint 0, Milestone 0.2: Project structure and governing documentation.
+Sprint 0, Milestone 0.3: Centralized brand configuration.

@@ -10,3 +10,12 @@ All notable changes to this project will be documented in this file. The format 
 - TypeScript, Tailwind CSS, ESLint, App Router, and Turbopack configured.
 - Git repository initialized.
 - Baseline lint, TypeScript, production build, and development-server validation completed.
+- Centralized brand configuration added.
+
+### Changed
+
+- Application metadata now reads from the brand configuration.
+
+### Removed
+
+- Obsolete `docs/.gitkeep` placeholder removed.

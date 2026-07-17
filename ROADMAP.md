@@ -1,0 +1,75 @@
+# Product Roadmap
+
+This roadmap establishes the current development sequence. Items identified as future possibilities are uncommitted and will be evaluated before development.
+
+## Sprint 0: Foundation
+
+- Milestone 0.1: Initialize Next.js project
+- Milestone 0.2: Project structure and governing documentation
+- Milestone 0.3: Centralized brand configuration
+- Milestone 0.4: Establish the design foundation
+- Milestone 0.5: Final foundation validation and GitHub setup
+
+## Sprint 1: Marketing Website
+
+- Homepage
+- Product explanation
+- How it works
+- Trust and reliability messaging
+- Contact or demo interest form
+- Responsive and accessible presentation
+
+Multiple marketing pages will not be introduced unless a demonstrated need justifies them.
+
+## Sprint 2: Authentication
+
+- Registration
+- Sign-in
+- Password reset
+- Protected application area
+
+## Sprint 3: Business Dashboard Foundation
+
+- Basic navigation
+- High-level activity summary
+- Recent customer inquiries
+- Items requiring attention
+
+## Sprint 4: Lead Capture MVP
+
+- Captured customer information
+- Inquiry summary
+- Lead status
+- Notes
+- Search and filtering only if proven necessary
+
+## Sprint 5: AI Receptionist MVP
+
+- Receive a customer interaction through the chosen communication provider
+- Gather required customer details
+- Produce a structured summary
+- Create a lead
+- Notify the business owner
+- Support clear escalation or human handoff
+
+Communication and AI providers will be selected only after technical and business evaluation.
+
+## Sprint 6: Customer Validation
+
+- Real-world testing
+- Reliability improvements
+- Usability improvements
+- Security review
+- Bug fixes
+- Customer feedback
+
+## Future Features (Uncommitted)
+
+The following are possibilities, not current development commitments:
+
+- Scheduling
+- Automated follow-up
+- Calendar integrations
+- Additional communication channels
+- Analytics
+- Additional AI employee roles

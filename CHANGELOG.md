@@ -14,12 +14,17 @@ All notable changes to this project will be documented in this file. The format 
 - Initial visual design foundation established.
 - Reusable header, footer, logo, container, and button components added.
 - Responsive and accessible homepage shell created.
+- Architectural decision log added.
 
 ### Changed
 
 - Application metadata now reads from the brand configuration.
 - Default Next.js starter screen replaced.
+- Foundation certified.
+- Sprint 0 completed.
+- Version tagged as `v0.0.1`.
 
 ### Removed
 
-- Obsolete `docs/.gitkeep` placeholder removed.
+- Obsolete `config/.gitkeep` and `docs/.gitkeep` placeholders removed.
+- Unused Next.js starter assets removed.

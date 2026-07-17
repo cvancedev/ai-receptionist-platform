@@ -2,15 +2,15 @@
 
 This roadmap establishes the current development sequence. Items identified as future possibilities are uncommitted and will be evaluated before development.
 
-## Sprint 0: Foundation
+## Sprint 0: Foundation (Complete)
 
-- Milestone 0.1: Initialize Next.js project
-- Milestone 0.2: Project structure and governing documentation
-- Milestone 0.3: Centralized brand configuration
-- Milestone 0.4: Establish the design foundation
-- Milestone 0.5: Final foundation validation and GitHub setup
+- Milestone 0.1: Initialize Next.js project — Complete
+- Milestone 0.2: Project structure and governing documentation — Complete
+- Milestone 0.3: Centralized brand configuration — Complete
+- Milestone 0.4: Establish the design foundation — Complete
+- Milestone 0.5: Foundation certification — Complete
 
-## Sprint 1: Marketing Website
+## Sprint 1: Marketing Website (Not Started)
 
 - Homepage
 - Product explanation

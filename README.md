@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-The project is in Sprint 0: Foundation. Milestone 0.4 establishes the initial visual design foundation and a limited homepage shell. Product features have not been implemented.
+Sprint 0 is complete, and the project foundation is certified as `v0.0.1`. Sprint 1 has not begun, and product features have not been implemented.
 
 Version 1 is intentionally small and focused. It will not be developed as an all-in-one business platform.
 
@@ -51,6 +51,7 @@ npm run build
 - [Project rules](PROJECT_RULES.md)
 - [Product roadmap](ROADMAP.md)
 - [Changelog](CHANGELOG.md)
+- [Architectural decisions](DECISIONS.md)
 
 ## Branding Configuration
 
@@ -62,4 +63,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 0, Milestone 0.4: Establish the design foundation.
+Sprint 0, Milestone 0.5: Foundation certification complete. The project is ready to begin Sprint 1.

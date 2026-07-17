@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-The project is in Sprint 0: Foundation. Milestone 0.3 centralizes the temporary brand configuration and application metadata. Product features have not been implemented.
+The project is in Sprint 0: Foundation. Milestone 0.4 establishes the initial visual design foundation and a limited homepage shell. Product features have not been implemented.
 
 Version 1 is intentionally small and focused. It will not be developed as an all-in-one business platform.
 
@@ -56,6 +56,10 @@ npm run build
 
 Branding is centralized in [`config/branding.ts`](config/branding.ts). The current names and contact details are temporary. Future rebranding should begin by updating that file instead of scattering brand values throughout the application.
 
+## Design Foundation
+
+Semantic design tokens live in [`app/globals.css`](app/globals.css), while shared layout and UI components live under [`components`](components). Branding remains centralized in [`config/branding.ts`](config/branding.ts). The current homepage establishes a reusable visual foundation; it is not the completed marketing website.
+
 ## Current Milestone
 
-Sprint 0, Milestone 0.3: Centralized brand configuration.
+Sprint 0, Milestone 0.4: Establish the design foundation.

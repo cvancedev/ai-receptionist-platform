@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
+import { branding } from "@/config/branding";
 
 const navigation = [
   { href: "#product", label: "Product" },
-  { href: "#how-it-works", label: "How It Works" },
+  { href: "#workflow", label: "How It Works" },
   { href: "#early-access", label: "Contact" },
 ] as const;
 
@@ -28,7 +29,10 @@ export function SiteHeader() {
               ))}
             </ul>
           </nav>
-          <Button href="#early-access" className="px-4 sm:px-5">
+          <Button
+            href={`mailto:${branding.salesEmail}`}
+            className="px-4 sm:px-5"
+          >
             Request Early Access
           </Button>
         </div>

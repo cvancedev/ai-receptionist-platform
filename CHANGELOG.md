@@ -23,6 +23,9 @@ All notable changes to this project will be documented in this file. The format 
 - Foundation certified.
 - Sprint 0 completed.
 - Version tagged as `v0.0.1`.
+- Homepage messaging refined for small service businesses.
+- Problem, intended workflow, trust, and early-access sections added.
+- Static product preview improved.
 
 ### Removed
 

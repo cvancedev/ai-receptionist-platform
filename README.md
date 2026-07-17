@@ -6,7 +6,9 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 is complete, and the project foundation is certified as `v0.0.1`. Sprint 1 has not begun, and product features have not been implemented.
+Sprint 0 is complete, and the project foundation is certified as `v0.0.1`. Sprint 1, Milestone 1.1 establishes the customer-validation homepage. Functional product features have not been implemented.
+
+The homepage is now being used to test clear customer messaging and invite early conversations with small service businesses.
 
 Version 1 is intentionally small and focused. It will not be developed as an all-in-one business platform.
 
@@ -59,8 +61,8 @@ Branding is centralized in [`config/branding.ts`](config/branding.ts). The curre
 
 ## Design Foundation
 
-Semantic design tokens live in [`app/globals.css`](app/globals.css), while shared layout and UI components live under [`components`](components). Branding remains centralized in [`config/branding.ts`](config/branding.ts). The current homepage establishes a reusable visual foundation; it is not the completed marketing website.
+Semantic design tokens live in [`app/globals.css`](app/globals.css), while shared layout and UI components live under [`components`](components). Branding remains centralized in [`config/branding.ts`](config/branding.ts). The current homepage applies that foundation to customer messaging and early validation; it is not the completed marketing website.
 
 ## Current Milestone
 
-Sprint 0, Milestone 0.5: Foundation certification complete. The project is ready to begin Sprint 1.
+Sprint 1, Milestone 1.1: Customer validation homepage complete. Milestone 1.2 has not begun.

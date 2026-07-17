@@ -10,7 +10,12 @@ This roadmap establishes the current development sequence. Items identified as f
 - Milestone 0.4: Establish the design foundation — Complete
 - Milestone 0.5: Foundation certification — Complete
 
-## Sprint 1: Marketing Website (Not Started)
+## Sprint 1: Marketing Website (In Progress)
+
+- Milestone 1.1: Customer validation homepage — Complete
+- Milestone 1.2: Early-access contact experience and supporting legal pages — Next
+
+### Sprint Goals
 
 - Homepage
 - Product explanation

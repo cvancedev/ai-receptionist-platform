@@ -29,7 +29,7 @@ export const branding = {
   tagline: "Never miss another customer.",
   productPromise: "Your business is always open, even when you are not.",
   shortDescription:
-    "An AI receptionist that helps small businesses capture customer inquiries.",
+    "An AI receptionist being developed to help small businesses capture and organize customer inquiries.",
   supportEmail: "support@example.com",
   salesEmail: "sales@example.com",
   websiteUrl: "https://example.com",
@@ -42,8 +42,8 @@ export const branding = {
     linkedin: "",
     x: "",
   },
-  defaultPageTitle: "AI Receptionist Platform",
+  defaultPageTitle: "AI Receptionist for Small Service Businesses",
   titleTemplate: "%s | AI Receptionist Platform",
   defaultMetaDescription:
-    "Help your small business capture customer inquiries through an AI receptionist.",
+    "An early-stage AI receptionist platform being developed to help small service businesses capture, organize, and follow up on customer inquiries.",
 } as const satisfies BrandingConfig;

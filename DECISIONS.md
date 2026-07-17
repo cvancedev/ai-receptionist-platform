@@ -29,3 +29,7 @@ The project is built milestone-by-milestone so each change has a clear purpose, 
 ## Architecture
 
 Reusable UI and layout components separate repeated presentation concerns from page content. Configuration, shared types, service integrations, and business logic remain separate only when those layers are needed, preventing both duplication and premature architecture.
+
+## Public Website Delivery
+
+The marketing website uses native Next.js metadata and metadata routes instead of third-party SEO packages. Early-access contact remains email-based until data-handling requirements are defined. Analytics is deferred until the company has a real measurement plan and has reviewed the related privacy implications.

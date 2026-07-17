@@ -2,9 +2,23 @@ import type { Metadata } from "next";
 import { ContentPage } from "@/components/layout/ContentPage";
 import { branding } from "@/config/branding";
 
+const pageTitle = "Terms";
+const pageDescription = `Plain-language terms for the current ${branding.productName} development-stage website.`;
+
 export const metadata: Metadata = {
-  title: "Terms",
-  description: `Plain-language terms for the current ${branding.productName} development-stage website.`,
+  title: pageTitle,
+  description: pageDescription,
+  openGraph: {
+    title: `${pageTitle} | ${branding.productName}`,
+    description: pageDescription,
+    siteName: branding.productName,
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: `${pageTitle} | ${branding.productName}`,
+    description: pageDescription,
+  },
 };
 
 const unacceptableUses = [
@@ -85,7 +99,7 @@ export default function TermsPage() {
         <h2 id="terms-contact-heading" className="text-2xl font-semibold text-primary">Contact</h2>
         <address className="mt-4 not-italic text-secondary">
           Questions about these terms can be emailed to{" "}
-          <a href={`mailto:${branding.supportEmail}`} className="rounded font-medium text-brand underline underline-offset-4 hover:text-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2">
+          <a href={`mailto:${branding.supportEmail}`} className="break-all rounded font-medium text-brand underline underline-offset-4 hover:text-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2">
             {branding.supportEmail}
           </a>.
         </address>

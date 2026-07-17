@@ -18,6 +18,9 @@ All notable changes to this project will be documented in this file. The format 
 - Early-access information and email contact experience added.
 - Plain-language privacy notice added.
 - Development-stage website terms added.
+- Native robots and sitemap metadata routes added.
+- Branded application icon added.
+- Sprint 1 certification document added.
 
 ### Changed
 
@@ -30,6 +33,11 @@ All notable changes to this project will be documented in this file. The format 
 - Problem, intended workflow, trust, and early-access sections added.
 - Static product preview improved.
 - Header, footer, and homepage navigation updated for the early-access and supporting legal pages.
+- Root and page-specific SEO, Open Graph, Twitter, and robots metadata established.
+- Customer-facing messaging clarified around unavailable live call handling and production functionality.
+- Final accessibility, responsive, messaging, navigation, performance, and deployment review completed.
+- Open Graph image and domain-dependent metadata deferred until a production website URL is configured.
+- Sprint 1 customer-validation website certified complete.
 
 ### Removed
 

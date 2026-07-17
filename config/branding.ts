@@ -47,3 +47,27 @@ export const branding = {
   defaultMetaDescription:
     "An early-stage AI receptionist platform being developed to help small service businesses capture, organize, and follow up on customer inquiries.",
 } as const satisfies BrandingConfig;
+
+const nonDeploymentHosts = new Set([
+  "example.com",
+  "www.example.com",
+  "localhost",
+  "127.0.0.1",
+]);
+
+export function getDeploymentWebsiteUrl(): URL | null {
+  try {
+    const websiteUrl = new URL(branding.websiteUrl);
+
+    if (
+      websiteUrl.protocol !== "https:" ||
+      nonDeploymentHosts.has(websiteUrl.hostname)
+    ) {
+      return null;
+    }
+
+    return websiteUrl;
+  } catch {
+    return null;
+  }
+}

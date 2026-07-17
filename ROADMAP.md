@@ -10,11 +10,11 @@ This roadmap establishes the current development sequence. Items identified as f
 - Milestone 0.4: Establish the design foundation — Complete
 - Milestone 0.5: Foundation certification — Complete
 
-## Sprint 1: Marketing Website (In Progress)
+## Sprint 1: Marketing Website (Complete)
 
 - Milestone 1.1: Customer validation homepage — Complete
 - Milestone 1.2: Early-access contact experience and supporting legal pages — Complete
-- Milestone 1.3: Deployment readiness, SEO foundation, and final customer-validation review — Next
+- Milestone 1.3: Deployment readiness, SEO foundation, and final customer-validation review — Complete
 
 ### Sprint Goals
 
@@ -27,21 +27,25 @@ This roadmap establishes the current development sequence. Items identified as f
 
 Multiple marketing pages will not be introduced unless a demonstrated need justifies them.
 
-## Sprint 2: Authentication
+## Sprint 2: Customer Discovery (Next)
+
+- Milestone 2.1: Customer discovery framework and validated MVP requirements — Next
+
+## Sprint 3: Authentication
 
 - Registration
 - Sign-in
 - Password reset
 - Protected application area
 
-## Sprint 3: Business Dashboard Foundation
+## Sprint 4: Business Dashboard Foundation
 
 - Basic navigation
 - High-level activity summary
 - Recent customer inquiries
 - Items requiring attention
 
-## Sprint 4: Lead Capture MVP
+## Sprint 5: Lead Capture MVP
 
 - Captured customer information
 - Inquiry summary
@@ -49,7 +53,7 @@ Multiple marketing pages will not be introduced unless a demonstrated need justi
 - Notes
 - Search and filtering only if proven necessary
 
-## Sprint 5: AI Receptionist MVP
+## Sprint 6: AI Receptionist MVP
 
 - Receive a customer interaction through the chosen communication provider
 - Gather required customer details
@@ -60,7 +64,7 @@ Multiple marketing pages will not be introduced unless a demonstrated need justi
 
 Communication and AI providers will be selected only after technical and business evaluation.
 
-## Sprint 6: Customer Validation
+## Sprint 7: Customer Validation
 
 - Real-world testing
 - Reliability improvements

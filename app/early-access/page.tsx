@@ -3,9 +3,23 @@ import { ContentPage } from "@/components/layout/ContentPage";
 import { Button } from "@/components/ui/Button";
 import { branding } from "@/config/branding";
 
+const pageTitle = "Early Access";
+const pageDescription = `Learn about early-access conversations for ${branding.productName}, a product under development for small service businesses.`;
+
 export const metadata: Metadata = {
-  title: "Early Access",
-  description: `Learn about early-access conversations for ${branding.productName}, a product under development for small service businesses.`,
+  title: pageTitle,
+  description: pageDescription,
+  openGraph: {
+    title: `${pageTitle} | ${branding.productName}`,
+    description: pageDescription,
+    siteName: branding.productName,
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: `${pageTitle} | ${branding.productName}`,
+    description: pageDescription,
+  },
 };
 
 const participantTypes = [
@@ -84,7 +98,7 @@ export default function EarlyAccessPage() {
           “Early Access Interest.”
         </p>
         <address className="mt-6 not-italic">
-          <Button href={emailHref} variant="secondary" className="border-white bg-white text-primary hover:border-white hover:bg-blue-50">
+          <Button href={emailHref} variant="secondary" className="max-w-full break-all border-white bg-white text-primary hover:border-white hover:bg-blue-50">
             Email {branding.salesEmail}
           </Button>
         </address>

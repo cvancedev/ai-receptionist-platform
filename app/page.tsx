@@ -233,8 +233,8 @@ export default function Home() {
                 </p>
               </div>
               <p className="max-w-md rounded-[var(--radius-standard)] border border-border bg-brand-surface px-4 py-3 text-sm leading-6 text-brand">
-                This is the intended product direction. Live communication and
-                AI infrastructure are not represented as complete today.
+                This is the intended product direction. Live call handling and
+                the production AI receptionist are not available today.
               </p>
             </div>
             <ol className="mt-10 grid gap-5 md:grid-cols-3">

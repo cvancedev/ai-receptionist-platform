@@ -26,31 +26,31 @@ export function SiteFooter() {
                   Early Access
                 </Link>
               </li>
-            <li>
-              <Link
-                href="/privacy"
-                prefetch={false}
-                className="rounded text-secondary underline-offset-4 hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
-              >
-                Privacy
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/terms"
-                prefetch={false}
-                className="rounded text-secondary underline-offset-4 hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
-              >
-                Terms
-              </Link>
-            </li>
+              <li>
+                <Link
+                  href="/privacy"
+                  prefetch={false}
+                  className="rounded text-secondary underline-offset-4 hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+                >
+                  Privacy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms"
+                  prefetch={false}
+                  className="rounded text-secondary underline-offset-4 hover:text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+                >
+                  Terms
+                </Link>
+              </li>
             </ul>
           </nav>
           <address className="not-italic text-sm text-muted">
             Support:{" "}
             <a
               href={`mailto:${branding.supportEmail}`}
-              className="rounded text-secondary underline underline-offset-4 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+              className="break-all rounded text-secondary underline underline-offset-4 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
             >
               {branding.supportEmail}
             </a>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { branding } from "@/config/branding";
+import { branding, getDeploymentWebsiteUrl } from "@/config/branding";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,12 +13,32 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const deploymentWebsiteUrl = getDeploymentWebsiteUrl();
+
 export const metadata: Metadata = {
+  ...(deploymentWebsiteUrl ? { metadataBase: deploymentWebsiteUrl } : {}),
   title: {
     default: branding.defaultPageTitle,
     template: branding.titleTemplate,
   },
   description: branding.defaultMetaDescription,
+  applicationName: branding.productName,
+  publisher: branding.copyrightOwner,
+  openGraph: {
+    title: branding.defaultPageTitle,
+    description: branding.defaultMetaDescription,
+    siteName: branding.productName,
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: branding.defaultPageTitle,
+    description: branding.defaultMetaDescription,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

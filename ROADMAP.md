@@ -13,7 +13,8 @@ This roadmap establishes the current development sequence. Items identified as f
 ## Sprint 1: Marketing Website (In Progress)
 
 - Milestone 1.1: Customer validation homepage — Complete
-- Milestone 1.2: Early-access contact experience and supporting legal pages — Next
+- Milestone 1.2: Early-access contact experience and supporting legal pages — Complete
+- Milestone 1.3: Deployment readiness, SEO foundation, and final customer-validation review — Next
 
 ### Sprint Goals
 
@@ -21,7 +22,7 @@ This roadmap establishes the current development sequence. Items identified as f
 - Product explanation
 - How it works
 - Trust and reliability messaging
-- Contact or demo interest form
+- Email-based early-access contact experience
 - Responsive and accessible presentation
 
 Multiple marketing pages will not be introduced unless a demonstrated need justifies them.

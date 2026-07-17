@@ -2,7 +2,6 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { branding } from "@/config/branding";
 
 const busyMoments = [
   ["On a job site", "The team is focused on the customer in front of them."],
@@ -109,7 +108,7 @@ export default function Home() {
                 details that matter, and keep owners informed.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Button href={`mailto:${branding.salesEmail}`}>
+                <Button href="/early-access">
                   Request Early Access
                 </Button>
                 <Button href="#workflow" variant="secondary">
@@ -409,7 +408,7 @@ export default function Home() {
               </div>
               <div className="mt-8 shrink-0 lg:mt-0">
                 <Button
-                  href={`mailto:${branding.salesEmail}`}
+                  href="/early-access"
                   variant="secondary"
                   className="border-white bg-white text-primary hover:border-white hover:bg-blue-50"
                 >

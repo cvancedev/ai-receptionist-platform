@@ -6,9 +6,9 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 is complete, and the project foundation is certified as `v0.0.1`. Sprint 1, Milestone 1.1 establishes the customer-validation homepage. Functional product features have not been implemented.
+Sprint 0 is complete, and the project foundation is certified as `v0.0.1`. Sprint 1, Milestone 1.2 adds a focused early-access contact experience and supporting privacy and terms pages. Functional product features have not been implemented.
 
-The homepage is now being used to test clear customer messaging and invite early conversations with small service businesses.
+The website is static and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
 Version 1 is intentionally small and focused. It will not be developed as an all-in-one business platform.
 
@@ -65,4 +65,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 1, Milestone 1.1: Customer validation homepage complete. Milestone 1.2 has not begun.
+Sprint 1, Milestone 1.2: Early-access contact experience and supporting legal pages complete. Milestone 1.3 has not begun.

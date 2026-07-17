@@ -15,6 +15,9 @@ All notable changes to this project will be documented in this file. The format 
 - Reusable header, footer, logo, container, and button components added.
 - Responsive and accessible homepage shell created.
 - Architectural decision log added.
+- Early-access information and email contact experience added.
+- Plain-language privacy notice added.
+- Development-stage website terms added.
 
 ### Changed
 
@@ -26,6 +29,7 @@ All notable changes to this project will be documented in this file. The format 
 - Homepage messaging refined for small service businesses.
 - Problem, intended workflow, trust, and early-access sections added.
 - Static product preview improved.
+- Header, footer, and homepage navigation updated for the early-access and supporting legal pages.
 
 ### Removed
 

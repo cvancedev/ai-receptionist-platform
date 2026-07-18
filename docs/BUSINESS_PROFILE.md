@@ -2,80 +2,112 @@
 
 ## Purpose
 
-The Business Profile is the customer-owned configuration that teaches the AI receptionist how a specific small service business operates. Every business supplies and maintains its own profile. Industry knowledge is configuration, not platform-core behavior.
+The Business Profile is the authoritative, customer-owned configuration that tells the AI receptionist how a specific small service business operates. Every business supplies and maintains its own profile. The AI Core remains industry-agnostic and provides universal conversation behavior without embedding an industry's services, terminology, policies, intake requirements, workflows, or knowledge.
 
-Before interacting with a customer, the AI reads the applicable Business Profile. It uses that profile to understand the business's identity, configured services, approved knowledge, communication preferences, and customer-defined workflows. When the profile is incomplete or unclear, the AI acknowledges the limit and follows the configured escalation path rather than inventing an answer.
+Before interacting with a customer, the AI must use an active, validated Business Profile. It may rely only on information approved in that profile and on platform-owned safeguards. Missing, inactive, contradictory, or unsupported configuration must lead to clarification or human escalation, never an invented answer or commitment.
 
 ## Architectural Boundary
 
-The platform core provides universal conversation behavior: listening, clarification, intake, confirmation, summarization, next-step guidance, and escalation. The Business Profile provides the business-specific context that makes those behaviors relevant.
+The platform core owns universal capabilities:
 
-Workflows, terminology, services, policies, frequently asked questions, and business rules must remain in the Business Profile. They must not be embedded as defaults in the AI Core.
+- Listening and understanding
+- Relevant questioning
+- Confirmation and correction
+- Summarization
+- Honest next-step guidance
+- Universal safety and escalation safeguards
+- Reliability, privacy, and honesty requirements
 
-## Business Identity
+The Business Profile owns business-specific context:
 
-Each business configures:
+- Identity and public information
+- Operating rules and availability
+- Services and customer-defined workflows
+- Communication preferences and approved language
+- Knowledge, policies, and guidance
+- Intake requirements
+- Business-specific escalation rules
+- Human handoff destinations and expectations
 
-- **Business Name:** The approved name used in customer conversations.
-- **Logo:** The business-owned visual identity used where the product experience supports it.
-- **Industry:** A descriptive classification for context, not a source of assumed rules.
-- **Description:** A concise, approved explanation of what the business does and whom it serves.
+Industry labels may provide descriptive context, but they must never activate assumed services, questions, policies, or workflows.
 
-## Business Operations
+## Configuration Classification
 
-Each business configures:
+Every profile element belongs to one of four conceptual classes:
 
-- **Business Hours:** Normal operating and customer-contact hours.
-- **Service Area:** The locations or geographic boundaries the business serves.
-- **Time Zone:** The reference time zone for hours, dates, and scheduling language.
-- **Emergency Availability:** Whether emergency or after-hours service exists and the approved handling path.
+- **Required platform field:** Information every business must supply before activation because the platform cannot operate safely or complete a human handoff without it.
+- **Optional business field:** Information a business may supply to improve relevance but may omit without making the profile unsafe.
+- **Conditional field:** Information required only when another configuration choice enables a capability or creates a dependency.
+- **Business-defined field:** Customer-authored content or rules whose names, values, and applicability differ by business.
 
-The platform must not infer availability, coverage, or response times from industry labels.
+The platform defines these classes and their safety boundaries. The business controls the operational content within them.
 
-## Services
+## Profile Domains
 
-Each business configures:
+### Identity
 
-- **Services Offered:** The services the business currently provides.
-- **Service Categories:** The business's preferred way to organize and describe those services.
-- **Optional Service-Specific Intake Fields:** Additional questions or information requirements that apply only to a configured service or customer-defined workflow.
+Defines the approved public identity of the business, including its name, description, industry label, logo reference, website, primary contact information, and time zone.
 
-Service names and intake requirements come from the business. The AI should preserve an inquiry when a customer is unsure which configured service fits and escalate classification when human judgment is needed.
+### Operations
 
-## Communication
+Defines when and where the business operates, including regular hours, holiday hours, after-hours behavior, service area, emergency availability, and supported customer channels.
 
-Each business configures:
+### Services
 
-- **Phone:** Approved customer-facing and handoff phone details.
-- **Email:** Approved customer-facing and handoff email details.
-- **Preferred Contact Methods:** The channels the business uses and the rules for selecting among them.
+Defines each customer-created service and its public description, availability, intake requirements, optional follow-up questions, escalation conditions, and approved next steps. The platform must not provide a hardcoded industry taxonomy.
 
-The AI must use only configured contact details and must not invent a recipient, department, or response time.
+### Communication
 
-## Knowledge
+Defines approved greetings and closings, tone preferences, preferred contact methods, response expectations, and language preferences. Business expression may vary, but it cannot override platform standards for honesty, respect, accessibility, or non-coercive behavior.
 
-Each business configures:
+### Knowledge
 
-- **Frequently Asked Questions:** Approved answers to common customer questions.
-- **Policies:** Customer-facing business policies and any boundaries on how they may be explained.
-- **Scheduling Rules:** Approved availability language, scheduling constraints, and human-review requirements.
-- **Pricing Guidance (Optional):** Approved pricing information and clear limits beyond which a human must assist.
-- **Escalation Rules:** Business-specific situations, contacts, priorities, and handoff expectations that supplement the platform's universal safety and judgment guardrails.
+Defines approved frequently asked questions, policies, service descriptions, scheduling guidance, pricing guidance, payment guidance, and required disclaimers. The presence of a topic does not grant unlimited authority: each item must make clear what the AI may explain and when a person must assist.
 
-The AI may explain only knowledge present in the profile and within its approved boundaries. Missing or conflicting knowledge triggers clarification or escalation, never invention.
+### Intake Configuration
 
-## Brand Personality
+Defines the information needed for a useful inquiry, including required universal fields, optional fields, service-specific fields, conditional fields, customer-facing explanations, and completion rules. Intake remains conversational and proportionate; configuration must not turn it into unnecessary data collection.
 
-Each business configures:
+### Escalation Configuration
 
-- **Tone:** The approved voice within the platform's professional, respectful, and honest behavioral standards.
-- **Greeting Style:** How the business welcomes customers and identifies the receptionist.
-- **Closing Style:** How the business thanks customers and explains an approved next step.
+Defines business-specific handling for human requests, urgent situations, complaints, pricing or scheduling exceptions, safety concerns, missing knowledge, and conflicting configuration. These rules supplement and may strengthen platform safeguards, but may never weaken them.
 
-Business personality may shape expression, but it cannot override platform safeguards against pressure, deception, disrespect, unsupported promises, or replacement of human judgment.
+### Handoff Configuration
 
-## Ownership and Maintenance
+Defines where a completed or escalated inquiry goes, how it is delivered, which summary fields are required, which priority indicators apply, and what approved follow-up window may be communicated.
 
-The customer business owns the accuracy of its profile and supplies changes as its services, policies, or operations evolve. Future implementation planning must define how profiles are reviewed, versioned, validated, and made available to the AI before conversations begin.
+The detailed conceptual structure is defined in [Business Profile Schema](BUSINESS_PROFILE_SCHEMA.md).
 
-The platform must make profile gaps visible. A missing configuration should reduce the AI's authority and lead to a safe handoff; it should never cause the platform core to substitute an industry assumption.
+## Activation Standard
+
+A Business Profile must be validated before it can become active. At minimum, the business must provide a usable identity, time zone, contact destination, an active service with an intake path, operating or after-hours behavior, escalation destination, and human handoff rules.
+
+Activation is blocked when configuration could cause the AI to guess, misrepresent availability, make an unsupported commitment, lose a handoff, or follow contradictory instructions. Non-blocking warnings may identify quality improvements that do not compromise safe operation.
+
+Meaningful changes to active configuration must be revalidated before they are used in customer conversations. Lifecycle states and validation rules are defined in [Business Profile Validation](BUSINESS_PROFILE_VALIDATION.md).
+
+## Authority and Conflict Resolution
+
+Platform safety, privacy, honesty, and reliability rules always take precedence over business configuration. The AI must reject or escalate instructions that are unsafe, deceptive, contradictory, incomplete, or outside the business's approved authority.
+
+The business retains control over accurate operational information and decides which services, policies, knowledge, and workflows it approves. The platform is responsible for enforcing boundaries and preventing unsupported claims. Ownership is defined in [Configuration Ownership](CONFIGURATION_OWNERSHIP.md).
+
+## Use During a Conversation
+
+An active profile provides the relevant context for each interaction. The AI should:
+
+1. Use the approved identity and communication style.
+2. Understand the request before selecting a configured service or workflow.
+3. Ask only required or contextually relevant questions.
+4. Answer only from approved knowledge.
+5. Follow configured completion, escalation, and handoff rules.
+6. Preserve uncertainty and missing information in the summary.
+7. Leave unsupported commitments and exceptions to human judgment.
+
+The same sequence applies to every small service business. Only the profile content changes. Fictional illustrations are provided in [Business Profile Examples](BUSINESS_PROFILE_EXAMPLES.md); they are examples, not defaults.
+
+## Maintenance and Accountability
+
+The customer business is responsible for reviewing and updating its profile as operations change. Stale hours, services, policies, contact destinations, or guidance must not remain silently authoritative.
+
+The platform must make configuration status and validation issues visible, prevent invalid profiles from activating, and ensure conversations use only the approved active version. Future implementation planning will determine storage, editing, versioning, and deployment mechanisms; this milestone defines behavior and responsibility only.

@@ -45,3 +45,9 @@ This decision improves:
 - **Simpler onboarding:** Each business describes how it operates in one coherent profile.
 - **Cleaner AI architecture:** Conversation behavior is separated from the context that grounds a particular interaction.
 - **Future multi-industry expansion:** The platform can learn from new markets without treating one industry's practices as defaults.
+
+## Validated Configuration Activation
+
+Only an active, validated Business Profile may configure customer conversations. Draft, incomplete, review-pending, suspended, or archived profiles cannot become silent fallbacks, and meaningful changes require revalidation before replacing the active configuration.
+
+This boundary prevents missing, stale, or contradictory business information from becoming an AI claim or failed handoff. Platform safety, privacy, honesty, and reliability rules always override business configuration; unsupported commitments and exceptions remain subject to human judgment.

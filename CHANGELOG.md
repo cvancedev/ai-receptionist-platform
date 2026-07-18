@@ -31,6 +31,10 @@ All notable changes to this project will be documented in this file. The format 
 - Adaptive question strategy added.
 - Customer experience standards and review criteria added.
 - Customer-configured Business Profile architecture introduced.
+- Conceptual Business Profile schema added.
+- Business Profile activation rules and lifecycle states added.
+- Configuration ownership and conflict-resolution responsibilities documented.
+- Fictional multi-industry Business Profile examples added.
 
 ### Changed
 

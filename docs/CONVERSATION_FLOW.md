@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This flow defines the high-level shape of a dependable receptionist conversation. It should help every customer feel heard while giving the business a complete, useful handoff. The stages describe outcomes, not a rigid script.
+This flow defines the customer-facing shape of a dependable receptionist conversation. It should help every customer feel heard while giving the business a complete, useful handoff. The stages describe outcomes, not a rigid script. Internal state, transitions, and interrupting escalation paths are defined in [Conversation Engine](CONVERSATION_ENGINE.md).
 
 ## 1. Greeting
 
@@ -18,42 +18,49 @@ This flow defines the high-level shape of a dependable receptionist conversation
 - **Customer experience goal:** The customer feels listened to before being asked for details.
 - **Business value:** Establishes context and prevents irrelevant questions.
 
-## 3. Collect Contact Information
+## 3. Resolve the Applicable Service
+
+- **Purpose:** Connect the request to an active configured service when the intent requires one.
+- **Information collected:** Customer clarification needed to distinguish active services, or an explicit unsupported or ambiguous status.
+- **Customer experience goal:** The customer is not forced into an inaccurate category.
+- **Business value:** Activates only relevant profile-defined intake and routing.
+
+## 4. Collect Contact Information
 
 - **Purpose:** Ensure the business can continue the conversation.
-- **Information collected:** Name, phone, email when useful, and preferred contact method.
+- **Information collected:** Name, a profile-required reachable contact method, and other contact details only when relevant.
 - **Customer experience goal:** Questions feel brief, expected, and connected to follow-up.
 - **Business value:** Prevents an otherwise valuable inquiry from becoming unreachable.
 
-## 4. Ask Profile-Defined Questions
+## 5. Ask Profile-Defined Questions
 
 - **Purpose:** Gather only the additional context required by the configured service or customer-defined workflow.
 - **Information collected:** Business Profile fields made relevant by the request and earlier answers.
 - **Customer experience goal:** Questions feel tailored without becoming an interrogation.
 - **Business value:** Gives staff enough context to prepare for the next conversation.
 
-## 5. Confirm Understanding
+## 6. Confirm Understanding
 
 - **Purpose:** Check that the receptionist understood the request accurately.
 - **Information collected:** Corrections, missing context, and confirmation of important details.
 - **Customer experience goal:** The customer can correct mistakes and knows their priorities were heard.
 - **Business value:** Reduces misunderstandings and unreliable handoffs.
 
-## 6. Summarize
+## 7. Summarize
 
 - **Purpose:** Present a concise account of the customer, request, timing, and concerns.
 - **Information collected:** No new information unless the summary exposes a gap.
 - **Customer experience goal:** The customer hears a clear, accurate recap without repetition.
 - **Business value:** Produces an actionable handoff that staff can scan quickly.
 
-## 7. Explain Next Steps
+## 8. Explain Next Steps
 
 - **Purpose:** Set an honest expectation for what the business may do next.
 - **Information collected:** Any final preference needed for follow-up.
 - **Customer experience goal:** The customer knows what to expect without receiving an unsupported promise.
 - **Business value:** Creates a consistent transition to human staff and protects business judgment.
 
-## 8. Close Professionally
+## 9. Close Professionally
 
 - **Purpose:** End the interaction clearly and respectfully.
 - **Information collected:** Final corrections or questions.
@@ -70,3 +77,4 @@ At every stage, the receptionist should:
 - Acknowledge uncertainty rather than inventing an answer.
 - Escalate decisions, exceptions, sensitive situations, and commitments to human staff.
 - Never promise pricing, availability, outcomes, or response timing that the business has not approved.
+- Preserve customer corrections and never treat assumptions or inferences as confirmed facts.

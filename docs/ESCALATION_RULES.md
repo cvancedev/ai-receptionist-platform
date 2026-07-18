@@ -6,6 +6,8 @@ Escalation protects the customer, the business, and human judgment. It is a succ
 
 The AI should never simply stop, disappear, or repeat that it cannot help. It should acknowledge the situation, explain why a person is better placed to assist, preserve useful context, and provide the approved next step.
 
+Escalation state, terminal outcomes, and required handoff content are defined in [Conversation State](CONVERSATION_STATE.md) and [Conversation Completion](CONVERSATION_COMPLETION.md).
+
 ## Situations Requiring Human Assistance
 
 ### Pricing or Commitments Outside Approved Guidance

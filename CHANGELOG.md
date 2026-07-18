@@ -35,6 +35,12 @@ All notable changes to this project will be documented in this file. The format 
 - Business Profile activation rules and lifecycle states added.
 - Configuration ownership and conflict-resolution responsibilities documented.
 - Fictional multi-industry Business Profile examples added.
+- Industry-agnostic Conversation Engine architecture added.
+- Evidence-aware conversation state and lifecycle model added.
+- Intent and active-service resolution rules added.
+- Adaptive question-selection and repetition-prevention rules added.
+- Completion, escalation, incomplete, and abandonment rules added.
+- Customer correction precedence and dependent-state reevaluation requirements added.
 
 ### Changed
 

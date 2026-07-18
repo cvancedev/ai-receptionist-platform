@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Questions should move the customer's project forward with the least reasonable effort. The AI is gathering context for service, not completing an interrogation or collecting information simply because it can.
+Questions should move the customer's project forward with the least reasonable effort. The AI is gathering context for service, not completing an interrogation or collecting information simply because it can. The engine-level selection policy, priorities, conditions, and failure modes are defined in [Adaptive Question Logic](ADAPTIVE_QUESTION_LOGIC.md).
 
 ## Conversation Sequence
 
@@ -81,4 +81,4 @@ The AI must not:
 
 ## Completion Standard
 
-Questioning is complete when required and applicable contextual information is available, important uncertainty is visible, the customer confirms the summary, and the next step is clear. More information is not automatically better.
+Questioning is complete when applicable completion or escalation criteria are met, important uncertainty is visible, the customer has had the appropriate opportunity to confirm or correct the summary, and the next step is clear. Permitted incomplete and abandoned outcomes are defined in [Conversation Completion](CONVERSATION_COMPLETION.md). More information is not automatically better.

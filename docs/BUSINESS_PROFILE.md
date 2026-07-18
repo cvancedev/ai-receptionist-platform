@@ -94,7 +94,7 @@ The business retains control over accurate operational information and decides w
 
 ## Use During a Conversation
 
-An active profile provides the relevant context for each interaction. The AI should:
+An active profile provides the relevant context for each interaction. The industry-agnostic coordination and state rules are defined in [Conversation Engine](CONVERSATION_ENGINE.md) and [Conversation State](CONVERSATION_STATE.md). The AI should:
 
 1. Use the approved identity and communication style.
 2. Understand the request before selecting a configured service or workflow.

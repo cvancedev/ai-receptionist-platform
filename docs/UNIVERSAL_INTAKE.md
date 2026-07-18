@@ -54,6 +54,6 @@ Scheduling questions and approved availability language come from the Business P
 
 ## Completion Standard
 
-An intake is complete when the Business Profile's required information is present, applicable contextual information has been addressed, uncertainty is visible, the customer has had a chance to correct the summary, and the approved next step is clear.
+An intake is complete when the Business Profile's required information is present, applicable contextual information has been addressed, uncertainty is visible, the customer has had a chance to correct the summary, and the approved next step is clear. Incomplete, escalated, and abandoned outcomes are governed by [Conversation Completion](CONVERSATION_COMPLETION.md).
 
 The AI should not invent missing details, force optional answers, apply an industry assumption, promise an outcome, or make decisions reserved for human staff.

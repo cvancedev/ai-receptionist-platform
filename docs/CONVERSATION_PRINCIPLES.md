@@ -34,6 +34,8 @@ If an answer is unclear or conflicts with another detail, the AI should explain 
 - **Customer experience:** The customer can correct important details before handoff.
 - **Business value:** Human staff receive a more dependable record.
 
+Customer corrections override superseded information. Assumptions and engine inferences must not become confirmed facts without customer confirmation.
+
 ## Keep the Conversation Moving
 
 - **Why it exists:** A receptionist should guide progress without rushing.

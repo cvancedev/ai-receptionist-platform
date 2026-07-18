@@ -23,6 +23,7 @@ Provide a trustworthy first response that captures the customer's request and gi
 - A professional greeting informed by the Business Profile
 - Clear understanding of the customer's request in their own words
 - Universal intake categories combined with profile-defined requirements
+- An industry-agnostic Conversation Engine that preserves evidence, corrections, and progress
 - Relevant questions for configured services and customer-defined workflows
 - Answers grounded only in approved business knowledge
 - Natural confirmation and correction of captured details

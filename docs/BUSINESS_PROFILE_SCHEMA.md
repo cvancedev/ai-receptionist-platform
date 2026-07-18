@@ -84,7 +84,7 @@ Silence is not approval. If guidance is absent, unclear, expired, or contradicto
 - **Service-specific fields — Business-defined field:** Additional information tied to a configured service rather than an industry assumption.
 - **Conditional fields — Business-defined field:** Information requested only when an explicit condition is met.
 - **Field explanation — Required for unexpected or sensitive fields:** Plain-language reason the information helps the business respond.
-- **Completion rules — Required platform field:** The minimum information and confirmation needed to mark an inquiry complete or eligible for partial handoff.
+- **Completion rules — Required platform field:** The minimum information and confirmation needed to mark an inquiry complete or eligible for partial handoff, consistent with [Conversation Completion](CONVERSATION_COMPLETION.md).
 
 Every intake field should have a clear purpose, applicability rule, and requirement level. The AI should use volunteered information and avoid duplicate questions.
 

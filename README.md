@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 now includes customer-discovery, universal intake, conversation, MVP, AI behavior, and complete Business Profile architecture that future implementation must follow. The AI Core is industry-agnostic; each customer business supplies its own services, knowledge, policies, terminology, workflows, and handoff rules through a validated profile. Functional product features have not been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 now includes customer discovery, universal intake, AI behavior, Business Profile, and Conversation Engine architecture that future implementation must follow. The AI Core is industry-agnostic; each customer business supplies its own services, knowledge, policies, terminology, workflows, and handoff rules through a validated profile. Functional product features have not been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -93,6 +93,11 @@ npm run build
 - [Customer discovery](docs/CUSTOMER_DISCOVERY.md)
 - [Universal intake](docs/UNIVERSAL_INTAKE.md)
 - [Conversation flow](docs/CONVERSATION_FLOW.md)
+- [Conversation Engine](docs/CONVERSATION_ENGINE.md)
+- [Conversation state](docs/CONVERSATION_STATE.md)
+- [Intent and service resolution](docs/INTENT_AND_SERVICE_RESOLUTION.md)
+- [Adaptive question logic](docs/ADAPTIVE_QUESTION_LOGIC.md)
+- [Conversation completion](docs/CONVERSATION_COMPLETION.md)
 - [Business Profile](docs/BUSINESS_PROFILE.md)
 - [Business Profile schema](docs/BUSINESS_PROFILE_SCHEMA.md)
 - [Business Profile validation](docs/BUSINESS_PROFILE_VALIDATION.md)
@@ -115,4 +120,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 2, Milestone 2.3: Business Profile Architecture complete. The next planned milestone is Sprint 2.4: Conversation Engine Architecture.
+Sprint 2, Milestone 2.4: Conversation Engine Architecture complete. The next planned milestone is Sprint 2.5: Knowledge Architecture.

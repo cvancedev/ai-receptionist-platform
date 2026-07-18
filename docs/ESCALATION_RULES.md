@@ -60,6 +60,8 @@ Escalate when the AI and customer cannot establish shared understanding after a 
 
 Escalate when the AI cannot reliably identify the request, distinguish between configured services or customer-defined workflows, reconcile important details, or answer from approved Business Profile information.
 
+Missing, expired, restricted, disputed, or conflicting business knowledge follows [Knowledge Conflicts and Uncertainty](KNOWLEDGE_CONFLICTS_AND_UNCERTAINTY.md) and must not be replaced with speculation.
+
 ### Missing Required Information
 
 If profile-defined required information is unavailable, unknown, or declined, explain why it would help. If the customer still cannot or does not want to provide it, create the best partial handoff allowed rather than pressuring or repeatedly asking.

@@ -111,6 +111,7 @@ The final handoff aligns with the active Business Profile's handoff configuratio
 - **Escalation reasons:** Active or completed escalation triggers and applicable destination.
 - **Recommended next action:** Approved next step for staff or customer, not an unsupported promise.
 - **Priority:** Profile-defined or platform-required indicator with its reason.
+- **Knowledge traceability:** Sources and versions supporting material business answers, retained for authorized audit without exposing restricted content.
 
 The handoff should be concise enough to scan and complete enough that staff do not make the customer reconstruct the conversation.
 

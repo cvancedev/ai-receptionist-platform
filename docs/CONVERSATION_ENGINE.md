@@ -10,7 +10,7 @@ The engine defines responsibilities, evidence handling, state transitions, and c
 
 - **Active validated Business Profile:** The approved business identity, active services, intake rules, escalation paths, handoff rules, and communication preferences for the conversation.
 - **Platform behavior rules:** Universal safety, honesty, privacy, accessibility, conversation, and escalation standards.
-- **Approved business knowledge:** Profile content the business has authorized for the applicable context.
+- **Approved business knowledge:** Active, current, audience-permitted, business-scoped information eligible under [Knowledge Architecture](KNOWLEDGE_ARCHITECTURE.md).
 - **Customer messages:** The customer's words, corrections, questions, concerns, refusals, and requests for human help.
 - **Existing conversation state:** The current lifecycle stage, evidence, progress, unresolved issues, and escalation status.
 - **Channel context:** The interaction channel and any channel-specific capabilities or constraints approved by the profile.

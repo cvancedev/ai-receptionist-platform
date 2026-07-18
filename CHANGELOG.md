@@ -41,6 +41,14 @@ All notable changes to this project will be documented in this file. The format 
 - Adaptive question-selection and repetition-prevention rules added.
 - Completion, escalation, incomplete, and abandonment rules added.
 - Customer correction precedence and dependent-state reevaluation requirements added.
+- Platform, Business Profile, approved-reference, and conversation knowledge layers added.
+- Structured, document, temporary, and audience-classified knowledge source types added.
+- Knowledge creation, review, approval, activation, versioning, expiration, suspension, and retirement lifecycle added.
+- Approved-and-active knowledge eligibility requirements added.
+- Business-scoped retrieval and audience-disclosure boundaries added.
+- Knowledge authority hierarchy and time-bound override rules added.
+- Conflict, uncertainty, outdated-information, and missing-knowledge handling added.
+- Source and version traceability requirements added for material business answers.
 
 ### Changed
 

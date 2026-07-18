@@ -60,12 +60,14 @@ Question history prevents repetition. A corrected answer may reopen a dependent 
 
 ## Knowledge and Boundaries
 
-- **Business knowledge used:** Approved profile knowledge relied on in a customer-facing answer, attributable to the active profile version.
+- **Business knowledge used:** Approved knowledge relied on in a customer-facing answer, attributable to its business, source, version, lifecycle status, and effective context at use time.
 - **Unknown information:** Questions the active profile and conversation evidence cannot answer.
 - **Conflicting information:** Customer or profile information that cannot safely be reconciled.
 - **Statements requiring human review:** Pricing, scheduling, policy, safety, exception, or other matters outside approved authority.
 
 Unknown or conflicting information must not be hidden by a confident tone. It must cause clarification, an honest limitation, or escalation according to applicable rules.
+
+Conversation knowledge remains scoped to the current interaction. Customer statements and corrections do not alter permanent business knowledge without separate business review and approval.
 
 ## Escalation State
 

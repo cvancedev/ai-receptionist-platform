@@ -56,7 +56,7 @@ The platform defines privacy, security, and data-minimization boundaries. The bu
 
 ### Knowledge Review
 
-The platform prevents unsupported answers and exposes missing or conflicting guidance. The business approves source content, limits the AI's authority, and keeps facts current.
+The platform prevents unsupported answers and enforces the lifecycle, audience, business-isolation, traceability, and conflict boundaries in [Knowledge Architecture](KNOWLEDGE_ARCHITECTURE.md). The business approves source content, limits the AI's authority, and keeps facts current.
 
 ### Profile Accuracy
 

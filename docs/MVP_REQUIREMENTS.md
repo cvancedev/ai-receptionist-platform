@@ -26,6 +26,7 @@ Provide a trustworthy first response that captures the customer's request and gi
 - An industry-agnostic Conversation Engine that preserves evidence, corrections, and progress
 - Relevant questions for configured services and customer-defined workflows
 - Answers grounded only in approved business knowledge
+- Source and version traceability for material business answers
 - Natural confirmation and correction of captured details
 - A structured, readable inquiry summary
 - An approved explanation of next steps

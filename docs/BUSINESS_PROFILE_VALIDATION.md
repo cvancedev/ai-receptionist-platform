@@ -86,6 +86,7 @@ The profile is retained as historical configuration but is no longer eligible fo
 - Required disclaimers must be connected to every applicable answer or workflow.
 - Expired, unsupported, or unapproved information must not be treated as knowledge.
 - Unknown information must never be guessed.
+- Referenced business knowledge must be active, approved, business-scoped, audience-permitted, and traceable under the knowledge lifecycle.
 
 ### Escalation and Handoff
 

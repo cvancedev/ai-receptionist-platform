@@ -140,6 +140,8 @@ Capture the customer's goal, explain that the active profile does not provide an
 
 Do not infer the missing rule or ask the customer to supply internal business policy. Restrict the affected response, preserve relevant inquiry context, and escalate through the validated missing-configuration path.
 
+Missing approved reference knowledge follows [Knowledge Retrieval Rules](KNOWLEDGE_RETRIEVAL_RULES.md): preserve the unanswered question, avoid speculation, and use the approved human path when appropriate.
+
 ### Conflicting Business Profile Rules
 
 Do not choose one rule silently. Stop the affected workflow, identify the configuration conflict for business review, communicate only safe confirmed information, and use the approved escalation destination.

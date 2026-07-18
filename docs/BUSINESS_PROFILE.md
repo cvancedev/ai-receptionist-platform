@@ -62,7 +62,7 @@ Defines approved greetings and closings, tone preferences, preferred contact met
 
 ### Knowledge
 
-Defines approved frequently asked questions, policies, service descriptions, scheduling guidance, pricing guidance, payment guidance, and required disclaimers. The presence of a topic does not grant unlimited authority: each item must make clear what the AI may explain and when a person must assist.
+Defines approved frequently asked questions, policies, service descriptions, scheduling guidance, pricing guidance, payment guidance, and required disclaimers. The presence of a topic does not grant unlimited authority: each item must make clear what the AI may explain and when a person must assist. Supporting source authority, approval, audience, lifecycle, and traceability are governed by [Knowledge Architecture](KNOWLEDGE_ARCHITECTURE.md).
 
 ### Intake Configuration
 

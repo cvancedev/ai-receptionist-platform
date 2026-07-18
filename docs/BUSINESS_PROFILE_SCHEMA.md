@@ -65,7 +65,7 @@ Tone cannot authorize pressure, deception, discrimination, impersonation, or uns
 
 ## Knowledge
 
-Knowledge entries are business-defined and must identify approved content, applicable context, and escalation boundaries.
+Knowledge entries are business-defined and must identify approved content, applicable context, audience, and escalation boundaries. Supporting sources remain subject to [Knowledge Architecture](KNOWLEDGE_ARCHITECTURE.md) and do not become active merely because the profile references them.
 
 - **Approved FAQs — Optional business field:** Approved answers to common questions.
 - **Policies — Conditional field:** Required when the AI is expected to explain or apply a business policy.

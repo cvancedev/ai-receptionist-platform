@@ -57,3 +57,9 @@ This boundary prevents missing, stale, or contradictory business information fro
 The Conversation Engine keeps confirmed facts, customer claims, inferences, assumptions, and unknowns conceptually distinct. Only customer confirmation or approved active-profile context can establish confirmed conversation information; assumptions and inferences may never silently become facts.
 
 Customer corrections supersede prior incorrect values and require dependent intent, service, intake, escalation, and completion decisions to be reevaluated. This preserves customer trust, prevents repeated questions, and produces handoffs that expose uncertainty instead of hiding it.
+
+## Approved Knowledge Only
+
+Customer-facing responses may use only active, approved, business-scoped knowledge permitted for the current audience and context, together with current confirmed conversation facts. Material business answers remain traceable to the source and version used.
+
+Missing, disputed, expired, superseded, suspended, restricted, or conflicting information must never be presented as certain. Platform safety and honesty requirements override all business knowledge, and uncertain or unsupported matters remain subject to human review.

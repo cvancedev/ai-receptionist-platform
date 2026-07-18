@@ -21,6 +21,11 @@ All notable changes to this project will be documented in this file. The format 
 - Native robots and sitemap metadata routes added.
 - Branded application icon added.
 - Sprint 1 certification document added.
+- Living customer-discovery record added.
+- Universal intake architecture added.
+- High-level receptionist conversation architecture added.
+- Initial service taxonomy added.
+- Concise MVP definition and success criteria added.
 
 ### Changed
 
@@ -38,6 +43,7 @@ All notable changes to this project will be documented in this file. The format 
 - Final accessibility, responsive, messaging, navigation, performance, and deployment review completed.
 - Open Graph image and domain-dependent metadata deferred until a production website URL is configured.
 - Sprint 1 customer-validation website certified complete.
+- Sprint 1 customer-validation release tagged as `v0.1.0` after review.
 
 ### Removed
 

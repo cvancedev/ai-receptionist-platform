@@ -27,9 +27,18 @@ This roadmap establishes the current development sequence. Items identified as f
 
 Multiple marketing pages will not be introduced unless a demonstrated need justifies them.
 
-## Sprint 2: Customer Discovery (Next)
+## Sprint 2: Customer Discovery (In Progress)
 
-- Milestone 2.1: Customer discovery framework and validated MVP requirements — Next
+- Milestone 2.1: Universal intake and conversation architecture — Complete
+- Milestone 2.2: Conversation Design per Service Type — Next
+
+### Sprint Goals
+
+- Maintain a clear record of validated customer evidence, assumptions, and open questions
+- Define the minimum universal intake shared by service businesses
+- Define a trustworthy end-to-end conversation flow
+- Validate service-specific conversation needs before implementation
+- Establish a disciplined MVP boundary before selecting AI or communication providers
 
 ## Sprint 3: Authentication
 

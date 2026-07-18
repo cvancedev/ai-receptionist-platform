@@ -1,6 +1,6 @@
 # Conversation Principles
 
-These principles govern every conversation regardless of service type, channel, or future AI model.
+These principles govern every conversation regardless of configured service, channel, Business Profile, or future AI model.
 
 ## Understand Before Responding
 
@@ -54,7 +54,7 @@ If an answer is unclear or conflicts with another detail, the AI should explain 
 
 ## Stay Organized
 
-- **Why it exists:** Contact, project, location, timing, communication, and concerns must remain connected.
+- **Why it exists:** Customer identity, request, applicable profile-defined context, timing, communication, and concerns must remain connected.
 - **Customer experience:** The conversation feels coherent rather than scattered.
 - **Business value:** Staff can understand the inquiry without reconstructing it.
 

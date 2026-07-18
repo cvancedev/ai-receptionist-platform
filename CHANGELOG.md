@@ -24,13 +24,13 @@ All notable changes to this project will be documented in this file. The format 
 - Living customer-discovery record added.
 - Universal intake architecture added.
 - High-level receptionist conversation architecture added.
-- Initial service taxonomy added.
 - Concise MVP definition and success criteria added.
 - AI personality and conduct standards added.
 - Customer-centered conversation principles added.
 - Human escalation rules and handoff standards added.
 - Adaptive question strategy added.
 - Customer experience standards and review criteria added.
+- Customer-configured Business Profile architecture introduced.
 
 ### Changed
 
@@ -49,8 +49,12 @@ All notable changes to this project will be documented in this file. The format 
 - Open Graph image and domain-dependent metadata deferred until a production website URL is configured.
 - Sprint 1 customer-validation website certified complete.
 - Sprint 1 customer-validation release tagged as `v0.1.0` after review.
+- Platform architecture generalized around an industry-agnostic AI Core.
+- Customer discovery clarified by separating platform principles, industry-specific observations, future research, and open questions.
+- Project rules updated to keep industry-specific workflows, terminology, services, and policies in the Business Profile.
 
 ### Removed
 
 - Obsolete `config/.gitkeep` and `docs/.gitkeep` placeholders removed.
 - Unused Next.js starter assets removed.
+- Industry-specific assumptions and the initial service taxonomy removed from platform documentation.

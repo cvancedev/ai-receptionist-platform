@@ -1,128 +1,65 @@
 # Customer Discovery
 
-This is the living record of customer evidence for the AI receptionist product. It should be updated when new interviews, observations, or tests add evidence or contradict an earlier conclusion.
+This is the living record of customer evidence for the AI receptionist platform. It should be updated when interviews, observations, or tests add evidence, challenge an assumption, or reveal a new question.
 
-## Evidence Standard
+## Evidence Context
 
-- **Validated observation:** A theme supported by customer feedback available to the project.
-- **Future assumption:** A reasonable product hypothesis that still requires validation.
-- **Open question:** Information the team must learn before treating a decision as settled.
+The initial customer interview was conducted with Jacob, a moving-company owner. The available milestone brief contains summarized themes rather than a transcript or detailed research notes. Those observations are valuable evidence from one service business, but they do not establish universal industry rules.
 
-The current source is feedback from Jacob, a moving-company owner. The milestone brief provides broad themes rather than a transcript or detailed interview notes. Those themes are recorded as validated; operational details that were not supplied remain assumptions or open questions.
+The platform generalizes the strongest themes into testable principles. Details unique to the interviewed business remain industry-specific observations and belong in a customer's Business Profile if they later become product configuration.
 
-## Biggest Business Problems
+## Validated Platform Principles
 
-### Validated observations
+The initial evidence supports these platform-wide principles:
 
-- New inquiries can arrive while the owner or team is occupied with service work.
-- A delayed response or incomplete first conversation makes consistent follow-up harder.
-- Missing details create avoidable back-and-forth before staff can understand the request.
-- The initial inquiry experience influences whether a prospective customer feels heard and confident about the next step.
+- Small service-business teams can receive inquiries while occupied with customer work.
+- Delayed responses and incomplete intake make consistent follow-up harder.
+- Missing context creates avoidable back-and-forth before staff can evaluate a request.
+- Customers need to feel heard and understand what will happen next.
+- Staff repeatedly collect contact details, request context, timing, and customer concerns.
+- A structured summary can make human follow-up more useful and less repetitive.
+- The AI should answer inquiries, capture opportunities, gather complete relevant information, and support human employees.
+- Pricing, commitments, exceptions, and other business judgments must remain under human control unless explicitly governed by approved Business Profile guidance.
+- The AI must never invent information, pressure customers, or overpromise.
 
-### Future assumptions
+These principles are validated as needs expressed in the initial discovery context. Their prevalence and exact form across different service-business categories still require broader research.
 
-- The cost of missed or incomplete inquiries is significant enough to justify a dedicated receptionist product.
-- After-hours inquiries create the same or greater burden as inquiries received during active jobs.
-- A reusable intake structure can serve several service categories without feeling generic.
+## Industry-Specific Observations
 
-### Open questions
+The initial interview surfaced details relevant to the interviewed moving business:
 
-- How many inquiries arrive during jobs, after hours, and during peak periods?
-- Which channels create the most missed or incomplete inquiries?
-- Where does follow-up most often break down today?
-- Which failures are most costly or stressful for the business?
+- Location and timing context can materially affect the team's ability to evaluate an inquiry.
+- Some requests may require both a starting location and a destination, while a destination may be unknown during first contact.
+- Access conditions, project scope, and special handling concerns may affect follow-up preparation.
 
-## Required Customer Information
+These are examples from the initial interview, not platform defaults. The AI Core must not assume these fields apply to another business. A customer business defines comparable terminology, services, intake fields, and workflows in its Business Profile.
 
-### Validated observations
+## Future Research
 
-- Staff need enough contact information to continue the conversation.
-- They need a clear description of the requested service and the customer's goal.
-- Moving inquiries require location and timing context; a destination may not always be known initially.
-- Special concerns can materially affect how staff prepare for follow-up.
+Research with a broader range of small service businesses should determine:
 
-### Future assumptions
+- Which inquiry problems recur across service-business categories.
+- Which intake information is truly universal and which is profile-defined.
+- Which communication channels produce the most missed or incomplete inquiries.
+- Which repeated questions can be answered safely from approved business knowledge.
+- Which handoff formats save staff the most time.
+- What introduction and AI disclosure language customers consider trustworthy.
+- Which response, completion, and reliability measures predict customer value.
+- How different business-defined services and workflows affect conversation design.
 
-- A universal intake can cover identity, contact, service, location, timing, and notes before service-specific questions begin.
-- Customers will provide more complete information when questions are brief, relevant, and explained naturally.
+Future interviews must record the business context and distinguish direct evidence from interpretation. A pattern should not become platform-core behavior merely because it appears in one industry.
 
-### Open questions
+## Open Questions
 
-- Which fields are mandatory before a moving-company employee can act?
-- When is an email address necessary in addition to a phone number?
-- Which details are useful at first contact but better left for a later estimate conversation?
+- How frequently do missed or incomplete inquiries occur across different small service businesses?
+- What is the minimum contact information needed for a useful handoff when business preferences vary?
+- Which intake fields should the platform always support, and which should exist only through Business Profile configuration?
+- How should the platform handle conflicts between a customer's wording and configured service terminology?
+- Which policies and frequently asked questions can the AI explain without human judgment?
+- What conditions should always trigger a platform-level escalation versus a business-configured escalation?
+- When and how should the receptionist identify itself as AI?
+- What evidence should be required before expanding the MVP scope or automating a workflow?
 
-## Common Customer Questions
+## Research Guardrail
 
-### Validated observations
-
-- Customers need clarity about whether the business may fit their request, what information is needed, and what happens next.
-- Repeated questions are part of the intake workload and affect confidence in the business.
-
-### Future assumptions
-
-- Availability, service scope, process, preparation, timing, and pricing approach will be common topics.
-- Approved answers can reduce repetition without allowing the receptionist to invent policies, prices, or commitments.
-
-### Open questions
-
-- What are the ten questions Jacob's team answers most often?
-- Which questions can be answered consistently, and which require human judgment?
-- What wording best sets expectations without sounding evasive?
-
-## Repetitive Administrative Work
-
-### Validated observations
-
-- Staff repeatedly gather the same basic contact and project information.
-- They repeatedly explain the next step and transfer inquiry details for follow-up.
-- Turning a conversation into a useful handoff is valuable work, but it should not require unnecessary re-entry or reconstruction.
-
-### Future assumptions
-
-- A structured summary can reduce the time staff spend replaying or reorganizing inquiry details.
-- Consistent intake will make follow-up easier even before scheduling or automation exists.
-
-### Open questions
-
-- Where are inquiry details recorded today?
-- Which information is most often retyped or lost?
-- Which administrative task should be measured first in a real-world trial?
-
-## Trust Building
-
-### Validated observations
-
-- Customers should feel listened to rather than processed.
-- Clear expectations and an honest next step matter more than an overconfident answer.
-- The receptionist must support human staff and leave judgment, pricing, commitments, and exceptions with the business.
-
-### Future assumptions
-
-- Confirming the request in plain language will reduce misunderstandings.
-- Transparent limits and professional handoff language will increase willingness to continue the conversation.
-
-### Open questions
-
-- What introduction would feel trustworthy to Jacob's customers?
-- When should the receptionist explicitly identify itself as AI?
-- Which situations require immediate human escalation?
-
-## AI Receptionist Vision
-
-### Validated observations
-
-- The desired role is to answer inquiries, capture opportunities, gather complete information, and help customers feel heard.
-- The receptionist should reduce repetitive work while supporting, not replacing, human staff.
-- It must never overpromise, pressure a customer, or substitute automated judgment for a business decision.
-
-### Future assumptions
-
-- The same core conversation can support multiple service categories through a universal intake plus a small service-specific layer.
-- A clear summary and next-step explanation are the minimum useful outputs of a completed conversation.
-
-### Open questions
-
-- Which communication channel should be validated first?
-- What response and completion standards would Jacob consider dependable?
-- What evidence would justify expanding beyond moving-related services?
+Customer discovery guides platform principles; it does not hardcode a customer's industry into the product. New evidence should improve the universal conversation architecture or the Business Profile model while keeping the AI Core industry-agnostic.

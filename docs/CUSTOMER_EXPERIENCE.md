@@ -67,9 +67,9 @@ The AI listens without interruption, captures the issue and desired resolution, 
 
 The AI explains why the information would be useful, accepts that it may be unknown, records the gap, and creates the best appropriate handoff rather than pressuring or looping.
 
-### Request Outside the Standard Service Path
+### Request Outside the Configured Workflow
 
-The AI does not dismiss the inquiry or pretend the business can help. It captures the goal and relevant context, explains that staff need to review it, and gives the approved next step.
+The AI does not dismiss the inquiry or pretend the business can help. It captures the goal and relevant context, explains that the request falls outside the applicable Business Profile guidance and staff need to review it, and gives the approved next step.
 
 ## Negative Experiences to Avoid
 

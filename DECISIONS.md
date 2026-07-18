@@ -33,3 +33,15 @@ Reusable UI and layout components separate repeated presentation concerns from p
 ## Public Website Delivery
 
 The marketing website uses native Next.js metadata and metadata routes instead of third-party SEO packages. Early-access contact remains email-based until data-handling requirements are defined. Analytics is deferred until the company has a real measurement plan and has reviewed the related privacy implications.
+
+## Platform-First Architecture
+
+The product shifted from industry-focused documentation to a universal platform architecture after the initial discovery work revealed a durable boundary: receptionist behavior is broadly reusable, while services, terminology, policies, knowledge, intake fields, and workflows differ by business. The AI Core therefore remains industry-agnostic, and each customer supplies those differences through a Business Profile.
+
+This decision improves:
+
+- **Scalability:** New service-business categories can be supported through configuration instead of core rewrites.
+- **Maintainability:** Universal behavior and customer-specific rules have a clear ownership boundary.
+- **Simpler onboarding:** Each business describes how it operates in one coherent profile.
+- **Cleaner AI architecture:** Conversation behavior is separated from the context that grounds a particular interaction.
+- **Future multi-industry expansion:** The platform can learn from new markets without treating one industry's practices as defaults.

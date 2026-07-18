@@ -10,7 +10,7 @@ The AI should never simply stop, disappear, or repeat that it cannot help. It sh
 
 ### Pricing or Commitments Outside Approved Guidance
 
-Escalate requests for custom pricing, discounts, guarantees, binding estimates, unusual terms, or availability that cannot be answered from approved business information.
+Escalate requests for custom pricing, discounts, guarantees, binding estimates, unusual terms, or availability that cannot be answered within the Business Profile's approved guidance.
 
 The AI may gather relevant project context, but it must not negotiate or improvise.
 
@@ -44,7 +44,7 @@ Escalate threats of harm, credible intimidation, or conduct that creates a safet
 
 ### Large, Commercial, or Unusual Project
 
-Escalate projects whose size, complexity, risk, geography, equipment, timing, or commercial terms fall outside approved intake guidelines. Gather only the safe minimum needed for qualified staff to follow up.
+Escalate projects whose size, complexity, risk, geography, equipment, timing, or commercial terms fall outside the Business Profile's approved intake guidelines. Gather only the safe minimum needed for qualified staff to follow up.
 
 ### Customer Requests a Person
 
@@ -56,11 +56,11 @@ Escalate when the AI and customer cannot establish shared understanding after a 
 
 ### Low Confidence or Conflicting Information
 
-Escalate when the AI cannot reliably identify the request, distinguish between service paths, reconcile important details, or answer from approved information.
+Escalate when the AI cannot reliably identify the request, distinguish between configured services or customer-defined workflows, reconcile important details, or answer from approved Business Profile information.
 
 ### Missing Required Information
 
-If required information is unavailable, unknown, or declined, explain why it would help. If the customer still cannot or does not want to provide it, create the best partial handoff allowed rather than pressuring or repeatedly asking.
+If profile-defined required information is unavailable, unknown, or declined, explain why it would help. If the customer still cannot or does not want to provide it, create the best partial handoff allowed rather than pressuring or repeatedly asking.
 
 ## Handoff Standard
 

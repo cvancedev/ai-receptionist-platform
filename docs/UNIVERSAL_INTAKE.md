@@ -2,59 +2,58 @@
 
 ## Purpose
 
-Universal intake defines the minimum context needed to understand and hand off a service inquiry. It is a conversation blueprint, not a form or implementation specification.
+Universal intake defines the minimum categories of context needed to understand and hand off an inquiry for a small service business. It is a conversation blueprint, not a form, schema, or implementation specification.
 
-The intake should gather only information that helps the business respond. It should feel relevant, respectful, and easy to correct.
+The AI Core supplies the intake behavior. The Business Profile defines the business's configured services, terminology, required fields, optional fields, contextual fields, and customer-defined workflows. The conversation should gather only information that helps the business respond.
 
 ## Information Status
 
-- **Required:** Needed before the inquiry can be considered complete.
+- **Required:** Needed before the inquiry can be considered complete under the applicable Business Profile.
 - **Optional:** Helpful when the customer knows it, but not necessary to continue.
-- **Contextual:** Required only when the selected service or an earlier answer makes it relevant.
+- **Contextual:** Needed only when a configured service, business rule, or earlier answer makes it relevant.
+
+Exact status is business-configured. The platform should support these statuses without imposing industry-specific requirements.
 
 ## Customer
 
-| Information | Status | Why it matters |
-| --- | --- | --- |
-| Name | Required | Gives the business and customer a clear reference for the inquiry. |
-| Phone | Required | Provides a dependable follow-up method for service businesses. |
-| Email | Optional | Supports written follow-up; it becomes contextual when email is the preferred contact method. |
+- **Name:** Identifies the customer and gives the inquiry a clear human reference.
+- **Reachable contact method:** At least one approved way for the business to continue the conversation, such as phone or email.
+- **Additional contact details:** Collected only when the Business Profile or customer's preference makes them relevant.
 
-## Project
+## Request
 
-| Information | Status | Why it matters |
-| --- | --- | --- |
-| Service type | Required | Routes the conversation to the relevant service context. |
-| Project description | Required | Captures what the customer wants help with in their own words. |
+- **Configured service:** The closest business-defined service when it can be identified confidently.
+- **Request description:** What the customer wants help with, in the customer's own words.
+- **Customer goal:** The outcome the customer is trying to achieve.
+
+If the request does not match a configured service, the AI preserves the customer's description and follows the profile's review or escalation path instead of forcing a category.
 
 ## Location
 
-| Information | Status | Why it matters |
-| --- | --- | --- |
-| Origin | Contextual | Needed when service depends on a pickup, work, or starting location. |
-| Destination | Contextual | Needed for moving-related services when known; it may remain unknown during initial contact. |
+- **Relevant location:** Collected when the configured service or workflow depends on where work, delivery, pickup, travel, or another activity occurs.
+- **Additional locations:** Collected only when a customer-defined workflow requires them.
+
+The AI Core does not assume a number or type of locations. Their labels and requirements come from the Business Profile.
 
 ## Scheduling
 
-| Information | Status | Why it matters |
-| --- | --- | --- |
-| Preferred date | Optional | Helps staff understand timing without promising availability. It becomes contextual when urgency affects the request. |
+- **Preferred date or time frame:** Helps the business understand timing without promising availability.
+- **Urgency:** Collected when timing affects the request, safety, or applicable workflow.
+
+Scheduling questions and approved availability language come from the Business Profile.
 
 ## Communication
 
-| Information | Status | Why it matters |
-| --- | --- | --- |
-| Preferred contact method | Required | Tells staff how the customer would like the business to follow up. |
+- **Preferred contact method:** Records how the customer would like the business to follow up, subject to configured channels.
+- **Communication considerations:** Captured only when volunteered or needed to support an accessible, effective handoff.
 
 ## Notes
 
-| Information | Status | Why it matters |
-| --- | --- | --- |
-| Customer goals | Optional | Preserves the outcome the customer cares about, not just the task. |
-| Special concerns | Optional | Gives the customer space to identify constraints, risks, or sensitivities. A concern may trigger contextual follow-up. |
+- **Special concerns:** Constraints, risks, sensitivities, or priorities the customer wants the business to understand.
+- **Additional context:** Other information that materially improves the business's response.
 
 ## Completion Standard
 
-An intake is complete when required information is present, applicable contextual information has been addressed, the customer has had a chance to correct the summary, and the next step is clear.
+An intake is complete when the Business Profile's required information is present, applicable contextual information has been addressed, uncertainty is visible, the customer has had a chance to correct the summary, and the approved next step is clear.
 
-The receptionist should not invent missing details, force optional answers, promise availability, or make decisions reserved for human staff.
+The AI should not invent missing details, force optional answers, apply an industry assumption, promise an outcome, or make decisions reserved for human staff.

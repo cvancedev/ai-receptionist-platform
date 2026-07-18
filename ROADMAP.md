@@ -31,15 +31,20 @@ Multiple marketing pages will not be introduced unless a demonstrated need justi
 
 - Milestone 2.1: Universal intake and conversation architecture — Complete
 - Milestone 2.2: AI Behavior & Conversation Intelligence — Complete
-- Milestone 2.3: Dynamic Intake Logic — Next
+- Milestone 2.3: Business Profile Architecture — Next
+- Milestone 2.4: Conversation Engine — Planned
+- Milestone 2.5: Knowledge Architecture — Planned
+- Milestone 2.6: Prompt & Context Architecture — Planned
+- Milestone 2.7: Implementation Planning — Planned
 
 ### Sprint Goals
 
 - Maintain a clear record of validated customer evidence, assumptions, and open questions
-- Define the minimum universal intake shared by service businesses
+- Define the minimum universal intake shared by service businesses and keep exact requirements profile-driven
 - Define a trustworthy end-to-end conversation flow
 - Define consistent personality, questioning, escalation, and customer experience standards
-- Validate service-specific conversation needs before implementation
+- Define a Business Profile for customer-configured services, knowledge, policies, terminology, and workflows
+- Keep the AI Core industry-agnostic while supporting customer-defined workflows
 - Establish a disciplined MVP boundary before selecting AI or communication providers
 
 ## Sprint 3: Authentication

@@ -14,7 +14,7 @@ This flow defines the high-level shape of a dependable receptionist conversation
 ## 2. Understand the Request
 
 - **Purpose:** Let the customer describe the service need and desired outcome in their own words.
-- **Information collected:** Service type, project description, customer goals, and initial concerns.
+- **Information collected:** Configured service when identifiable, request description, customer goals, and initial concerns.
 - **Customer experience goal:** The customer feels listened to before being asked for details.
 - **Business value:** Establishes context and prevents irrelevant questions.
 
@@ -25,10 +25,10 @@ This flow defines the high-level shape of a dependable receptionist conversation
 - **Customer experience goal:** Questions feel brief, expected, and connected to follow-up.
 - **Business value:** Prevents an otherwise valuable inquiry from becoming unreachable.
 
-## 4. Ask Service-Specific Questions
+## 4. Ask Profile-Defined Questions
 
-- **Purpose:** Gather only the additional context the selected service requires.
-- **Information collected:** Relevant location, timing, scope, access, or constraint information.
+- **Purpose:** Gather only the additional context required by the configured service or customer-defined workflow.
+- **Information collected:** Business Profile fields made relevant by the request and earlier answers.
 - **Customer experience goal:** Questions feel tailored without becoming an interrogation.
 - **Business value:** Gives staff enough context to prepare for the next conversation.
 
@@ -64,7 +64,7 @@ This flow defines the high-level shape of a dependable receptionist conversation
 
 At every stage, the receptionist should:
 
-- Answer using only approved information.
+- Answer using only approved information from the Business Profile.
 - Capture the opportunity without pressuring the customer.
 - Gather complete information without forcing optional details.
 - Acknowledge uncertainty rather than inventing an answer.

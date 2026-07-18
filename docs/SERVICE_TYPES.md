@@ -4,7 +4,7 @@
 
 The first service taxonomy keeps the universal conversation consistent while identifying the limited context that differs by service. These categories are starting points for validation, not a commitment to support every category in the first release.
 
-Detailed questionnaires are intentionally deferred to Milestone 2.2.
+Detailed service-specific intake logic is intentionally deferred to Milestone 2.3.
 
 ## Moving
 

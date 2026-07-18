@@ -30,13 +30,15 @@ Multiple marketing pages will not be introduced unless a demonstrated need justi
 ## Sprint 2: Customer Discovery (In Progress)
 
 - Milestone 2.1: Universal intake and conversation architecture — Complete
-- Milestone 2.2: Conversation Design per Service Type — Next
+- Milestone 2.2: AI Behavior & Conversation Intelligence — Complete
+- Milestone 2.3: Dynamic Intake Logic — Next
 
 ### Sprint Goals
 
 - Maintain a clear record of validated customer evidence, assumptions, and open questions
 - Define the minimum universal intake shared by service businesses
 - Define a trustworthy end-to-end conversation flow
+- Define consistent personality, questioning, escalation, and customer experience standards
 - Validate service-specific conversation needs before implementation
 - Establish a disciplined MVP boundary before selecting AI or communication providers
 

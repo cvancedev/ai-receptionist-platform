@@ -26,6 +26,11 @@ All notable changes to this project will be documented in this file. The format 
 - High-level receptionist conversation architecture added.
 - Initial service taxonomy added.
 - Concise MVP definition and success criteria added.
+- AI personality and conduct standards added.
+- Customer-centered conversation principles added.
+- Human escalation rules and handoff standards added.
+- Adaptive question strategy added.
+- Customer experience standards and review criteria added.
 
 ### Changed
 

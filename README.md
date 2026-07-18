@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 has begun with documented customer-discovery findings, universal intake, conversation flow, service taxonomy, and MVP requirements. Functional product features have not been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 now includes the customer-discovery, intake, conversation, MVP, and AI behavioral architecture that future implementation must follow. Functional product features have not been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -95,6 +95,11 @@ npm run build
 - [Conversation flow](docs/CONVERSATION_FLOW.md)
 - [Service types](docs/SERVICE_TYPES.md)
 - [MVP requirements](docs/MVP_REQUIREMENTS.md)
+- [AI personality](docs/AI_PERSONALITY.md)
+- [Conversation principles](docs/CONVERSATION_PRINCIPLES.md)
+- [Escalation rules](docs/ESCALATION_RULES.md)
+- [Question strategy](docs/QUESTION_STRATEGY.md)
+- [Customer experience standards](docs/CUSTOMER_EXPERIENCE.md)
 
 ## Branding Configuration
 
@@ -106,4 +111,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 2, Milestone 2.1: Universal intake and conversation architecture complete. The next planned milestone is Sprint 2.2: Conversation Design per Service Type.
+Sprint 2, Milestone 2.2: AI behavior and conversation intelligence architecture complete. The next planned milestone is Sprint 2.3: Dynamic Intake Logic.

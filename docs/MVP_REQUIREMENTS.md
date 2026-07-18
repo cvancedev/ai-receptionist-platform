@@ -47,7 +47,7 @@ Provide a consistent first response that captures the customer's request and giv
 - Promising availability, arrival times, or service outcomes without approval
 - Processing payments
 - Acting as a general CRM, dispatch, accounting, or all-in-one operations platform
-- Building detailed service questionnaires before Milestone 2.2 validation
+- Building detailed service-specific intake logic before Milestone 2.3
 - Implementing AI, APIs, authentication, storage, forms, or dashboards in this architecture milestone
 
 ## Success Criteria

@@ -34,8 +34,8 @@ Multiple marketing pages will not be introduced unless a demonstrated need justi
 - Milestone 2.3: Business Profile Architecture — Complete
 - Milestone 2.4: Conversation Engine Architecture — Complete
 - Milestone 2.5: Knowledge Architecture — Complete
-- Milestone 2.6: Prompt & Context Architecture — Next
-- Milestone 2.7: Implementation Planning — Planned
+- Milestone 2.6: Prompt & Context Architecture — Complete
+- Milestone 2.7: Implementation Planning — Next
 
 ### Sprint Goals
 

@@ -24,6 +24,8 @@ Provide a trustworthy first response that captures the customer's request and gi
 - Clear understanding of the customer's request in their own words
 - Universal intake categories combined with profile-defined requirements
 - An industry-agnostic Conversation Engine that preserves evidence, corrections, and progress
+- Application-controlled, business-scoped context assembly
+- Validation of model-proposed responses, state updates, and actions before use
 - Relevant questions for configured services and customer-defined workflows
 - Answers grounded only in approved business knowledge
 - Source and version traceability for material business answers

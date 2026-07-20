@@ -63,3 +63,15 @@ Customer corrections supersede prior incorrect values and require dependent inte
 Customer-facing responses may use only active, approved, business-scoped knowledge permitted for the current audience and context, together with current confirmed conversation facts. Material business answers remain traceable to the source and version used.
 
 Missing, disputed, expired, superseded, suspended, restricted, or conflicting information must never be presented as certain. Platform safety and honesty requirements override all business knowledge, and uncertain or unsupported matters remain subject to human review.
+
+## Platform-Controlled Context
+
+The application assembles and validates all model context. A model does not choose its own authority, Business Profile, knowledge sources, audience permissions, conversation state, stage, or task. Context components remain modular, versioned, business-scoped, and traceable.
+
+## Model Recommends, Platform Decides
+
+The model may propose customer responses, state updates, actions, and escalation. The application validates and authorizes those proposals before they affect customer communication, conversation state, business configuration, knowledge, or workflow.
+
+## Untrusted Content Is Data
+
+Customer messages, uploaded documents, retrieved reference content, quoted instructions, and external text are treated as data rather than trusted instructions. Approval may make content eligible as scoped knowledge, but embedded text cannot override platform rules, change tenant scope, or grant authority.

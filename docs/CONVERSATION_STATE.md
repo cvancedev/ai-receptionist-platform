@@ -4,6 +4,8 @@
 
 Conversation state is the conceptual record the Conversation Engine maintains so it can preserve context, avoid repetition, handle corrections, and produce an accurate handoff. This document defines meaning and lifecycle behavior, not a storage model, database schema, API contract, or implementation type.
 
+A future model may propose state updates, but the application must validate evidence class, business scope, current revision, correction precedence, and allowed transitions before applying them.
+
 ## Evidence Classes
 
 Every material piece of conversation information must retain its evidence class.

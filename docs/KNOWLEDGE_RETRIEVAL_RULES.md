@@ -4,6 +4,8 @@
 
 Knowledge retrieval is the conceptual process by which the Conversation Engine selects approved information relevant to the current interaction. This document defines eligibility, authority, relevance, use, and traceability without specifying embeddings, vector databases, search algorithms, ranking formulas, code, or vendors.
 
+The application performs retrieval and context selection. A future model does not choose its own sources, audience permissions, authority, or business scope. Eligible results enter model context only through [Context Assembly](CONTEXT_ASSEMBLY.md).
+
 ## Retrieval Inputs
 
 - **Business identifier:** The customer business whose knowledge is eligible.

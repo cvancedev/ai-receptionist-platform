@@ -49,6 +49,14 @@ All notable changes to this project will be documented in this file. The format 
 - Knowledge authority hierarchy and time-bound override rules added.
 - Conflict, uncertainty, outdated-information, and missing-knowledge handling added.
 - Source and version traceability requirements added for material business answers.
+- Modular, versioned, model-independent prompt architecture added.
+- Application-controlled context assembly and validation sequence added.
+- Context prioritization, reduction, long-conversation, and overflow rules added.
+- Prompt-injection and untrusted-content security boundaries added.
+- Cross-business tenant-isolation requirements added for model context.
+- Application-validated model output contract added.
+- Prompt, context, adversarial, and regression testing strategy added.
+- Model-recommendation and platform-authorization boundaries documented.
 
 ### Changed
 

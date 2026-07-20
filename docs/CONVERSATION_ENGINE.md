@@ -2,9 +2,11 @@
 
 ## Purpose
 
-The Conversation Engine is the industry-agnostic coordinator for a customer interaction. It determines what the conversation needs next by applying platform behavior rules to an active, validated Business Profile and the current conversation state.
+The Conversation Engine is the industry-agnostic coordinator for a customer interaction. It determines what the conversation needs next by applying platform behavior rules to an active, validated Business Profile and the current conversation state. For any future model call, the application assembles and validates these inputs under [Prompt Architecture](PROMPT_ARCHITECTURE.md) and [Context Assembly](CONTEXT_ASSEMBLY.md).
 
 The engine defines responsibilities, evidence handling, state transitions, and completion standards. It does not define an AI provider, production prompt, API, database, storage mechanism, or user interface.
+
+Model output is advisory. The application validates proposed responses, state changes, actions, and escalation against [Model Output Contract](MODEL_OUTPUT_CONTRACT.md) before they affect the conversation.
 
 ## Inputs
 

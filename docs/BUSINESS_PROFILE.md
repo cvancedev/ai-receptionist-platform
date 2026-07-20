@@ -4,7 +4,7 @@
 
 The Business Profile is the authoritative, customer-owned configuration that tells the AI receptionist how a specific small service business operates. Every business supplies and maintains its own profile. The AI Core remains industry-agnostic and provides universal conversation behavior without embedding an industry's services, terminology, policies, intake requirements, workflows, or knowledge.
 
-Before interacting with a customer, the AI must use an active, validated Business Profile. It may rely only on information approved in that profile and on platform-owned safeguards. Missing, inactive, contradictory, or unsupported configuration must lead to clarification or human escalation, never an invented answer or commitment.
+Before interacting with a customer, the application must bind the AI to an active, validated Business Profile. The model cannot select or activate its own profile. It may rely only on information approved in that profile and on platform-owned safeguards. Missing, inactive, contradictory, or unsupported configuration must lead to clarification or human escalation, never an invented answer or commitment.
 
 ## Architectural Boundary
 

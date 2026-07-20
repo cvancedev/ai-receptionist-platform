@@ -17,6 +17,8 @@ The platform owns rules that must remain consistent across every business and in
 - Reliability and failure-handling rules
 - Business Profile lifecycle and validation boundaries
 - Enforcement that only active, validated configuration may guide a conversation
+- Model-independent prompt components and application-controlled context assembly
+- Validation and authorization of model output before it affects state or workflow
 - The rule that human judgment is required for unsupported commitments and exceptions
 
 Platform-owned rules define the minimum acceptable behavior. A business may adopt stricter protections but may not weaken or disable them.

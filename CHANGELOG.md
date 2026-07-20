@@ -57,6 +57,14 @@ All notable changes to this project will be documented in this file. The format 
 - Application-validated model output contract added.
 - Prompt, context, adversarial, and regression testing strategy added.
 - Model-recommendation and platform-authorization boundaries documented.
+- High-level implementation architecture and layer responsibilities added.
+- Conceptual system component boundaries added.
+- Platform, business, conversation, model-proposal, application-decision, and derived-data ownership documented.
+- Conceptual API and security boundaries added.
+- Vertical-slice development sequence added.
+- MVP unit, integration, end-to-end, security, reliability, accessibility, and acceptance test plan added.
+- Sprint 3 local Conversation Prototype plan added.
+- Major technology decisions deferred to their documented point of need.
 
 ### Changed
 

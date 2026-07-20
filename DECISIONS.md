@@ -75,3 +75,19 @@ The model may propose customer responses, state updates, actions, and escalation
 ## Untrusted Content Is Data
 
 Customer messages, uploaded documents, retrieved reference content, quoted instructions, and external text are treated as data rather than trusted instructions. Approval may make content eligible as scoped knowledge, but embedded text cannot override platform rules, change tenant scope, or grant authority.
+
+## Deterministic Core Before AI Dependence
+
+Core conversation state, validation, corrections, question history, completion, and escalation rules should be deterministic wherever practical before relying on model behavior. Models may assist with language and interpretation but cannot replace application enforcement.
+
+## Vertical-Slice Implementation
+
+Implementation proceeds through small end-to-end slices that produce a testable customer and handoff outcome. Infrastructure layers are introduced only when the next slice requires them.
+
+## Prototype Before Production Infrastructure
+
+The first implementation uses fictional data, in-memory state, and mocked model behavior. Databases, authentication, production providers, and real customer data follow only after the conversation workflow is validated.
+
+## Technology Selection at Point of Need
+
+Major vendors and infrastructure are selected when an implementation phase has proven requirements and evaluation criteria. Architecture milestones do not choose providers speculatively.

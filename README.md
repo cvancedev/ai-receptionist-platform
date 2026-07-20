@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 now includes customer discovery, universal intake, AI behavior, Business Profile, Conversation Engine, Knowledge, and Prompt and Context Architecture that future implementation must follow. The AI Core is industry-agnostic; each customer business supplies its own services, approved knowledge, policies, terminology, workflows, and handoff rules through validated configuration. Functional product features have not been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 is complete and defines customer discovery, intake, AI behavior, Business Profile, Conversation Engine, Knowledge, Prompt and Context, and implementation architecture. The AI Core remains industry-agnostic. Functional product features have not been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -109,6 +109,13 @@ npm run build
 - [Prompt security](docs/PROMPT_SECURITY.md)
 - [Model output contract](docs/MODEL_OUTPUT_CONTRACT.md)
 - [Prompt testing strategy](docs/PROMPT_TESTING_STRATEGY.md)
+- [Implementation architecture](docs/IMPLEMENTATION_ARCHITECTURE.md)
+- [System components](docs/SYSTEM_COMPONENTS.md)
+- [Data and state ownership](docs/DATA_AND_STATE_OWNERSHIP.md)
+- [API boundaries](docs/API_BOUNDARIES.md)
+- [Implementation sequence](docs/IMPLEMENTATION_SEQUENCE.md)
+- [MVP test plan](docs/MVP_TEST_PLAN.md)
+- [Sprint 3 plan](docs/SPRINT_3_PLAN.md)
 - [Business Profile](docs/BUSINESS_PROFILE.md)
 - [Business Profile schema](docs/BUSINESS_PROFILE_SCHEMA.md)
 - [Business Profile validation](docs/BUSINESS_PROFILE_VALIDATION.md)
@@ -131,4 +138,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 2, Milestone 2.6: Prompt & Context Architecture complete. The next planned milestone is Sprint 2.7: Implementation Planning.
+Sprint 2 architecture and implementation planning are complete. The next planned work is Sprint 3: Conversation Prototype; it has not begun.

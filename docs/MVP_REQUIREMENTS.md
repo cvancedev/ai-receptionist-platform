@@ -70,3 +70,5 @@ The MVP will be considered successful when customer and business testing shows t
 - Escalate uncertainty and judgment to a person
 - Reduce repetitive intake effort while maintaining a respectful customer experience
 - Earn validation from service-business owners before the product scope expands
+
+Implementation order, component boundaries, and the fictional local prototype are defined in [Implementation Architecture](IMPLEMENTATION_ARCHITECTURE.md), [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md), and [Sprint 3 Plan](SPRINT_3_PLAN.md).

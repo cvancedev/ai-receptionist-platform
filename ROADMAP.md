@@ -27,7 +27,7 @@ This roadmap establishes the current development sequence. Items identified as f
 
 Multiple marketing pages will not be introduced unless a demonstrated need justifies them.
 
-## Sprint 2: Customer Discovery (In Progress)
+## Sprint 2: Customer Discovery and Architecture (Complete)
 
 - Milestone 2.1: Universal intake and conversation architecture — Complete
 - Milestone 2.2: AI Behavior & Conversation Intelligence — Complete
@@ -35,7 +35,7 @@ Multiple marketing pages will not be introduced unless a demonstrated need justi
 - Milestone 2.4: Conversation Engine Architecture — Complete
 - Milestone 2.5: Knowledge Architecture — Complete
 - Milestone 2.6: Prompt & Context Architecture — Complete
-- Milestone 2.7: Implementation Planning — Next
+- Milestone 2.7: Implementation Planning — Complete
 
 ### Sprint Goals
 
@@ -47,12 +47,17 @@ Multiple marketing pages will not be introduced unless a demonstrated need justi
 - Keep the AI Core industry-agnostic while supporting customer-defined workflows
 - Establish a disciplined MVP boundary before selecting AI or communication providers
 
-## Sprint 3: Authentication
+## Sprint 3: Conversation Prototype (Next)
 
-- Registration
-- Sign-in
-- Password reset
-- Protected application area
+- Milestone 3.1: Prototype Foundation
+- Milestone 3.2: Conversation State Prototype
+- Milestone 3.3: Deterministic Intake Flow
+- Milestone 3.4: Prototype Chat Interface
+- Milestone 3.5: Prototype Certification
+
+Sprint 3 uses fictional configuration, in-memory state, and mocked model behavior. It does not introduce authentication, persistence, a production AI provider, or real customer data.
+
+The numbered sequence after Sprint 3 remains provisional and must be reassessed using prototype evidence. Authentication and authorization must precede any real protected business data or administration workflow.
 
 ## Sprint 4: Business Dashboard Foundation
 
@@ -99,3 +104,4 @@ The following are possibilities, not current development commitments:
 - Additional communication channels
 - Analytics
 - Additional AI employee roles
+- Authentication and protected business administration when real business-user workflows require them

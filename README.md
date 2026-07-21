@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 is complete and defines customer discovery, intake, AI behavior, Business Profile, Conversation Engine, Knowledge, Prompt and Context, and implementation architecture. Sprint 3 now includes a local, fictional, in-memory conversation-state prototype. The AI Core remains industry-agnostic; the complete intake flow has not been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 is complete and defines customer discovery, intake, AI behavior, Business Profile, Conversation Engine, Knowledge, Prompt and Context, and implementation architecture. Sprint 3 now includes a local, fictional, in-memory deterministic intake prototype. The AI Core remains industry-agnostic; no production AI, persistence, integrations, or customer UI have been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -139,4 +139,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3, Milestone 3.2 is complete. Conversation state is initialized, business-scoped, validated, and updated immutably through typed application-owned operations. Claims remain separate from confirmed facts, corrections remain traceable, and missing fields, questions, escalation, completion, and final snapshots are deterministic. Model proposals cannot mutate state. The public website remains unchanged. The next planned work is Milestone 3.3: Deterministic Intake Flow; it has not begun.
+Sprint 3, Milestone 3.3 is complete. Active Business Profile configuration exclusively defines services, required fields, optional fields, aliases, and approved questions. Service resolution, question selection, readiness, corrections, stage coordination, unsupported-service handling, and validated handoff construction are deterministic and application-owned. Unsupported services are never silently mapped. The public website remains unchanged. The next planned work is Milestone 3.4: Prototype Chat Interface; it has not begun.

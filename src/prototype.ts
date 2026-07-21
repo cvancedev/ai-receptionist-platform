@@ -5,6 +5,9 @@ import { fictionalKnowledgeRecords } from "./fixtures/knowledge";
 import { MockModelGateway, type ModelGateway } from "./model/model-gateway";
 import { COMPLETION_STATES, CONVERSATION_STAGES } from "./shared/constants";
 import type { ConversationState } from "./domain/conversation-state";
+import { DeterministicConversationEngine } from "./conversation/conversation-engine";
+import { DeterministicHandoffBuilder, type HandoffBuildResult } from "./handoff/handoff-builder";
+import type { DeterministicIntakeResult } from "./domain/intake";
 
 export interface PrototypeFoundation {
   businessProfile: typeof fictionalBusinessProfile;
@@ -21,12 +24,7 @@ export function createPrototypeFoundation(): PrototypeFoundation {
     conversationId: "fictional-conversation-001",
     businessProfileId: fictionalBusinessProfile.id,
     businessProfileVersion: fictionalBusinessProfile.version,
-    requiredFields: [
-      "customer-name",
-      "contact-method",
-      "requested-service",
-      "project-description",
-    ],
+    requiredFields: ["requested-service"],
     authorizedEscalationDestination:
       fictionalBusinessProfile.escalation.destination,
   });
@@ -43,6 +41,52 @@ export function createPrototypeFoundation(): PrototypeFoundation {
 }
 
 export const prototypeFoundation = createPrototypeFoundation();
+
+export interface DeterministicIntakeDemonstration {
+  successful: { intake: DeterministicIntakeResult; handoff: HandoffBuildResult };
+  correction: DeterministicIntakeResult;
+  unsupported: DeterministicIntakeResult;
+  ambiguous: DeterministicIntakeResult;
+}
+
+export function runDeterministicIntakeDemonstration(): DeterministicIntakeDemonstration {
+  const successfulFoundation = createPrototypeFoundation();
+  const successfulEngine = new DeterministicConversationEngine(
+    successfulFoundation.businessProfile,
+    successfulFoundation.conversationStateManager,
+    successfulFoundation.conversationState.conversationId,
+  );
+  successfulEngine.initializeIntake("project help", "fictional-service-message");
+  answerNext(successfulEngine, "customer-name", "Jordan Example", "fictional-name-message");
+  answerNext(successfulEngine, "contact-method", "Fictional written follow-up", "fictional-contact-message");
+  answerNext(successfulEngine, "project-description", "A fictional room needs a routine project review.", "fictional-description-message");
+  answerNext(successfulEngine, "service-location", "North Harbor", "fictional-location-message");
+  successfulEngine.coordinateReadiness();
+  successfulEngine.correctAnswer("service-location", "Maple Glen", "fictional-correction-message");
+  const correction = successfulEngine.evaluate();
+  answerNext(successfulEngine, "service-location", "Maple Glen", "fictional-corrected-location-message");
+  successfulEngine.coordinateReadiness();
+  const successful = successfulEngine.confirmIntake();
+  const successfulState = successfulFoundation.conversationStateManager.snapshot({
+    conversationId: successfulFoundation.conversationState.conversationId,
+    businessProfileId: successfulFoundation.businessProfile.id,
+    businessProfileVersion: successfulFoundation.businessProfile.version,
+  });
+  if (successfulState.status === "failure") throw new Error("Successful fictional state is unavailable.");
+  const handoff = new DeterministicHandoffBuilder().build(successfulFoundation.businessProfile, successfulState.state);
+
+  const unsupportedFoundation = createPrototypeFoundation();
+  const unsupported = new DeterministicConversationEngine(unsupportedFoundation.businessProfile, unsupportedFoundation.conversationStateManager, unsupportedFoundation.conversationState.conversationId).initializeIntake("unconfigured fictional roofing", "fictional-unsupported-message");
+  const ambiguousFoundation = createPrototypeFoundation();
+  const ambiguous = new DeterministicConversationEngine(ambiguousFoundation.businessProfile, ambiguousFoundation.conversationStateManager, ambiguousFoundation.conversationState.conversationId).initializeIntake("consultation", "fictional-ambiguous-message");
+  return { successful: { intake: successful, handoff }, correction, unsupported, ambiguous };
+}
+
+function answerNext(engine: DeterministicConversationEngine, expectedField: string, value: string, source: string) {
+  const question = engine.selectAndMarkNextQuestion();
+  if (question.status !== "selected" || question.field.id !== expectedField) throw new Error(`Unexpected fictional intake question for ${expectedField}.`);
+  engine.applyAnswer(expectedField, value, source);
+}
 
 export interface PrototypeStateDemonstration {
   initialSnapshot: ConversationState;

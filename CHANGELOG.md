@@ -77,6 +77,14 @@ All notable changes to this project will be documented in this file. The format 
 - Business-scoped in-memory prototype store and immutable state snapshots added.
 - Conversation-state validation, ownership checks, and cross-scope rejection added.
 - Executable fictional prototype verification added without a testing dependency.
+- Active-profile-only deterministic service resolution added for identifiers, names, and approved aliases.
+- Profile-driven required and optional intake-field loading added.
+- Deterministic next-question selection, repetition prevention, and correction-aware clarification added.
+- Derived intake readiness and validated stage coordination added.
+- Unsupported-service preservation and configured escalation handling added.
+- Minimal deterministic Conversation Engine and prototype orchestrator implemented.
+- Validated, traceable Handoff Builder implemented using confirmed state only.
+- Prototype verification expanded with successful, correction, unsupported, ambiguous, isolation, and determinism scenarios.
 
 ### Changed
 

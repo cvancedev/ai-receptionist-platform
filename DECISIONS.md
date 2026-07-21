@@ -95,3 +95,15 @@ Major vendors and infrastructure are selected when an implementation phase has p
 ## Validated Immutable State Updates
 
 Conversation state changes are applied through typed, validated, application-owned operations that produce new state snapshots. Models, customer messages, and external content cannot directly mutate conversation state.
+
+## Business-Profile-Driven Intake
+
+Service resolution, required fields, optional fields, aliases, and approved intake questions come from the active validated Business Profile. The platform core does not hardcode industry-specific intake logic.
+
+## Deterministic Intake Authority
+
+The application determines service resolution, question selection, readiness, stage transitions, and handoff eligibility. A model may assist with language or interpretation later, but it cannot control these decisions.
+
+## Unsupported Means Unsupported
+
+When a requested service is not configured and active for the current business, the platform does not map it to another service or invent capability. It returns an unsupported, clarification, escalation, or approved closure outcome.

@@ -51,7 +51,7 @@ Multiple marketing pages will not be introduced unless a demonstrated need justi
 
 - Milestone 3.1: Prototype Foundation — Complete
 - Milestone 3.2: Conversation State Prototype — Complete
-- Milestone 3.3: Deterministic Intake Flow
+- Milestone 3.3: Deterministic Intake Flow — Complete
 - Milestone 3.4: Prototype Chat Interface
 - Milestone 3.5: Prototype Certification
 

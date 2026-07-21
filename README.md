@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 is complete and defines customer discovery, intake, AI behavior, Business Profile, Conversation Engine, Knowledge, Prompt and Context, and implementation architecture. Sprint 3 now includes a local, fictional, in-memory deterministic intake prototype with an isolated developer chat interface. The AI Core remains industry-agnostic; no production AI, persistence, integrations, or production customer experience have been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. The AI Core remains industry-agnostic; no production AI, persistence, integrations, or production customer experience have been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -118,6 +118,7 @@ npm run verify:prototype
 - [Implementation sequence](docs/IMPLEMENTATION_SEQUENCE.md)
 - [MVP test plan](docs/MVP_TEST_PLAN.md)
 - [Sprint 3 plan](docs/SPRINT_3_PLAN.md)
+- [Sprint 3 certification](docs/SPRINT_3_CERTIFICATION.md)
 - [Business Profile](docs/BUSINESS_PROFILE.md)
 - [Business Profile schema](docs/BUSINESS_PROFILE_SCHEMA.md)
 - [Business Profile validation](docs/BUSINESS_PROFILE_VALIDATION.md)
@@ -140,4 +141,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3, Milestone 3.4 is complete. The isolated `/prototype` route visualizes and exercises the deterministic backend through fictional messages, read-only state panels, correction history, progress, errors, reset, and validated handoff output. The UI remains presentation-only and performs no networking, persistence, model call, or direct state mutation. Existing validation-site pages remain unchanged. The next planned work is Milestone 3.5: Prototype Certification; it has not begun.
+Sprint 3 is certified complete. The isolated `/prototype` route exercises the deterministic, Business-Profile-driven intake flow through fictional messages and read-only state and handoff projections. The certification suite covers foundation validation, state integrity, intake, handoff, UI projection, isolation, failure paths, and deterministic repeatability. Existing validation-site pages remain unchanged. Sprint 4 has not begun and its provisional scope must be reassessed before implementation.

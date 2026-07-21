@@ -47,15 +47,17 @@ Multiple marketing pages will not be introduced unless a demonstrated need justi
 - Keep the AI Core industry-agnostic while supporting customer-defined workflows
 - Establish a disciplined MVP boundary before selecting AI or communication providers
 
-## Sprint 3: Conversation Prototype (In Progress)
+## Sprint 3: Conversation Prototype (Complete)
 
 - Milestone 3.1: Prototype Foundation — Complete
 - Milestone 3.2: Conversation State Prototype — Complete
 - Milestone 3.3: Deterministic Intake Flow — Complete
 - Milestone 3.4: Prototype Chat Interface — Complete
-- Milestone 3.5: Prototype Certification
+- Milestone 3.5: Prototype Certification — Complete
 
 Sprint 3 uses fictional configuration, in-memory state, and mocked model behavior. It does not introduce authentication, persistence, a production AI provider, or real customer data.
+
+Sprint 3 certification confirms deterministic behavior, validated state and handoff boundaries, Business Profile and profile-version isolation, presentation-only UI behavior, and regression coverage across the complete prototype.
 
 The numbered sequence after Sprint 3 remains provisional and must be reassessed using prototype evidence. Authentication and authorization must precede any real protected business data or administration workflow.
 

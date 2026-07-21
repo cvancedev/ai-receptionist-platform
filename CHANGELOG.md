@@ -91,6 +91,9 @@ All notable changes to this project will be documented in this file. The format 
 - Confirmed facts, customer claims, missing fields, and correction summaries added as separate panels.
 - Validated handoff summary display and in-memory prototype reset added.
 - Prototype session verification added for UI state projection, correction reopening, handoff gating, unsupported services, and reset.
+- Active structural validation added for fictional knowledge records and mocked model proposals.
+- Sprint 3 certification suite added for successful, corrected, unsupported, ambiguous, escalated, abandoned, isolated, invalid, and repeatability scenarios.
+- Sprint 3 prototype certification record added.
 
 ### Changed
 
@@ -112,6 +115,7 @@ All notable changes to this project will be documented in this file. The format 
 - Platform architecture generalized around an industry-agnostic AI Core.
 - Customer discovery clarified by separating platform principles, industry-specific observations, future research, and open questions.
 - Project rules updated to keep industry-specific workflows, terminology, services, and policies in the Business Profile.
+- Sprint 3 Conversation Prototype certified complete without production infrastructure.
 
 ### Removed
 

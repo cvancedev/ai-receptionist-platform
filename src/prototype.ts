@@ -40,8 +40,6 @@ export function createPrototypeFoundation(): PrototypeFoundation {
   };
 }
 
-export const prototypeFoundation = createPrototypeFoundation();
-
 export interface DeterministicIntakeDemonstration {
   successful: { intake: DeterministicIntakeResult; handoff: HandoffBuildResult };
   correction: DeterministicIntakeResult;

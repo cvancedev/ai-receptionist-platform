@@ -72,3 +72,9 @@ The MVP will be considered successful when customer and business testing shows t
 - Earn validation from service-business owners before the product scope expands
 
 Implementation order, component boundaries, and the fictional local prototype are defined in [Implementation Architecture](IMPLEMENTATION_ARCHITECTURE.md), [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md), and [Sprint 3 Plan](SPRINT_3_PLAN.md).
+
+## Prototype Certification Status
+
+Sprint 3 certifies the local conversation prototype, not the production MVP. The prototype proves deterministic Business-Profile-driven service resolution, required-field intake, corrections, state isolation, readiness, escalation state, and validated handoff generation using fictional data and in-memory state.
+
+The production MVP still requires the deferred capabilities above, including an evaluated Model Gateway, application-controlled context assembly, output authorization, authentication, persistence, approved knowledge operations, a real communication channel, and production reliability and security review. See [Sprint 3 Certification](SPRINT_3_CERTIFICATION.md) for the verified boundary.

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "verify:prototype": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/conversation-state.verify.js && node .prototype-build/verification/intake-flow.verify.js && node .prototype-build/verification/prototype-chat-session.verify.js"
+    "verify:prototype": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/conversation-state.verify.js && node .prototype-build/verification/intake-flow.verify.js && node .prototype-build/verification/prototype-chat-session.verify.js && node .prototype-build/verification/sprint-3-certification.verify.js"
   },
   "dependencies": {
     "next": "16.2.10",

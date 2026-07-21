@@ -1,10 +1,12 @@
 export const CONVERSATION_STAGES = {
   INITIALIZED: "initialized",
-  UNDERSTANDING_REQUEST: "understanding-request",
-  COLLECTING_INFORMATION: "collecting-information",
-  CONFIRMING_DETAILS: "confirming-details",
-  READY_FOR_HANDOFF: "ready-for-handoff",
-  CLOSED: "closed",
+  INTAKE: "intake",
+  CLARIFICATION: "clarification",
+  CONFIRMATION: "confirmation",
+  ESCALATION: "escalation",
+  HANDOFF: "handoff",
+  COMPLETED: "completed",
+  ABANDONED: "abandoned",
 } as const;
 
 export type ConversationStage =
@@ -14,16 +16,21 @@ export const ESCALATION_STATES = {
   NONE: "none",
   RECOMMENDED: "recommended",
   REQUIRED: "required",
+  REQUESTED_BY_CUSTOMER: "requested-by-customer",
+  IN_PROGRESS: "in-progress",
+  HANDED_OFF: "handed-off",
+  RESOLVED: "resolved",
 } as const;
 
 export type EscalationState =
   (typeof ESCALATION_STATES)[keyof typeof ESCALATION_STATES];
 
 export const COMPLETION_STATES = {
-  IN_PROGRESS: "in-progress",
+  NOT_READY: "not-ready",
+  READY_FOR_CONFIRMATION: "ready-for-confirmation",
   READY_FOR_HANDOFF: "ready-for-handoff",
-  COMPLETE: "complete",
-  INCOMPLETE: "incomplete",
+  COMPLETED: "completed",
+  ABANDONED: "abandoned",
 } as const;
 
 export type CompletionState =

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "verify:prototype": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/conversation-state.verify.js"
   },
   "dependencies": {
     "next": "16.2.10",

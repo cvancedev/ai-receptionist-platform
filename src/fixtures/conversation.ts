@@ -9,9 +9,11 @@ export const initializedConversationState: ConversationState = {
   conversationId: "fictional-conversation-001",
   businessProfileId: "friendly-home-services",
   businessProfileVersion: 1,
+  authorizedEscalationDestination: "Fictional customer care team",
+  revision: 0,
   stage: CONVERSATION_STAGES.INITIALIZED,
   confirmedFacts: {},
-  customerClaims: {},
+  customerClaims: [],
   corrections: [],
   missingFields: [
     "customer-name",
@@ -20,6 +22,12 @@ export const initializedConversationState: ConversationState = {
     "project-description",
   ],
   askedQuestions: [],
-  escalationState: ESCALATION_STATES.NONE,
-  completionState: COMPLETION_STATES.IN_PROGRESS,
+  escalation: {
+    status: ESCALATION_STATES.NONE,
+    reason: null,
+    triggerSource: null,
+    destination: null,
+  },
+  completionState: COMPLETION_STATES.NOT_READY,
+  finalSnapshot: null,
 };

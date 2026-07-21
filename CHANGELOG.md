@@ -70,6 +70,13 @@ All notable changes to this project will be documented in this file. The format 
 - Conversation, orchestration, context, output-validation, and handoff interfaces scaffolded.
 - Deterministic placeholder validation and a mocked local Model Gateway added.
 - Isolated in-memory prototype foundation wiring added without changing the public website.
+- Deterministic conversation initialization and valid stage-transition rules added.
+- Customer claims, application-confirmed facts, and traceable correction history added.
+- Missing-field and asked-question history tracking added with duplicate prevention.
+- Structured escalation and completion state handling added.
+- Business-scoped in-memory prototype store and immutable state snapshots added.
+- Conversation-state validation, ownership checks, and cross-scope rejection added.
+- Executable fictional prototype verification added without a testing dependency.
 
 ### Changed
 

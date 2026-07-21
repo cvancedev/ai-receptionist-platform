@@ -91,3 +91,7 @@ The first implementation uses fictional data, in-memory state, and mocked model 
 ## Technology Selection at Point of Need
 
 Major vendors and infrastructure are selected when an implementation phase has proven requirements and evaluation criteria. Architecture milestones do not choose providers speculatively.
+
+## Validated Immutable State Updates
+
+Conversation state changes are applied through typed, validated, application-owned operations that produce new state snapshots. Models, customer messages, and external content cannot directly mutate conversation state.

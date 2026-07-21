@@ -7,6 +7,7 @@ import type { BusinessProfile } from "../domain/business-profile";
 import type { ConversationStateManager } from "../conversation/conversation-state-manager";
 
 export type ConversationTurnRequest =
+  | { type: "evaluate" }
   | { type: "start-intake"; serviceInput: string; source: string }
   | { type: "answer"; fieldId: string; value: string; source: string }
   | { type: "correction"; fieldId: string; value: string; source: string }
@@ -36,6 +37,8 @@ export class PrototypeConversationOrchestrator {
 
   processTurn(request: ConversationTurnRequest): ConversationTurnResult {
     switch (request.type) {
+      case "evaluate":
+        return { intake: this.engine.evaluate() };
       case "start-intake":
         return { intake: this.engine.initializeIntake(request.serviceInput, request.source) };
       case "answer":

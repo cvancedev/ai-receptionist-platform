@@ -52,7 +52,7 @@ Multiple marketing pages will not be introduced unless a demonstrated need justi
 - Milestone 3.1: Prototype Foundation — Complete
 - Milestone 3.2: Conversation State Prototype — Complete
 - Milestone 3.3: Deterministic Intake Flow — Complete
-- Milestone 3.4: Prototype Chat Interface
+- Milestone 3.4: Prototype Chat Interface — Complete
 - Milestone 3.5: Prototype Certification
 
 Sprint 3 uses fictional configuration, in-memory state, and mocked model behavior. It does not introduce authentication, persistence, a production AI provider, or real customer data.

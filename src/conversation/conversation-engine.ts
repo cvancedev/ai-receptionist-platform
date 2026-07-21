@@ -53,6 +53,13 @@ export class DeterministicConversationEngine {
       return this.result(resolution);
     }
     if (resolution.status !== "resolved") return this.result(resolution);
+    if (this.requireState().stage === CONVERSATION_STAGES.CLARIFICATION) {
+      this.applyRequired({
+        type: "transition-stage",
+        scope: this.scope,
+        stage: CONVERSATION_STAGES.INTAKE,
+      });
+    }
     this.applyRequired({ type: "confirm-fact", scope: this.scope, field: "requested-service", value: resolution.service.id, source: "application-service-resolution" });
     const fields = resolveIntakeFields(this.profile, resolution.service, this.requireState());
     if (!fields) return this.blockedResult(resolution, ["Intake configuration could not be resolved."]);

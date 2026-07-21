@@ -85,6 +85,12 @@ All notable changes to this project will be documented in this file. The format 
 - Minimal deterministic Conversation Engine and prototype orchestrator implemented.
 - Validated, traceable Handoff Builder implemented using confirmed state only.
 - Prototype verification expanded with successful, correction, unsupported, ambiguous, isolation, and determinism scenarios.
+- Isolated fictional prototype chat route added without changing validation-site pages.
+- Deterministic customer and assistant message display added with sequence-based traceability.
+- Read-only stage, service, readiness, escalation, completion, revision, and profile status added.
+- Confirmed facts, customer claims, missing fields, and correction summaries added as separate panels.
+- Validated handoff summary display and in-memory prototype reset added.
+- Prototype session verification added for UI state projection, correction reopening, handoff gating, unsupported services, and reset.
 
 ### Changed
 

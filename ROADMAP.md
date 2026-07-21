@@ -47,9 +47,9 @@ Multiple marketing pages will not be introduced unless a demonstrated need justi
 - Keep the AI Core industry-agnostic while supporting customer-defined workflows
 - Establish a disciplined MVP boundary before selecting AI or communication providers
 
-## Sprint 3: Conversation Prototype (Next)
+## Sprint 3: Conversation Prototype (In Progress)
 
-- Milestone 3.1: Prototype Foundation
+- Milestone 3.1: Prototype Foundation — Complete
 - Milestone 3.2: Conversation State Prototype
 - Milestone 3.3: Deterministic Intake Flow
 - Milestone 3.4: Prototype Chat Interface

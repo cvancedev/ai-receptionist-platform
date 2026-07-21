@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 is complete and defines customer discovery, intake, AI behavior, Business Profile, Conversation Engine, Knowledge, Prompt and Context, and implementation architecture. The AI Core remains industry-agnostic. Functional product features have not been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 is complete and defines customer discovery, intake, AI behavior, Business Profile, Conversation Engine, Knowledge, Prompt and Context, and implementation architecture. Sprint 3 has begun with a local, fictional, in-memory prototype foundation. The AI Core remains industry-agnostic, and functional conversation behavior has not been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -138,4 +138,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 2 architecture and implementation planning are complete. The next planned work is Sprint 3: Conversation Prototype; it has not begun.
+Sprint 3, Milestone 3.1 is complete. The project now has typed domain contracts, fictional fixtures, deterministic placeholder validation and component scaffolding, a mocked Model Gateway, and isolated prototype wiring. This milestone implements the existing plan without changing an architectural or implementation decision. The next planned work is Milestone 3.2: Conversation State Prototype; it has not begun.

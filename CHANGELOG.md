@@ -65,6 +65,11 @@ All notable changes to this project will be documented in this file. The format 
 - MVP unit, integration, end-to-end, security, reliability, accessibility, and acceptance test plan added.
 - Sprint 3 local Conversation Prototype plan added.
 - Major technology decisions deferred to their documented point of need.
+- Sprint 3 prototype domain contracts and shared state constants added.
+- Fictional Business Profile, approved knowledge, and initialized conversation fixtures added.
+- Conversation, orchestration, context, output-validation, and handoff interfaces scaffolded.
+- Deterministic placeholder validation and a mocked local Model Gateway added.
+- Isolated in-memory prototype foundation wiring added without changing the public website.
 
 ### Changed
 

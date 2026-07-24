@@ -26,6 +26,8 @@ Provide a trustworthy first response that captures the customer's request and gi
 - An industry-agnostic Conversation Engine that preserves evidence, corrections, and progress
 - Application-controlled, business-scoped context assembly
 - Validation of model-proposed responses, state updates, and actions before use
+- Provider-independent model execution behind application-owned policy and adapters
+- AI-free deterministic fallback when model assistance is unavailable, ineligible, or invalid
 - Relevant questions for configured services and customer-defined workflows
 - Answers grounded only in approved business knowledge
 - Source and version traceability for material business answers
@@ -56,6 +58,7 @@ Provide a trustworthy first response that captures the customer's request and gi
 - Acting as a general CRM, dispatch, accounting, or all-in-one operations platform
 - Automating customer-defined workflows before their architecture and safeguards are validated
 - Implementing AI, APIs, authentication, storage, forms, or dashboards during documentation architecture milestones
+- Allowing partial or streamed model output to mutate authoritative state
 
 ## Success Criteria
 
@@ -78,3 +81,9 @@ Implementation order, component boundaries, and the fictional local prototype ar
 Sprint 3 certifies the local conversation prototype, not the production MVP. The prototype proves deterministic Business-Profile-driven service resolution, required-field intake, corrections, state isolation, readiness, escalation state, and validated handoff generation using fictional data and in-memory state.
 
 The production MVP still requires the deferred capabilities above, including an evaluated Model Gateway, application-controlled context assembly, output authorization, authentication, persistence, approved knowledge operations, a real communication channel, and production reliability and security review. See [Sprint 3 Certification](SPRINT_3_CERTIFICATION.md) for the verified boundary.
+
+## Sprint 4 Architecture Status
+
+Sprint 4, Milestone 4.1 defines how future AI assistance remains provider-independent, application-controlled, validation-bound, bounded in cost and retries, and optional to deterministic operation. It does not implement a real Model Gateway, choose a provider or model, add production prompts, or make the MVP operational.
+
+Context Assembly architecture, Prompt and Task architecture, Model Output and Proposal Validation architecture, and any provider-neutral prototype foundation remain separate later milestones. See [Sprint 4 Plan](SPRINT_4_PLAN.md).

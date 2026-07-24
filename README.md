@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. The AI Core remains industry-agnostic; no production AI, persistence, integrations, or production customer experience have been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4 begins with provider-independent AI integration architecture: AI is advisory, the deterministic application remains authoritative, and all future model output must pass application validation before use. No real AI provider, model, API, persistence, authentication, integration, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -111,6 +111,12 @@ npm run verify:prototype
 - [Prompt security](docs/PROMPT_SECURITY.md)
 - [Model output contract](docs/MODEL_OUTPUT_CONTRACT.md)
 - [Prompt testing strategy](docs/PROMPT_TESTING_STRATEGY.md)
+- [AI integration architecture](docs/AI_INTEGRATION_ARCHITECTURE.md)
+- [Model Gateway architecture](docs/MODEL_GATEWAY_ARCHITECTURE.md)
+- [Model lifecycle](docs/MODEL_LIFECYCLE.md)
+- [AI failure and recovery](docs/AI_FAILURE_AND_RECOVERY.md)
+- [AI cost and usage boundaries](docs/AI_COST_AND_USAGE_BOUNDARIES.md)
+- [Sprint 4 plan](docs/SPRINT_4_PLAN.md)
 - [Implementation architecture](docs/IMPLEMENTATION_ARCHITECTURE.md)
 - [System components](docs/SYSTEM_COMPONENTS.md)
 - [Data and state ownership](docs/DATA_AND_STATE_OWNERSHIP.md)
@@ -141,4 +147,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3 is certified complete. The isolated `/prototype` route exercises the deterministic, Business-Profile-driven intake flow through fictional messages and read-only state and handoff projections. The certification suite covers foundation validation, state integrity, intake, handoff, UI projection, isolation, failure paths, and deterministic repeatability. Existing validation-site pages remain unchanged. Sprint 4 has not begun and its provisional scope must be reassessed before implementation.
+Sprint 3 is certified complete. Sprint 4, Milestone 4.1 defines the architecture for introducing future model-assisted capabilities without surrendering deterministic application control. The Model Gateway, Context Builder, Prompt Composer, output parser, providers, models, networking, retries, persistence, and authentication remain unimplemented and unselected. The existing public website and isolated `/prototype` remain unchanged. Sprint 4.2 has not started.

@@ -102,6 +102,8 @@ The complete Sprint 3 verification suite passes together with lint, TypeScript, 
 
 ## Known Future Milestones
 
-The roadmap currently names Sprint 4 as Business Dashboard Foundation, but post-Sprint-3 sequencing remains provisional. Before Sprint 4 begins, its scope must be reassessed against prototype evidence, MVP priorities, and the requirement that authentication and authorization precede protected business data or administration.
+At certification, post-Sprint-3 sequencing remained provisional and required reassessment against prototype evidence, MVP priorities, and the requirement that authentication and authorization precede protected business data or administration.
 
 No Sprint 4 work is authorized by this certification.
+
+After certification, Sprint 4 was separately approved to begin with provider-independent AI integration architecture. That later planning decision does not alter the Sprint 3 certification boundary or authorize production AI, persistence, authentication, or protected business data.

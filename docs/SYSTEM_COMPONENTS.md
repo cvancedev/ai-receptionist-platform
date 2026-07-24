@@ -37,15 +37,27 @@ It owns transaction-level coordination; individual services retain their validat
 
 ## Context Builder
 
-Assembles a business-scoped context package using versioned platform rules, behavior rules, profile configuration, approved knowledge, structured state, relevant history, current task, customer input, and output requirements. It fails closed on unsafe ambiguity.
+Assembles a business-scoped context package using versioned platform rules, behavior rules, profile configuration, approved knowledge, structured state, relevant history, current task, customer input, and output requirements. It owns source eligibility, ordering, filtering, sensitivity, size, and provenance boundaries and fails closed on unsafe ambiguity. Its production implementation remains deferred.
 
 ## Model Gateway
 
-Provides a provider-independent boundary. It receives a validated package, calls a configured provider, returns normalized raw output and failure metadata, and handles timeouts. It never mutates state or selects tenant, profile, knowledge, permissions, or authority.
+Provides a provider-independent execution boundary. It receives a validated provider-neutral request, application-approved task and model policy, enforces allowlists and execution limits, routes through one approved Provider Adapter, and returns normalized raw output, usage metadata, or explicit failure information.
+
+It never mutates state or selects tenant, profile, knowledge, permissions, deterministic task, or application authority. The current `MockModelGateway` performs no AI or networking and is not the future production implementation.
+
+## Provider Adapter
+
+Translates one provider-neutral request into one approved provider format and normalizes provider responses, usage, finish reasons, and errors. Provider-specific SDK types stop at this boundary.
+
+An adapter contains no business logic, does not choose providers or models, cannot broaden context or permissions, and cannot release messages or perform state changes. No adapter or provider is selected.
 
 ## Output Validator
 
-Checks allowed action, business scope, stage, knowledge support, unsupported promises, restricted content, state consistency, correction handling, escalation, and completion. It authorizes, rejects, or routes controlled repair; it does not trust model labels by themselves.
+Parses and checks proposal structure, task type, business and conversation scope, stage, knowledge support, unsupported promises, restricted content, state consistency, correction handling, escalation, completion, and prohibited operations. It returns validation results; it does not trust model or provider labels.
+
+## Application Decision Layer
+
+Evaluates validated proposals against current deterministic state and may accept, partially accept, modify, request clarification, retry under policy, use deterministic fallback, escalate, or reject. Only this application-owned layer may authorize typed state operations or customer-response release.
 
 ## Handoff Builder
 
@@ -53,7 +65,7 @@ Creates a concise human-readable handoff from validated state, including intent,
 
 ## Audit Recorder
 
-Records material decisions and versions: business, profile, state, knowledge, prompt/context components, model proposal, validation result, applied changes, escalation, and handoff.
+Records material decisions and versions: request and trace identity, business, profile, state, task, context sources, provider policy, normalized result, usage, model proposal, validation, application decision, applied changes, fallback, escalation, response release, and handoff. Audit persistence remains deferred.
 
 ## Configuration Administration
 
@@ -66,3 +78,5 @@ Presents authorized messages, accepts customer input, manages accessible interac
 ## Component Rule
 
 Components may recommend or derive information only within their boundary. The Application Layer coordinates final authority, and tenant scope is validated at every boundary rather than assumed from upstream callers.
+
+Partial or streamed model output cannot mutate state, activate escalation, determine completion, or trigger external actions. AI-free deterministic behavior remains available whenever the AI Integration Layer is unavailable or ineligible.

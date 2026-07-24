@@ -107,3 +107,37 @@ The application determines service resolution, question selection, readiness, st
 ## Unsupported Means Unsupported
 
 When a requested service is not configured and active for the current business, the platform does not map it to another service or invent capability. It returns an unsupported, clarification, escalation, or approved closure outcome.
+
+## AI Is Advisory, Application Is Authoritative
+
+A model may propose interpretations, response text, classifications, summaries, clarification, escalation, and candidate actions. The application validates each proposal and decides whether to accept, modify, retry, reject, fall back, or escalate.
+
+A model cannot mutate state, confirm facts, resolve services authoritatively, determine required intake, activate escalation, mark completion, release customer messages, or trigger irreversible actions.
+
+## Provider Independence
+
+Application and domain logic depend on provider-neutral concepts rather than provider SDK types. Provider-specific request, response, event, usage, finish-reason, and error behavior belongs behind a Provider Adapter.
+
+Provider and model selection remain application-controlled and deferred until requirements and evaluation criteria justify a decision.
+
+## AI-Free Deterministic Fallback
+
+Core intake, exact configured-service resolution, required-field selection, question selection, state management, escalation, readiness, completion, and handoff behavior remain available without an AI provider.
+
+Provider absence, policy denial, timeout, refusal, invalid output, or budget exhaustion cannot make AI a single point of failure.
+
+## Validated Output Before Use
+
+Raw model output is untrusted. No model-generated response, structured value, recommendation, or action may influence state or reach a customer until it passes application-owned structural, scope, evidence, safety, grounding, and authority validation.
+
+Provider success is not application acceptance.
+
+## Bounded AI Usage
+
+AI eligibility, provider and model allowlists, context size, output size, latency, retries, fallback, and spending remain constrained by application-owned policy.
+
+Providers, adapters, and models cannot expand those limits or authorize indefinite retry.
+
+## No Partial-State Authority
+
+Streaming and partial output have no authority over conversation state, escalation, completion, handoff, tools, or external actions. Only a final validated proposal considered by the Application Decision Layer may lead to approved typed state operations or customer-visible content.

@@ -94,6 +94,13 @@ All notable changes to this project will be documented in this file. The format 
 - Active structural validation added for fictional knowledge records and mocked model proposals.
 - Sprint 3 certification suite added for successful, corrected, unsupported, ambiguous, escalated, abandoned, isolated, invalid, and repeatability scenarios.
 - Sprint 3 prototype certification record added.
+- Provider-independent AI integration architecture added.
+- Model Gateway and Provider Adapter boundaries documented without selecting a provider or model.
+- One-operation model lifecycle and application decision boundary documented.
+- AI failure, recovery, bounded retry, and fail-closed behavior documented.
+- AI cost, usage, context, output, and latency boundaries documented.
+- Sprint 4 architecture and prototype-foundation plan added.
+- AI-free deterministic fallback and no-partial-state-authority requirements documented.
 
 ### Changed
 
@@ -116,6 +123,8 @@ All notable changes to this project will be documented in this file. The format 
 - Customer discovery clarified by separating platform principles, industry-specific observations, future research, and open questions.
 - Project rules updated to keep industry-specific workflows, terminology, services, and policies in the Business Profile.
 - Sprint 3 Conversation Prototype certified complete without production infrastructure.
+- Sprint 4 begins with documentation architecture while the certified deterministic Sprint 3 prototype remains unchanged.
+- Roadmap sequencing updated so provider-independent AI architecture precedes any real model integration.
 
 ### Removed
 

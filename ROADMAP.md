@@ -61,12 +61,18 @@ Sprint 3 certification confirms deterministic behavior, validated state and hand
 
 The numbered sequence after Sprint 3 remains provisional and must be reassessed using prototype evidence. Authentication and authorization must precede any real protected business data or administration workflow.
 
-## Sprint 4: Business Dashboard Foundation
+## Sprint 4: Provider-Independent AI Integration Architecture
 
-- Basic navigation
-- High-level activity summary
-- Recent customer inquiries
-- Items requiring attention
+- Milestone 4.1: AI Integration Architecture — Current
+- Milestone 4.2: Context Assembly Architecture — Deferred
+- Milestone 4.3: Prompt and Task Architecture — Deferred
+- Milestone 4.4: Model Output and Proposal Validation Architecture — Deferred
+- Milestone 4.5: AI Integration Prototype Foundation — Deferred pending architecture approval
+- Milestone 4.6: Sprint 4 Certification — Deferred
+
+Sprint 4 keeps the deterministic application authoritative. It introduces no real provider, model, SDK, API, networking, persistence, authentication, production prompt, or production customer-facing AI capability during its architecture milestones.
+
+The detailed sequence and guardrails are defined in [Sprint 4 Plan](docs/SPRINT_4_PLAN.md).
 
 ## Sprint 5: Lead Capture MVP
 

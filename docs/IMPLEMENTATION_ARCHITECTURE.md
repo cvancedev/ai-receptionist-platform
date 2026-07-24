@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document maps the Sprint 2 architecture into implementation boundaries. It selects no vendor or infrastructure and authorizes no implementation work.
+This document maps the approved architecture into implementation boundaries. Sprint 3 implements only the certified deterministic local prototype. Sprint 4, Milestone 4.1 adds provider-independent AI architecture documentation and authorizes no AI implementation, vendor, model, API, networking, persistence, or authentication work.
 
 ## Customer Experience Layer
 
@@ -28,7 +28,11 @@ Owns approved knowledge records, lifecycle states, audience permissions, version
 
 ## AI Integration Layer
 
-Eventually owns a provider abstraction, request construction, validated-context delivery, response receipt, timeout and failure handling, and provider-independent normalization. It cannot choose the tenant, profile, permissions, sources, state, or allowed action. No provider is selected.
+Conceptually separates Context Assembly, a future Prompt Composer, the provider-independent Model Gateway, Provider Adapters, Model Output Validation, and the Application Decision Layer.
+
+The Model Gateway accepts only an application-approved provider-neutral request and policy. Provider Adapters translate and normalize one approved provider without business logic. Raw output remains untrusted until validation. The Application Decision Layer may accept, partially accept, modify, retry, reject, fall back, clarify, or escalate.
+
+This layer cannot choose the tenant, profile, permissions, sources, authoritative state, deterministic task, or allowed action. It cannot mutate state or release customer messages directly. No provider or model is selected, and the existing `MockModelGateway` remains a local deterministic stand-in.
 
 ## Validation and Safety Layer
 
@@ -40,25 +44,28 @@ Future persistence will be required for businesses, profile versions, services, 
 
 ## Observability Layer
 
-Future observability should cover errors, model failures, invalid outputs, escalations, knowledge conflicts, context-validation failures, response timing, completion, and handoff outcomes. No monitoring vendor is selected.
+Future observability should cover request and trace identity, task type, context provenance, provider policy, normalized gateway result, output validation, application decision, state operations, fallback, usage, latency, errors, escalations, knowledge conflicts, completion, and handoff outcomes. No monitoring vendor or audit persistence is selected.
 
 ## System Flow
 
 1. Resolve and validate the business and conversation.
 2. Load active profile, state, and eligible knowledge.
 3. Determine stage and deterministic requirements.
-4. Assemble and validate context when a model call is allowed.
-5. Receive a normalized model proposal or mocked result.
-6. Validate proposed response, action, and state changes.
-7. Apply only authorized changes atomically.
-8. Produce the customer response and any handoff.
-9. Record material versions and decisions.
+4. Determine whether AI assistance is eligible and valuable for the deterministic task.
+5. Assemble and validate context when a model call is allowed.
+6. Send a provider-neutral request through the Model Gateway and an approved adapter.
+7. Receive normalized raw output or explicit failure information.
+8. Parse and validate the proposal.
+9. Make an application-owned accept, partial-accept, modify, retry, fallback, reject, clarification, or escalation decision.
+10. Apply only authorized typed changes atomically through the State Manager.
+11. Release only the approved customer response and any validated handoff.
+12. Record material versions, usage, failures, and decisions.
 
 ## Technology Decision Timing
 
 | Decision | Remains deferred until |
 | --- | --- |
-| AI provider and model | Phase 3, after deterministic contracts and evaluation scenarios exist |
+| AI provider and model | A later approved implementation milestone, after provider-neutral context, task, output, failure, and evaluation architecture is complete |
 | Database | Phase 4, after in-memory domain behavior proves persistence requirements |
 | Authentication provider | A later sprint requiring real business users and administration |
 | Hosting architecture | End-to-end MVP planning when runtime, security, and persistence needs are known |
@@ -87,3 +94,7 @@ No vendor is selected merely to complete the architecture.
 ## MVP Boundary
 
 The MVP receives an inquiry, understands the general request, gathers required information, confirms understanding, preserves corrections, explains approved next steps, escalates appropriately, and produces a complete human handoff. It is not a CRM, scheduler, payment system, phone system, marketing platform, general automation suite, autonomous employee, or industry-specific application.
+
+## Sprint 4 Architecture Status
+
+Milestone 4.1 defines architecture only. Context Assembly implementation, Prompt Composer implementation, Provider Adapters, real Model Gateway execution, output parsing, retries, streaming, persistence, authentication, and production observability remain deferred. See [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md) and [Sprint 4 Plan](SPRINT_4_PLAN.md).

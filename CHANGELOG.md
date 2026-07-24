@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 5.2 - Immutable Conversation Read Model
+
+- Added a deeply readonly Conversation Read Model contract for stable presentation data.
+- Added a deterministic, fail-closed projector over validated state snapshots and application-resolved required-field and service context.
+- Added copied and recursively frozen identity, facts, corrections, missing fields, question history, status, progress, next-action, and projection metadata.
+- Kept customer-response release unauthorized and added no mutation, execution, persistence, networking, integration, or UI behavior.
+- Added focused verification for determinism, immutability, reference isolation, projection accuracy, bounded derived values, malformed inputs, and no execution.
+
 ### Sprint 5.1 - Controlled Conversation Execution
 
 - Added one immutable, explicit `initialized -> intake` AI transition definition.

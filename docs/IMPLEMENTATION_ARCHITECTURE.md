@@ -104,3 +104,9 @@ Milestone 4.5 adds an isolated `src/ai` vertical foundation without changing the
 Milestone 5.1 appends an isolated application-controlled execution boundary to the certified AI prototype. An immutable Transition Registry defines one `initialized -> intake` transition. The Transition Validator requires an accepted decision, valid proposal, allowlisted task/proposal/contract, exact scope and revision, legal current stage, and unique execution identity. Only then may the deterministic State Executor submit the existing typed stage update to the in-memory Conversation State Manager.
 
 The certified Sprint 4 read-only path remains available and unchanged. No general operation builder, fact mutation, correction, escalation activation, completion, response release, persistence, networking, external integration, or later Sprint 5 behavior is added. See [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md).
+
+## Sprint 5.2 Read-Model Status
+
+Milestone 5.2 adds a separate presentation boundary after state ownership. The fail-closed Conversation Read Model Projector validates a state snapshot and application-resolved required-field/service context, copies display-safe state data, derives only explicit deterministic status, and returns a deeply immutable data contract.
+
+The projector has no state manager, executor, provider, callback, persistence, network, external integration, or customer-release capability. It is not connected to the prototype UI or either orchestration path in this milestone. See [Conversation Read Model](CONVERSATION_READ_MODEL.md).

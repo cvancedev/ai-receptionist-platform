@@ -120,4 +120,6 @@ The focused suite proves legal execution, illegal and unknown transition rejecti
 
 Sprint 5.1 implements only an in-memory `initialized -> intake` stage transition in the isolated fictional AI prototype.
 
-It adds no persistence, database, network call, HTTP client, external API, email, SMS, telephony, scheduling, CRM integration, customer communication, background work, authentication change, UI redesign, or real model provider. No later Sprint 5 milestone is started.
+It adds no persistence, database, network call, HTTP client, external API, email, SMS, telephony, scheduling, CRM integration, customer communication, background work, authentication change, UI redesign, or real model provider.
+
+Sprint 5.2 adds the separate read-only [Conversation Read Model](CONVERSATION_READ_MODEL.md). That projector may describe an already executed state snapshot, but it is not part of execution and receives no executor or state-manager capability.

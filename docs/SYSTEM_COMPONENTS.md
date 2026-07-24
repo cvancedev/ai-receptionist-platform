@@ -81,6 +81,12 @@ Milestone 5.1 implements a narrow deterministic in-memory execution boundary. Th
 
 Raw output, parsed but unvalidated proposals, malformed or rejected decisions, unknown tasks/proposals/transitions, stale state, illegal transitions, and duplicate executions fail closed without mutation. See [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md).
 
+## Conversation Read Model Projector
+
+Milestone 5.2 implements an isolated fail-closed presentation boundary. It accepts an unknown state snapshot plus application-resolved required-field and service context, requires a structurally and semantically valid Conversation State, copies presentation data, derives bounded progress and allowlisted descriptive status, and returns a deeply immutable Conversation Read Model.
+
+The projector has no reference to the Conversation State Manager or State Executor and cannot mutate state, execute transitions, authorize customer release, persist data, perform networking, or invoke external actions. It is not integrated into the prototype UI. See [Conversation Read Model](CONVERSATION_READ_MODEL.md).
+
 ## Handoff Builder
 
 Creates a concise human-readable handoff from validated state, including intent, service, confirmed details, corrections, concerns, missing information, contradictions, escalation, priority, and next action.

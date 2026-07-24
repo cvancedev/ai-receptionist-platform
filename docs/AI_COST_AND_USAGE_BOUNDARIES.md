@@ -244,6 +244,8 @@ Cost optimization must not weaken validation, customer experience, or determinis
 - Caching policy
 - Customer-facing usage controls
 
+Milestone 4.2 establishes application-owned task and section budget classes, deterministic reduction order, essential-authority preservation, bounded history strategies, and safe failure when required context cannot fit. It chooses no numeric or provider-specific limits and implements no budgeting or metering code.
+
 ## Related Documents
 
 - [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md)
@@ -251,3 +253,4 @@ Cost optimization must not weaken validation, customer experience, or determinis
 - [Model Lifecycle](MODEL_LIFECYCLE.md)
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
 - [Context Priority and Limits](CONTEXT_PRIORITY_AND_LIMITS.md)
+- [Context Budgeting and Reduction](CONTEXT_BUDGETING_AND_REDUCTION.md)

@@ -37,7 +37,9 @@ It owns transaction-level coordination; individual services retain their validat
 
 ## Context Builder
 
-Assembles a business-scoped context package using versioned platform rules, behavior rules, profile configuration, approved knowledge, structured state, relevant history, current task, customer input, and output requirements. It owns source eligibility, ordering, filtering, sensitivity, size, and provenance boundaries and fails closed on unsafe ambiguity. Its production implementation remains deferred.
+Conceptually coordinates the application-owned Context Assembly pipeline for one approved task. It validates business, conversation, profile version, and state revision; selects only eligible sources; projects task-relevant state; filters sensitive data; reduces history and knowledge under application budgets; orders authority deterministically; validates the package; and records provenance.
+
+The model cannot select sources. Released packages are immutable, provider-neutral, and advisory-model input only. The existing component is a deferred interface, not an implementation. See [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md).
 
 ## Model Gateway
 

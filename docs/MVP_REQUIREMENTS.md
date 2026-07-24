@@ -84,6 +84,6 @@ The production MVP still requires the deferred capabilities above, including an 
 
 ## Sprint 4 Architecture Status
 
-Sprint 4, Milestone 4.1 defines how future AI assistance remains provider-independent, application-controlled, validation-bound, bounded in cost and retries, and optional to deterministic operation. It does not implement a real Model Gateway, choose a provider or model, add production prompts, or make the MVP operational.
+Sprint 4.1 defines how future AI assistance remains provider-independent, application-controlled, validation-bound, bounded in cost and retries, and optional to deterministic operation. Milestone 4.2 defines task-specific Context Assembly with application-owned source eligibility, strict business/conversation/profile-version isolation, explicit authority labels, bounded reduction, provider-neutral packages, and audit provenance.
 
-Context Assembly architecture, Prompt and Task architecture, Model Output and Proposal Validation architecture, and any provider-neutral prototype foundation remain separate later milestones. See [Sprint 4 Plan](SPRINT_4_PLAN.md).
+Both milestones are documentation only. No Context Builder, context types or validators, Prompt Composer, model output parser, provider, model, production prompt, API, networking, persistence, or authentication has been implemented. Prompt and Task architecture, Model Output and Proposal Validation architecture, and any provider-neutral prototype foundation remain separate later milestones. See [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md) and [Sprint 4 Plan](SPRINT_4_PLAN.md). Sprint 4.3 has not started.

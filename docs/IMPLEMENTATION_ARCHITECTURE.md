@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document maps the approved architecture into implementation boundaries. Sprint 3 implements only the certified deterministic local prototype. Sprint 4, Milestone 4.1 adds provider-independent AI architecture documentation and authorizes no AI implementation, vendor, model, API, networking, persistence, or authentication work.
+This document maps the approved architecture into implementation boundaries. Sprint 3 implements only the certified deterministic local prototype. Sprint 4.1 and 4.2 add provider-independent AI and Context Assembly architecture documentation and authorize no AI implementation, vendor, model, API, networking, persistence, or authentication work.
 
 ## Customer Experience Layer
 
@@ -97,4 +97,4 @@ The MVP receives an inquiry, understands the general request, gathers required i
 
 ## Sprint 4 Architecture Status
 
-Milestone 4.1 defines architecture only. Context Assembly implementation, Prompt Composer implementation, Provider Adapters, real Model Gateway execution, output parsing, retries, streaming, persistence, authentication, and production observability remain deferred. See [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md) and [Sprint 4 Plan](SPRINT_4_PLAN.md).
+Milestones 4.1 and 4.2 define architecture only. Future Context Assembly is application-owned and releases only validated, task-specific, provider-neutral packages with strict business, conversation, and profile-version isolation. The existing `ContextBuilder` remains a deferred interface. Context package types and validators, Prompt Composer implementation, Provider Adapters, real Model Gateway execution, output parsing, retries, streaming, persistence, authentication, and production observability remain deferred. See [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md), [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md), and [Sprint 4 Plan](SPRINT_4_PLAN.md). Sprint 4.3 has not started.

@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4 begins with provider-independent AI integration architecture: AI is advisory, the deterministic application remains authoritative, and all future model output must pass application validation before use. No real AI provider, model, API, persistence, authentication, integration, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4.1 and 4.2 now define provider-independent AI integration and application-owned Context Assembly architecture: AI is advisory, the deterministic application remains authoritative, and all future model output must pass application validation before use. No real AI provider, model, API, persistence, authentication, integration, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -108,6 +108,13 @@ npm run verify:prototype
 - [Prompt Architecture](docs/PROMPT_ARCHITECTURE.md)
 - [Context assembly](docs/CONTEXT_ASSEMBLY.md)
 - [Context priority and limits](docs/CONTEXT_PRIORITY_AND_LIMITS.md)
+- [Context Assembly architecture](docs/CONTEXT_ASSEMBLY_ARCHITECTURE.md)
+- [Context source catalog](docs/CONTEXT_SOURCE_CATALOG.md)
+- [Context eligibility and filtering](docs/CONTEXT_ELIGIBILITY_AND_FILTERING.md)
+- [Context ordering and precedence](docs/CONTEXT_ORDERING_AND_PRECEDENCE.md)
+- [Context budgeting and reduction](docs/CONTEXT_BUDGETING_AND_REDUCTION.md)
+- [Context package contract](docs/CONTEXT_PACKAGE_CONTRACT.md)
+- [Context failure and audit](docs/CONTEXT_FAILURE_AND_AUDIT.md)
 - [Prompt security](docs/PROMPT_SECURITY.md)
 - [Model output contract](docs/MODEL_OUTPUT_CONTRACT.md)
 - [Prompt testing strategy](docs/PROMPT_TESTING_STRATEGY.md)
@@ -147,4 +154,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3 is certified complete. Sprint 4, Milestone 4.1 defines the architecture for introducing future model-assisted capabilities without surrendering deterministic application control. The Model Gateway, Context Builder, Prompt Composer, output parser, providers, models, networking, retries, persistence, and authentication remain unimplemented and unselected. The existing public website and isolated `/prototype` remain unchanged. Sprint 4.2 has not started.
+Sprint 3 remains certified complete. Sprint 4.1 and 4.2 are complete as documentation architecture: future context is task-specific, provider-neutral, strictly business/conversation/profile-version scoped, bounded, and selected only by the application. The existing `ContextBuilder` is still a deferred interface; no Context Builder, prompt system, model output parser, provider, model, API, networking, persistence, or authentication has been implemented or selected. The public website and isolated `/prototype` remain unchanged. Sprint 4.3 has not started.

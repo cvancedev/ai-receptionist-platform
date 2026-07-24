@@ -350,7 +350,9 @@ Customer-facing handling should:
 
 ## Current Boundary
 
-No retry code, provider fallback, networking, queue, persistence, monitoring vendor, or recovery implementation is added in Milestone 4.1.
+Milestone 4.2 further defines fail-closed context failures: provider execution is blocked for unproven scope, incompatible profile versions, missing authoritative state, unsafe sensitive data, ambiguous authority, required context over budget, or invalid package contracts. Recovery may rebuild or reduce only through application-owned policy and never weakens isolation.
+
+No Context Builder, validator, retry code, provider fallback, networking, queue, persistence, monitoring vendor, or recovery implementation is added in Milestones 4.1 or 4.2.
 
 ## Related Documents
 
@@ -358,3 +360,4 @@ No retry code, provider fallback, networking, queue, persistence, monitoring ven
 - [Model Gateway Architecture](MODEL_GATEWAY_ARCHITECTURE.md)
 - [Model Lifecycle](MODEL_LIFECYCLE.md)
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
+- [Context Failure and Audit](CONTEXT_FAILURE_AND_AUDIT.md)

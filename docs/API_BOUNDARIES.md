@@ -75,4 +75,4 @@ Boundaries should return explicit identity, eligibility, validation, conflict, u
 
 ## Current Milestone Boundary
 
-These are architecture boundaries only. No endpoints, API routes, provider calls, adapters, networking, authentication, persistence, retries, or streaming are implemented in Sprint 4, Milestone 4.1.
+These are architecture boundaries only. Milestone 4.2 defines a conceptual internal Context Assembly boundary: application-owned inputs produce one validated, immutable, provider-neutral package or an explicit fail-closed result. It is not an endpoint or TypeScript contract. No endpoints, API routes, Context Builder, context validators, provider calls, adapters, networking, authentication, persistence, retries, or streaming are implemented in Sprint 4.1 or 4.2.

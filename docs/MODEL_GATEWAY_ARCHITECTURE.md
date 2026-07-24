@@ -272,6 +272,12 @@ The gateway returns explicit normalized failures. It must not:
 
 Customer-facing failure language remains an application responsibility and must not expose secrets or internal diagnostics.
 
+## Context Package Boundary
+
+The gateway may receive only a validated, immutable, provider-neutral context package released by application-owned Context Assembly for one approved task. The package binds business, conversation, profile, and state revisions; preserves authority labels and provenance; and satisfies an application budget before dispatch.
+
+The gateway cannot retrieve more data, select sources, broaden scope, repair missing context, reinterpret customer or knowledge instructions as policy, or use provider memory as context. An invalid or stale package fails before provider execution.
+
 ## Deferred Decisions
 
 - Provider and model selection
@@ -292,4 +298,5 @@ Customer-facing failure language remains an application responsibility and must 
 - [Model Lifecycle](MODEL_LIFECYCLE.md)
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
+- [Context Package Contract](CONTEXT_PACKAGE_CONTRACT.md)
 - [API Boundaries](API_BOUNDARIES.md)

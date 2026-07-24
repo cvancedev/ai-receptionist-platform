@@ -63,14 +63,14 @@ The numbered sequence after Sprint 3 remains provisional and must be reassessed 
 
 ## Sprint 4: Provider-Independent AI Integration Architecture
 
-- Milestone 4.1: AI Integration Architecture — Current
-- Milestone 4.2: Context Assembly Architecture — Deferred
+- Milestone 4.1: AI Integration Architecture — Complete
+- Milestone 4.2: Context Assembly Architecture — Complete
 - Milestone 4.3: Prompt and Task Architecture — Deferred
 - Milestone 4.4: Model Output and Proposal Validation Architecture — Deferred
 - Milestone 4.5: AI Integration Prototype Foundation — Deferred pending architecture approval
 - Milestone 4.6: Sprint 4 Certification — Deferred
 
-Sprint 4 keeps the deterministic application authoritative. It introduces no real provider, model, SDK, API, networking, persistence, authentication, production prompt, or production customer-facing AI capability during its architecture milestones.
+Sprint 4 keeps the deterministic application authoritative. Milestone 4.2 defines provider-neutral, task-specific, application-owned context selection and validation without implementing a Context Builder. It introduces no real provider, model, SDK, API, networking, persistence, authentication, production prompt, or production customer-facing AI capability during its architecture milestones. Milestone 4.3 remains deferred.
 
 The detailed sequence and guardrails are defined in [Sprint 4 Plan](docs/SPRINT_4_PLAN.md).
 

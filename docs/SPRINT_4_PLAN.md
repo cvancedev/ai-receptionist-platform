@@ -26,7 +26,7 @@ Sprint 4 must preserve this deterministic baseline.
 
 ## Milestone 4.1: AI Integration Architecture
 
-**Status:** Current milestone
+**Status:** Complete
 
 ### Deliverables
 
@@ -51,7 +51,7 @@ Sprint 4 must preserve this deterministic baseline.
 
 ## Milestone 4.2: Context Assembly Architecture
 
-**Status:** Deferred; not started
+**Status:** Complete
 
 ### Intended Scope
 
@@ -73,6 +73,8 @@ Sprint 4 must preserve this deterministic baseline.
 - No provider integration
 - No production token counting
 - No database or retrieval implementation
+
+Milestone 4.2 establishes provider-neutral, task-specific packages; strict business, conversation, and profile-version isolation; explicit authority labels; deterministic filtering, ordering, budgeting, validation, provenance, and failure behavior. It adds documentation only.
 
 ## Milestone 4.3: Prompt and Task Architecture
 
@@ -221,8 +223,17 @@ Sprint 4 is complete only when its final certification confirms:
 ## Related Documents
 
 - [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md)
+- [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md)
+- [Context Source Catalog](CONTEXT_SOURCE_CATALOG.md)
+- [Context Eligibility and Filtering](CONTEXT_ELIGIBILITY_AND_FILTERING.md)
+- [Context Ordering and Precedence](CONTEXT_ORDERING_AND_PRECEDENCE.md)
+- [Context Budgeting and Reduction](CONTEXT_BUDGETING_AND_REDUCTION.md)
+- [Context Package Contract](CONTEXT_PACKAGE_CONTRACT.md)
+- [Context Failure and Audit](CONTEXT_FAILURE_AND_AUDIT.md)
 - [Model Gateway Architecture](MODEL_GATEWAY_ARCHITECTURE.md)
 - [Model Lifecycle](MODEL_LIFECYCLE.md)
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
 - [Sprint 3 Certification](SPRINT_3_CERTIFICATION.md)
+
+Milestones 4.3 through 4.6 remain deferred. Sprint 4.3 has not started.

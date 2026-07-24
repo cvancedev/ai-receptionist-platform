@@ -221,12 +221,14 @@ Cancellation may occur before dispatch, during execution, during streaming, or b
 
 ## Current Boundary
 
-Milestone 4.1 defines this lifecycle only. No request preparation, gateway execution, provider call, output parsing, retry, audit storage, or response-release implementation is added.
+Milestones 4.1 and 4.2 define this lifecycle and its Context Assembly stage only. Request preparation now conceptually requires a validated, task-specific, provider-neutral package with scope, authority, budget, and provenance metadata. No Context Builder, request preparation, gateway execution, provider call, prompt system, output parsing, retry, audit storage, or response-release implementation is added.
 
 ## Related Documents
 
 - [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md)
 - [Model Gateway Architecture](MODEL_GATEWAY_ARCHITECTURE.md)
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
+- [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md)
+- [Context Failure and Audit](CONTEXT_FAILURE_AND_AUDIT.md)
 - [Conversation State](CONVERSATION_STATE.md)
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)

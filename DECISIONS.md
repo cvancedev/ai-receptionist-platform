@@ -141,3 +141,35 @@ Providers, adapters, and models cannot expand those limits or authorize indefini
 ## No Partial-State Authority
 
 Streaming and partial output have no authority over conversation state, escalation, completion, handoff, tools, or external actions. Only a final validated proposal considered by the Application Decision Layer may lead to approved typed state operations or customer-visible content.
+
+## Task-Specific Context Only
+
+The platform assembles context for one approved task rather than sending a universal conversation payload. Each task has explicit required, optional, and prohibited source categories.
+
+## Context Eligibility Is Application-Owned
+
+The application determines source eligibility, selection, filtering, ordering, budgeting, and release. A model or provider cannot request arbitrary additional business data or choose its own context sources.
+
+## Explicit Context Authority Labels
+
+Confirmed facts, customer claims, corrections, deterministic decisions, knowledge, rules, history, model proposals, and summaries remain distinguishable. Relevance or recency does not upgrade authority.
+
+## Strict Context Isolation
+
+Context Assembly fails closed when business, conversation, or applicable profile-version scope cannot be verified. Similar identifiers, provider caches, and model inference cannot establish scope.
+
+## Context Budgets Preserve Authority
+
+Reduction may remove duplicate, optional, old, or low-priority content, but cannot silently remove essential identity, scope, authoritative state, active corrections, application constraints, or required provenance.
+
+## Model Summaries Are Advisory
+
+Model-generated summaries do not replace deterministic state or original records. Reuse requires application policy, source traceability, version compatibility, and invalidation when relevant source data changes.
+
+## Context Provenance Is Required
+
+Every released context package records enough source revisions, selection and exclusion reasons, reduction steps, policy versions, and validation metadata to explain its assembly without retaining prohibited content.
+
+## Injection Content Remains Data
+
+Customer messages, knowledge documents, and quoted content cannot redefine application authority, task definition, source eligibility, or context policy. Instructions inside those sources remain untrusted data.

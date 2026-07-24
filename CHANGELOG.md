@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 4 - Context Assembly Architecture
+
+- Provider-neutral Context Assembly pipeline and component responsibilities documented.
+- Context source authority, eligibility, scope, freshness, failure, and audit catalog added.
+- Strict business, conversation, and profile-version filtering rules defined.
+- Deterministic ordering, conflict resolution, budgeting, reduction, and safe failure rules defined.
+- Conceptual context package, provenance, validation, recovery, and audit contracts added.
+- Task-specific context profiles defined for seven future model-assisted operations.
+- Sprint 4.1 and 4.2 marked complete while Sprint 4.3 remains deferred.
+- Certified Sprint 3 behavior, application code, configuration, and dependencies remain unchanged.
+
 ### Added
 
 - Initial Next.js project created.

@@ -241,7 +241,7 @@ Streaming is deferred. If introduced later:
 
 The current `MockModelGateway` is a deterministic local stand-in used by the certified Sprint 3 prototype. It performs no AI, prompt, API, or network work. The existing `ContextBuilder` and `OutputValidator` are deferred interfaces, not production implementations.
 
-Milestone 4.1 changes documentation only. Model Gateway implementation, Context Builder implementation, Prompt Composer implementation, provider evaluation, and output-contract code remain deferred.
+Milestones 4.1 and 4.2 change documentation only. Milestone 4.2 defines the application-owned pipeline that produces immutable, task-specific, business/conversation/profile-version-scoped, bounded, provider-neutral context packages. Model Gateway implementation, Context Builder implementation, Prompt Composer implementation, provider evaluation, and output-contract code remain deferred. No provider, model, production prompt, parser, API, networking, persistence, or authentication has been selected or implemented.
 
 ## Related Documents
 
@@ -251,4 +251,6 @@ Milestone 4.1 changes documentation only. Model Gateway implementation, Context 
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
 - [Sprint 4 Plan](SPRINT_4_PLAN.md)
 - [Context Assembly](CONTEXT_ASSEMBLY.md)
+- [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md)
+- [Context Package Contract](CONTEXT_PACKAGE_CONTRACT.md)
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)

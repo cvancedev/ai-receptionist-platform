@@ -74,13 +74,13 @@ Sprint 4 keeps the deterministic application authoritative. Milestone 4.5 implem
 
 The detailed sequence and guardrails are defined in [Sprint 4 Plan](docs/SPRINT_4_PLAN.md), with results in [Sprint 4 Certification](docs/certification/SPRINT4_CERTIFICATION.md).
 
-## Sprint 5: Lead Capture MVP
+## Sprint 5: Controlled Application Execution
 
-- Captured customer information
-- Inquiry summary
-- Lead status
-- Notes
-- Search and filtering only if proven necessary
+- Milestone 5.1: Controlled Conversation Execution — Complete
+
+Milestone 5.1 appends an application-owned Transition Registry, Transition Validator, duplicate guard, and State Executor to the certified Sprint 4 pipeline. It implements one explicit deterministic in-memory `initialized -> intake` transition and immutable Execution Results. It introduces no persistence, networking, external integration, customer communication, authentication change, UI redesign, or real provider.
+
+Later Sprint 5 milestones have not started.
 
 ## Sprint 6: AI Receptionist MVP
 

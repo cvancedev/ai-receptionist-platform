@@ -98,3 +98,9 @@ The MVP receives an inquiry, understands the general request, gathers required i
 ## Sprint 4 Architecture Status
 
 Milestone 4.5 adds an isolated `src/ai` vertical foundation without changing the certified Sprint 3 domain flow. It implements prototype contracts, registries, package builders, gateway/adapter, parsing, validation, duplicate protection, decisions, fictional fixtures, and verification. Existing Sprint 3 `ContextBuilder`, `OutputValidator`, proposal validator, gateway, orchestrator, and UI remain unchanged and separate. No production provider, prompt/schema, mutation/release, API, networking, persistence, authentication, or observability is added. Milestone 4.6 certifies this implementation and its read-only boundaries. See [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md) and [Sprint 4 Certification](certification/SPRINT4_CERTIFICATION.md).
+
+## Sprint 5.1 Execution Status
+
+Milestone 5.1 appends an isolated application-controlled execution boundary to the certified AI prototype. An immutable Transition Registry defines one `initialized -> intake` transition. The Transition Validator requires an accepted decision, valid proposal, allowlisted task/proposal/contract, exact scope and revision, legal current stage, and unique execution identity. Only then may the deterministic State Executor submit the existing typed stage update to the in-memory Conversation State Manager.
+
+The certified Sprint 4 read-only path remains available and unchanged. No general operation builder, fact mutation, correction, escalation activation, completion, response release, persistence, networking, external integration, or later Sprint 5 behavior is added. See [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md).

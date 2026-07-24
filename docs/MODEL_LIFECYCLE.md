@@ -221,7 +221,7 @@ Cancellation may occur before dispatch, during execution, during streaming, or b
 
 ## Current Boundary
 
-Milestone 4.5 exercises this lifecycle from approved task through immutable application decision using fictional fixtures and a deterministic mock adapter. It implements no authoritative state application, response release, repair/retry execution, real provider call, production prompt/schema, audit store, networking, or persistence.
+Milestone 4.5 exercises this lifecycle from approved task through immutable application decision using fictional fixtures and a deterministic mock adapter. Milestone 5.1 appends one application-controlled, registry-backed, validated in-memory `initialized -> intake` transition and immutable Execution Result. The model and application decision still cannot mutate state directly. No general state-operation builder, response release, repair/retry execution, real provider call, production prompt/schema, audit store, networking, or persistence is implemented. See [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md).
 
 ## Related Documents
 
@@ -238,3 +238,4 @@ Milestone 4.5 exercises this lifecycle from approved task through immutable appl
 - [AI Prototype Verification](AI_PROTOTYPE_VERIFICATION.md)
 - [Conversation State](CONVERSATION_STATE.md)
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)
+- [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md)

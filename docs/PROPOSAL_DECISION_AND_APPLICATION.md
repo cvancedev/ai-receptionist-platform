@@ -80,7 +80,7 @@ The decision record identifies proposal, accepted/rejected fields, modification,
 
 ## Prototype Status
 
-Milestone 4.5 implements deterministic decision classification only. Every result explicitly denies mutation and customer release. No Typed Operation Builder, Conversation State submission, escalation activation, completion, handoff, or release is implemented.
+Milestone 4.5 implements deterministic decision classification. Every decision still explicitly denies direct mutation and customer release. Milestone 5.1 adds a separate application-owned Transition Registry, Transition Validator, and State Executor for one validated in-memory `initialized -> intake` transition. No general Typed Operation Builder, fact/correction mutation, escalation activation, completion, handoff, response release, persistence, or networking is implemented.
 
 ## Related Documents
 
@@ -88,3 +88,4 @@ Milestone 4.5 implements deterministic decision classification only. Every resul
 - [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md)
 - [Conversation State](CONVERSATION_STATE.md)
 - [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md)
+- [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md)

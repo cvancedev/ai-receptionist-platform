@@ -7,8 +7,13 @@ import type {
   OperationResult,
   ValidationStatus,
 } from "../contracts/results";
+import { ConversationStateManager } from "../../conversation/conversation-state-manager";
+import { initializedConversationState } from "../../fixtures/conversation";
+import { CONVERSATION_STAGES } from "../../shared/constants";
 import { PrototypeContextPackageBuilder } from "../context/context-package-builder";
 import { ApplicationDecisionEngine } from "../decisions/application-decision-engine";
+import type { AiControlledExecutionResult } from "../execution/contracts";
+import { DeterministicStateExecutor } from "../execution/state-executor";
 import { PrototypeModelGateway } from "../gateway/model-gateway";
 import { BoundedRawOutputParser } from "../output/raw-output-parser";
 import { ProviderResultNormalizer } from "../output/provider-result-normalizer";
@@ -26,6 +31,11 @@ import { PrototypeProposalValidator } from "../validation/proposal-validator";
 import { createAiPrototypeFixture } from "./fixtures";
 
 export class AiFoundationPrototypeOrchestrator {
+  private readonly executionManager = createExecutionManager();
+  private readonly stateExecutor = new DeterministicStateExecutor(
+    this.executionManager,
+  );
+
   constructor(
     private readonly duplicateGuard = new DuplicateProcessingGuard(),
     private readonly tasks = new TaskRegistry(),
@@ -127,6 +137,45 @@ export class AiFoundationPrototypeOrchestrator {
     return { status: "success", value: deepFreeze(snapshot) };
   }
 
+  async runWithExecution(
+    scenario: MockProviderScenario,
+  ): Promise<AiControlledExecutionResult> {
+    const foundation = await this.run(scenario);
+    if (foundation.status === "failure") {
+      return { status: "failure", reason: "ExecutionStateUnavailable" };
+    }
+    const snapshot = foundation.value;
+    const proposalId = snapshot.validation.proposal?.proposalId;
+    const execution = this.stateExecutor.execute({
+      executionId: typeof proposalId === "string"
+        ? `execution-${proposalId}`
+        : `execution-${snapshot.identity.requestId}`,
+      transitionIdentifier: "begin_intake_after_language_interpretation",
+      transitionVersion: 1,
+      expectedCurrentStage: CONVERSATION_STAGES.INITIALIZED,
+      expectedStateRevision: snapshot.identity.stateRevision,
+      identity: snapshot.identity,
+      applicationDecision: snapshot.decision,
+      validation: snapshot.validation,
+    });
+    const state = this.executionManager.snapshot({
+      conversationId: snapshot.identity.conversationId,
+      businessProfileId: snapshot.identity.businessId,
+      businessProfileVersion: snapshot.identity.profileVersion,
+    });
+    if (state.status === "failure") {
+      return { status: "failure", reason: "ExecutionStateUnavailable" };
+    }
+    return {
+      status: "success",
+      value: deepFreeze({
+        foundationDecision: snapshot.decision,
+        execution,
+        conversationState: state.state,
+      }),
+    };
+  }
+
   duplicateSnapshot() {
     return this.duplicateGuard.snapshot();
   }
@@ -160,6 +209,22 @@ export class AiFoundationPrototypeOrchestrator {
       businessProfile,
     });
   }
+}
+
+function createExecutionManager() {
+  const manager = new ConversationStateManager();
+  const initialized = manager.initialize({
+    conversationId: initializedConversationState.conversationId,
+    businessProfileId: initializedConversationState.businessProfileId,
+    businessProfileVersion: initializedConversationState.businessProfileVersion,
+    requiredFields: initializedConversationState.missingFields,
+    authorizedEscalationDestination:
+      initializedConversationState.authorizedEscalationDestination,
+  });
+  if (initialized.status === "failure") {
+    throw new Error("The controlled execution fixture could not be initialized.");
+  }
+  return manager;
 }
 
 function taskForScenario(scenario: MockProviderScenario): ModelTaskIdentifier {

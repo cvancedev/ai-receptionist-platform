@@ -13,6 +13,10 @@ export class DuplicateProcessingGuard {
     return this.register(this.stateOperations, operationId, "DuplicateStateMutation");
   }
 
+  hasStateOperation(operationId: string): boolean {
+    return this.stateOperations.has(operationId);
+  }
+
   registerResponseRelease(releaseId: string): OperationResult<string> {
     return this.register(this.responseReleases, releaseId, "DuplicateResponseRelease");
   }

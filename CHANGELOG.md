@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 5.1 - Controlled Conversation Execution
+
+- Added one immutable, explicit `initialized -> intake` AI transition definition.
+- Added fail-closed execution-request, task, proposal, decision, scope, revision, policy, transition, and duplicate validation.
+- Added a deterministic State Executor that delegates one typed in-memory stage update to the existing Conversation State Manager.
+- Added immutable Execution Results with previous/new state, transition identity, deterministic timestamp, and execution metadata.
+- Added a separate integrated execution path while preserving the certified Sprint 4 read-only path and all existing prototype behavior.
+- Added focused state-execution verification without persistence, networking, customer communication, UI changes, or later Sprint 5 work.
+
 ### Sprint 4 - Certification
 
 - Provider independence, immutable packages/results, untrusted-output handling, fail-closed validation, deterministic mock processing, duplicate safety, and read-only decisions audited.

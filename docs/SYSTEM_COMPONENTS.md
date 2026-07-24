@@ -73,7 +73,13 @@ Milestone 4.5 implements these concepts in an isolated `src/ai` prototype rather
 
 Evaluates validated proposals against current deterministic state and may accept, partially accept, modify, request clarification, retry under policy, use deterministic fallback, escalate, or reject. Only this application-owned layer may authorize typed state operations or customer-response release.
 
-Future partial acceptance requires explicit contract support. Typed Operation Builder and Response Release Gate are separate conceptual components; neither is implemented. See [Proposal Decision and Application](PROPOSAL_DECISION_AND_APPLICATION.md) and [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md).
+Future partial acceptance requires explicit contract support. A general Typed Operation Builder and Response Release Gate remain separate conceptual components and are not implemented. See [Proposal Decision and Application](PROPOSAL_DECISION_AND_APPLICATION.md) and [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md).
+
+## State Executor
+
+Milestone 5.1 implements a narrow deterministic in-memory execution boundary. The immutable Transition Registry defines one explicit `initialized -> intake` transition. The Transition Validator requires a valid accepted decision, approved task/proposal/contract, exact scope and revision, legal current state, policy compatibility, and a unique execution identity. The State Executor contains no business rules; after validation, it delegates one typed stage update to the existing Conversation State Manager and returns an immutable Execution Result.
+
+Raw output, parsed but unvalidated proposals, malformed or rejected decisions, unknown tasks/proposals/transitions, stale state, illegal transitions, and duplicate executions fail closed without mutation. See [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md).
 
 ## Handoff Builder
 

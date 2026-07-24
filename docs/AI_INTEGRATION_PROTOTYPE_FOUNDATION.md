@@ -80,6 +80,8 @@ Validation checks contract fields and types, allowlists, scope, profile/state re
 
 An accepted proposal remains a candidate. The decision engine never constructs or applies authoritative operations and never releases customer text. Escalation remains a recommendation.
 
+Sprint 5.1 preserves this decision boundary and adds a separate application-controlled execution layer for one explicit validated in-memory stage transition. See [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md).
+
 ## Non-Goals
 
 Not implemented:

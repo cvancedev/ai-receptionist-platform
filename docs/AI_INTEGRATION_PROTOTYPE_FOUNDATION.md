@@ -82,6 +82,8 @@ An accepted proposal remains a candidate. The decision engine never constructs o
 
 Sprint 5.1 preserves this decision boundary and adds a separate application-controlled execution layer for one explicit validated in-memory stage transition. See [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md).
 
+Sprint 5.3 allows the Prototype Chat Session to supply its existing in-memory manager to the AI Foundation Orchestrator for the controlled path. `run()` remains read-only. The session projects post-execution state through the Conversation Read Model and exposes no raw state or execution authority to UI components. See [Prototype Read Model Integration](PROTOTYPE_READ_MODEL_INTEGRATION.md).
+
 ## Non-Goals
 
 Not implemented:

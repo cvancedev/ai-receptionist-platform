@@ -1,9 +1,14 @@
-import type { ConversationState } from "../domain/conversation-state";
+import type { AiControlledExecutionSnapshot } from "../ai/execution/contracts";
+import { AiFoundationPrototypeOrchestrator } from "../ai/prototype/ai-foundation-orchestrator";
 import type { QuestionSelectionResult } from "../domain/intake";
 import type { HandoffSummary } from "../domain/handoff-summary";
 import { createPrototypeFoundation } from "../prototype";
 import { PrototypeConversationOrchestrator } from "../services/conversation-orchestrator";
 import { CONVERSATION_STAGES } from "../shared/constants";
+import {
+  PrototypeReadModelIntegration,
+  type PrototypeReadModelIntegrationResult,
+} from "./prototype-read-model-integration";
 
 export interface PrototypeMessage {
   id: number;
@@ -13,8 +18,7 @@ export interface PrototypeMessage {
 
 export interface PrototypeChatView {
   messages: readonly PrototypeMessage[];
-  state: ConversationState;
-  resolvedService: string | null;
+  integration: PrototypeReadModelIntegrationResult;
   readiness: string;
   handoff: HandoffSummary | null;
   error: string | null;
@@ -24,10 +28,14 @@ export interface PrototypeChatView {
 export class PrototypeChatSession {
   private foundation = createPrototypeFoundation();
   private orchestrator = this.createOrchestrator();
+  private aiOrchestrator = this.createAiOrchestrator();
+  private readModelIntegration = this.createReadModelIntegration();
   private messages: PrototypeMessage[] = [];
   private pendingFieldId: string | null = null;
   private handoff: HandoffSummary | null = null;
   private error: string | null = null;
+  private controlledExecution: AiControlledExecutionSnapshot | null = null;
+  private controlledExecutionAttempted = false;
 
   constructor() {
     this.addAssistant(
@@ -35,7 +43,7 @@ export class PrototypeChatSession {
     );
   }
 
-  submit(rawText: string): PrototypeChatView {
+  async submit(rawText: string): Promise<PrototypeChatView> {
     const text = rawText.trim();
     if (!text) {
       this.error = "Enter a fictional message before submitting.";
@@ -44,6 +52,8 @@ export class PrototypeChatSession {
     this.error = null;
     this.addCustomer(text);
     try {
+      const executionAccepted = await this.ensureControlledExecution();
+      if (!executionAccepted) return this.view();
       const state = this.readState();
       if (state.stage === CONVERSATION_STAGES.ESCALATION) {
         this.addAssistant("This fictional conversation requires human review. Routine intake is paused.");
@@ -66,10 +76,14 @@ export class PrototypeChatSession {
   reset(): PrototypeChatView {
     this.foundation = createPrototypeFoundation();
     this.orchestrator = this.createOrchestrator();
+    this.aiOrchestrator = this.createAiOrchestrator();
+    this.readModelIntegration = this.createReadModelIntegration();
     this.messages = [];
     this.pendingFieldId = null;
     this.handoff = null;
     this.error = null;
+    this.controlledExecution = null;
+    this.controlledExecutionAttempted = false;
     this.addAssistant("Prototype reset. What fictional service would you like help with?");
     return this.view();
   }
@@ -78,12 +92,13 @@ export class PrototypeChatSession {
     const state = this.readState();
     const evaluated = this.orchestrator.processTurn({ type: "evaluate" }).intake;
     if (!evaluated) throw new Error("The deterministic intake result is unavailable.");
-    const serviceId = state.confirmedFacts["requested-service"]?.value;
-    const service = this.foundation.businessProfile.services.find((candidate) => candidate.id === serviceId);
+    const integration = this.readModelIntegration.project(
+      state,
+      this.controlledExecution,
+    );
     return {
       messages: this.messages.map((message) => ({ ...message })),
-      state,
-      resolvedService: service?.name ?? null,
+      integration,
       readiness: evaluated.readiness.status,
       handoff: this.handoff ? { ...this.handoff } : null,
       error: this.error,
@@ -182,6 +197,56 @@ export class PrototypeChatSession {
       this.foundation.conversationStateManager,
       this.foundation.conversationState.conversationId,
     );
+  }
+
+  private createAiOrchestrator() {
+    return new AiFoundationPrototypeOrchestrator({
+      executionManager: this.foundation.conversationStateManager,
+    });
+  }
+
+  private createReadModelIntegration() {
+    return new PrototypeReadModelIntegration(
+      this.foundation.businessProfile,
+    );
+  }
+
+  private async ensureControlledExecution() {
+    if (this.controlledExecutionAttempted) {
+      return Boolean(this.controlledExecution?.execution.success);
+    }
+    this.controlledExecutionAttempted = true;
+    const result = await this.aiOrchestrator.runWithExecution("valid_intent");
+    if (result.status === "failure") {
+      this.error =
+        "Controlled execution could not obtain a valid conversation state.";
+      this.addAssistant(
+        "The controlled execution stopped safely. The current conversation remains unchanged.",
+      );
+      return false;
+    }
+    this.controlledExecution = result.value;
+    const projected = this.readModelIntegration.project(
+      result.value.conversationState,
+      result.value,
+    );
+    if (projected.status === "projection-failure") {
+      this.error = projected.errors.join(" ")
+        || "Conversation projection failed closed.";
+      this.addAssistant(
+        "The conversation could not be projected safely. No raw state was displayed.",
+      );
+      return false;
+    }
+    if (!result.value.execution.success) {
+      this.error =
+        `Controlled execution rejected: ${result.value.execution.reason}.`;
+      this.addAssistant(
+        "The controlled execution was rejected without changing the conversation.",
+      );
+      return false;
+    }
+    return true;
   }
 
   private requireIntake(result: ReturnType<PrototypeConversationOrchestrator["processTurn"]>) {

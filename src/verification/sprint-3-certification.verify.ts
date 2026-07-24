@@ -19,16 +19,16 @@ void certifySprint3();
 
 async function certifySprint3() {
   await verifyFoundation();
-  scenarioACompleteSuccessfulIntake();
-  scenarioBCorrectionAfterConfirmation();
-  scenarioCUnsupportedService();
-  scenarioDAmbiguousService();
+  await scenarioACompleteSuccessfulIntake();
+  await scenarioBCorrectionAfterConfirmation();
+  await scenarioCUnsupportedService();
+  await scenarioDAmbiguousService();
   scenarioECustomerRequestsEscalation();
   scenarioFAbandonedConversation();
   scenarioGCrossBusinessIsolation();
   scenarioHProfileVersionMismatch();
   scenarioIInvalidTransitionRejection();
-  scenarioJEquivalentRepeatedExecution();
+  await scenarioJEquivalentRepeatedExecution();
 }
 
 async function verifyFoundation() {
@@ -52,40 +52,40 @@ async function verifyFoundation() {
   assert(!validateModelProposal({ ...first, customerResponse: "" }).valid, "model proposal validator rejects missing response");
 }
 
-function scenarioACompleteSuccessfulIntake() {
-  const view = completeSession(createPrototypeChatSession());
-  assert(view.state.stage === CONVERSATION_STAGES.HANDOFF, "Scenario A reaches handoff");
+async function scenarioACompleteSuccessfulIntake() {
+  const view = await completeSession(createPrototypeChatSession());
+  assert(readModel(view).stage === CONVERSATION_STAGES.HANDOFF, "Scenario A reaches handoff");
   assert(Boolean(view.handoff), "Scenario A creates a validated handoff");
   assert(view.handoff?.missingInformation.length === 0, "Scenario A has no missing required information");
 }
 
-function scenarioBCorrectionAfterConfirmation() {
+async function scenarioBCorrectionAfterConfirmation() {
   const session = createPrototypeChatSession();
-  reachConfirmation(session);
-  let view = session.submit("correct service-location: Maple Glen");
-  assert(view.state.stage === CONVERSATION_STAGES.INTAKE, "Scenario B correction reopens intake");
-  assert(view.state.corrections[0]?.previousValue === "North Harbor", "Scenario B retains the superseded value");
-  assert(view.state.missingFields.includes("service-location"), "Scenario B reopens the corrected required field");
-  view = session.submit("Maple Glen");
-  view = session.submit("confirm");
+  await reachConfirmation(session);
+  let view = await session.submit("correct service-location: Maple Glen");
+  assert(readModel(view).stage === CONVERSATION_STAGES.INTAKE, "Scenario B correction reopens intake");
+  assert(readModel(view).corrections[0]?.previousValue === "North Harbor", "Scenario B retains the superseded value");
+  assert(readModel(view).missingRequiredFields.includes("service-location"), "Scenario B reopens the corrected required field");
+  view = await session.submit("Maple Glen");
+  view = await session.submit("confirm");
   assert(view.handoff?.confirmedFacts["service-location"] === "Maple Glen", "Scenario B handoff uses only the corrected confirmed value");
   assert(view.handoff?.corrections.length === 1, "Scenario B handoff retains correction history");
 }
 
-function scenarioCUnsupportedService() {
-  const view = createPrototypeChatSession().submit("fictional unsupported roofing");
-  assert(view.state.stage === CONVERSATION_STAGES.ESCALATION, "Scenario C escalates unsupported service");
-  assert(view.resolvedService === null && view.handoff === null, "Scenario C invents no service or handoff");
+async function scenarioCUnsupportedService() {
+  const view = await createPrototypeChatSession().submit("fictional unsupported roofing");
+  assert(readModel(view).stage === CONVERSATION_STAGES.ESCALATION, "Scenario C escalates unsupported service");
+  assert(readModel(view).resolvedServiceId === null && view.handoff === null, "Scenario C invents no service or handoff");
 }
 
-function scenarioDAmbiguousService() {
+async function scenarioDAmbiguousService() {
   const session = createPrototypeChatSession();
-  let view = session.submit("consultation");
-  assert(view.state.stage === CONVERSATION_STAGES.CLARIFICATION, "Scenario D enters clarification");
-  assert(view.resolvedService === null, "Scenario D does not guess between candidates");
-  view = session.submit("Seasonal Home Check-In");
-  assert(view.state.stage === CONVERSATION_STAGES.INTAKE, "Scenario D resumes intake after exact clarification");
-  assert(view.resolvedService === "Seasonal Home Check-In", "Scenario D resolves only the clarified service");
+  let view = await session.submit("consultation");
+  assert(readModel(view).stage === CONVERSATION_STAGES.CLARIFICATION, "Scenario D enters clarification");
+  assert(readModel(view).resolvedServiceId === null, "Scenario D does not guess between candidates");
+  view = await session.submit("Seasonal Home Check-In");
+  assert(readModel(view).stage === CONVERSATION_STAGES.INTAKE, "Scenario D resumes intake after exact clarification");
+  assert(readModel(view).resolvedServiceId === "seasonal-home-check-in", "Scenario D resolves only the clarified service");
 }
 
 function scenarioECustomerRequestsEscalation() {
@@ -135,27 +135,34 @@ function scenarioIInvalidTransitionRejection() {
   assert(snapshot(manager, scope).stage === CONVERSATION_STAGES.INITIALIZED, "Scenario I leaves state unchanged after rejection");
 }
 
-function scenarioJEquivalentRepeatedExecution() {
+async function scenarioJEquivalentRepeatedExecution() {
   const first = runDeterministicIntakeDemonstration();
   const second = runDeterministicIntakeDemonstration();
   assert(JSON.stringify(first) === JSON.stringify(second), "Scenario J produces equivalent deterministic domain results");
 
-  const firstView = completeSession(createPrototypeChatSession());
-  const secondView = completeSession(createPrototypeChatSession());
+  const firstView = await completeSession(createPrototypeChatSession());
+  const secondView = await completeSession(createPrototypeChatSession());
   assert(JSON.stringify(firstView) === JSON.stringify(secondView), "Scenario J produces equivalent deterministic UI projections");
 }
 
-function completeSession(session: ReturnType<typeof createPrototypeChatSession>) {
-  reachConfirmation(session);
+async function completeSession(session: ReturnType<typeof createPrototypeChatSession>) {
+  await reachConfirmation(session);
   return session.submit("confirm");
 }
 
-function reachConfirmation(session: ReturnType<typeof createPrototypeChatSession>) {
-  session.submit("project help");
-  session.submit("Riley Example");
-  session.submit("Fictional written follow-up");
-  session.submit("A fictional room needs a routine review.");
+async function reachConfirmation(session: ReturnType<typeof createPrototypeChatSession>) {
+  await session.submit("project help");
+  await session.submit("Riley Example");
+  await session.submit("Fictional written follow-up");
+  await session.submit("A fictional room needs a routine review.");
   return session.submit("North Harbor");
+}
+
+function readModel(
+  view: Awaited<ReturnType<ReturnType<typeof createPrototypeChatSession>["submit"]>>,
+) {
+  assert(view.integration.status === "success", "UI projection is available");
+  return view.integration.readModel;
 }
 
 function createStateContext(requiredFields: readonly string[], conversationId: string) {

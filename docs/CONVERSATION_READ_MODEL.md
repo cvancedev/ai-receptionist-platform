@@ -15,7 +15,7 @@ validated Conversation State snapshot
   -> deeply immutable Conversation Read Model
 ```
 
-The projector is not integrated into the prototype UI or either AI orchestration path in this milestone. The existing panels continue to behave exactly as before.
+Sprint 5.3 integrates the projector through the Prototype Chat Session after controlled execution and before UI delivery. The projector itself remains pure and unchanged: integration code owns the state snapshot, context construction, and safe result mapping. See [Prototype Read Model Integration](PROTOTYPE_READ_MODEL_INTEGRATION.md).
 
 ## Inputs
 
@@ -117,12 +117,12 @@ The suite covers deterministic projection, source-state integrity, deep runtime 
 
 ## Current Limitations
 
-- Projection is in-memory and is not integrated into the prototype UI.
+- Projection and its prototype integration remain in memory.
 - The application must resolve required fields and active service before projection.
 - Service display names are not exposed because they do not exist in Conversation State.
 - Customer release remains unconditionally unauthorized because state contains no explicit release authorization.
 - There is no persistence, networking, execution journal, new transition, external integration, or production provider.
 
-## Future Integration Boundary
+## Integration Boundary
 
-A separately approved milestone may let an application coordinator resolve the active Business Profile context, call the projector with a validated state snapshot, and pass the resulting immutable value to a presentation layer. That integration must preserve the projector's no-mutation and no-authority boundary. It is not implemented here.
+The Sprint 5.3 prototype session resolves the active Business Profile context, calls the projector with a validated state snapshot, and passes only a UI-safe integration result to presentation components. Raw state and execution machinery remain private. Production integration, persistence, real providers, and customer communication are not implemented.

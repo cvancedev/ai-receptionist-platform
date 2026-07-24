@@ -123,3 +123,5 @@ Sprint 5.1 implements only an in-memory `initialized -> intake` stage transition
 It adds no persistence, database, network call, HTTP client, external API, email, SMS, telephony, scheduling, CRM integration, customer communication, background work, authentication change, UI redesign, or real model provider.
 
 Sprint 5.2 adds the separate read-only [Conversation Read Model](CONVERSATION_READ_MODEL.md). That projector may describe an already executed state snapshot, but it is not part of execution and receives no executor or state-manager capability.
+
+Sprint 5.3 connects the Prototype Chat Session to `runWithExecution()` using the session's existing in-memory manager. After execution, the session projects the current snapshot and gives the UI only a safe execution summary and immutable read model. Rejected execution is also projected without mutation. The UI cannot call the executor or construct an execution request. See [Prototype Read Model Integration](PROTOTYPE_READ_MODEL_INTEGRATION.md).

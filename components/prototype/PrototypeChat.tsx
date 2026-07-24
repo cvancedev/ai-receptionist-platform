@@ -15,8 +15,8 @@ export function PrototypeChat() {
   const [session] = useState(createPrototypeChatSession);
   const [view, setView] = useState(() => session.view());
 
-  function submit(message: string) {
-    setView(session.submit(message));
+  async function submit(message: string) {
+    setView(await session.submit(message));
   }
 
   function reset() {
@@ -41,8 +41,9 @@ export function PrototypeChat() {
               Deterministic intake workspace
             </h1>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-secondary sm:text-base">
-              Step through the local Business Profile-driven flow. No AI,
-              network request, persistence, or production customer data is used.
+              Step through the local Business Profile-driven flow. Only the
+              deterministic mock AI boundary is used; there is no real model,
+              network request, persistence, or production customer data.
             </p>
           </div>
           <button
@@ -54,7 +55,9 @@ export function PrototypeChat() {
           </button>
         </header>
 
-        <StageProgress activeStage={view.state.stage} />
+        {view.integration.status === "success" ? (
+          <StageProgress activeStage={view.integration.readModel.stage} />
+        ) : null}
 
         {view.error ? (
           <div role="alert" className="mt-5 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
@@ -62,11 +65,29 @@ export function PrototypeChat() {
           </div>
         ) : null}
 
+        {view.integration.status === "projection-failure" ? (
+          <div role="alert" className="mt-5 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
+            <span className="font-semibold">Projection unavailable:</span>{" "}
+            {view.integration.errors.join(" ")
+              || "The conversation read model failed closed."}
+          </div>
+        ) : null}
+
         <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(22rem,0.65fr)]">
-          <ChatWindow messages={view.messages} onSubmit={submit} disabled={view.state.stage === "handoff" || view.state.stage === "completed"} />
+          <ChatWindow
+            messages={view.messages}
+            onSubmit={submit}
+            disabled={
+              view.integration.status === "projection-failure"
+              || view.integration.readModel.stage === "handoff"
+              || view.integration.readModel.stage === "completed"
+            }
+          />
           <aside className="space-y-5" aria-label="Conversation debugging details">
             <ConversationStatus view={view} />
-            <DataPanels state={view.state} />
+            {view.integration.status === "success" ? (
+              <DataPanels readModel={view.integration.readModel} />
+            ) : null}
           </aside>
         </div>
 

@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 5.3 - Prototype Read Model Integration
+
+- Connected the existing deterministic mock AI `runWithExecution()` path to the prototype session's shared in-memory Conversation State Manager.
+- Added a deeply immutable UI-safe integration result containing the Conversation Read Model and copied decision/execution summaries without raw state snapshots.
+- Updated the existing prototype panels to consume read-model identity, stage, service ID, facts, corrections, missing fields, questions, status, progress, next action, and release denial.
+- Preserved rejected, duplicate, unknown, and stale execution state through safe projection; malformed or mismatched projections fail closed without raw fallback.
+- Preserved reset, deterministic intake behavior, the read-only `run()` path, the single transition registry, and all prohibited external boundaries.
+- Added focused prototype read-model integration verification.
+
 ### Sprint 5.2 - Immutable Conversation Read Model
 
 - Added a deeply readonly Conversation Read Model contract for stable presentation data.

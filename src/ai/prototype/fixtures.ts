@@ -1,5 +1,6 @@
 import type { ModelTaskIdentifier } from "../contracts/identities";
 import type { ContextConversationEntry } from "../contracts/packages";
+import type { ConversationState } from "../../domain/conversation-state";
 import { fictionalBusinessProfile } from "../../fixtures/business-profile";
 import { initializedConversationState } from "../../fixtures/conversation";
 import { fictionalKnowledgeRecords } from "../../fixtures/knowledge";
@@ -30,6 +31,7 @@ export const aiPrototypeCurrentCustomerInput: ContextConversationEntry = Object.
 export function createAiPrototypeIdentity(
   taskIdentifier: ModelTaskIdentifier,
   suffix: string,
+  stateRevision = initializedConversationState.revision,
 ) {
   return {
     requestId: `ai-request-${suffix}`,
@@ -37,20 +39,28 @@ export function createAiPrototypeIdentity(
     businessId: fictionalBusinessProfile.id,
     conversationId: initializedConversationState.conversationId,
     profileVersion: fictionalBusinessProfile.version,
-    stateRevision: initializedConversationState.revision,
+    stateRevision,
     taskIdentifier,
     taskVersion: 1,
   } as const;
 }
 
-export function createAiPrototypeFixture(taskIdentifier: ModelTaskIdentifier, suffix: string) {
+export function createAiPrototypeFixture(
+  taskIdentifier: ModelTaskIdentifier,
+  suffix: string,
+  conversationState: ConversationState = initializedConversationState,
+) {
   return {
-    identity: createAiPrototypeIdentity(taskIdentifier, suffix),
+    identity: createAiPrototypeIdentity(
+      taskIdentifier,
+      suffix,
+      conversationState.revision,
+    ),
     contextPackageId: `context-${suffix}`,
     promptPackageId: `prompt-${suffix}`,
     businessIdentity: { ...aiPrototypeBusinessIdentity },
     businessProfile: structuredClone(fictionalBusinessProfile),
-    conversationState: structuredClone(initializedConversationState),
+    conversationState: structuredClone(conversationState),
     knowledge: structuredClone(fictionalKnowledgeRecords),
     conversationEntries: structuredClone(aiPrototypeConversationEntries),
     currentCustomerInput: { ...aiPrototypeCurrentCustomerInput },

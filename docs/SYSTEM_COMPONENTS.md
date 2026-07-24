@@ -85,7 +85,13 @@ Raw output, parsed but unvalidated proposals, malformed or rejected decisions, u
 
 Milestone 5.2 implements an isolated fail-closed presentation boundary. It accepts an unknown state snapshot plus application-resolved required-field and service context, requires a structurally and semantically valid Conversation State, copies presentation data, derives bounded progress and allowlisted descriptive status, and returns a deeply immutable Conversation Read Model.
 
-The projector has no reference to the Conversation State Manager or State Executor and cannot mutate state, execute transitions, authorize customer release, persist data, perform networking, or invoke external actions. It is not integrated into the prototype UI. See [Conversation Read Model](CONVERSATION_READ_MODEL.md).
+The projector has no reference to the Conversation State Manager or State Executor and cannot mutate state, execute transitions, authorize customer release, persist data, perform networking, or invoke external actions. See [Conversation Read Model](CONVERSATION_READ_MODEL.md).
+
+## Prototype Read Model Integration
+
+Milestone 5.3 makes the Prototype Chat Session the owner of the shared in-memory manager, deterministic orchestration, controlled execution attempt, projection context, and UI-safe delivery. A dedicated integration component copies safe decision and execution metadata, omits raw execution snapshots, and returns either an immutable Conversation Read Model or deterministic projection errors.
+
+Prototype components read no raw Conversation State and receive no manager, executor, transition request, provider, callback, persistence, networking, or customer-release capability. See [Prototype Read Model Integration](PROTOTYPE_READ_MODEL_INTEGRATION.md).
 
 ## Handoff Builder
 

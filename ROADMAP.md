@@ -79,10 +79,13 @@ The detailed sequence and guardrails are defined in [Sprint 4 Plan](docs/SPRINT_
 - Milestone 5.1: Controlled Conversation Execution — Complete
 
 - Milestone 5.2: Immutable Conversation Read Model — Complete
+- Milestone 5.3: Prototype Read Model Integration — Complete
 
 Milestone 5.1 appends an application-owned Transition Registry, Transition Validator, duplicate guard, and State Executor to the certified Sprint 4 pipeline. It implements one explicit deterministic in-memory `initialized -> intake` transition and immutable Execution Results. It introduces no persistence, networking, external integration, customer communication, authentication change, UI redesign, or real provider.
 
 Milestone 5.2 adds an isolated, fail-closed projector that converts validated conversation snapshots and application-resolved intake context into a deeply immutable presentation contract. It derives bounded required-field progress, allowlisted next-action descriptions, and status flags without exposing state, executing transitions, authorizing customer release, or changing the existing UI.
+
+Milestone 5.3 connects the shared in-memory controlled-execution state to the read-model projector and adapts the existing prototype session and panels to consume only a UI-safe immutable result. Raw state and execution machinery remain private, rejected execution retains the current projection, and projection failure exposes no raw fallback.
 
 Later Sprint 5 milestones have not started.
 

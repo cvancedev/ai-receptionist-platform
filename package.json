@@ -10,7 +10,8 @@
     "verify:prototype": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/conversation-state.verify.js && node .prototype-build/verification/intake-flow.verify.js && node .prototype-build/verification/prototype-chat-session.verify.js && node .prototype-build/verification/sprint-3-certification.verify.js",
     "verify:ai-foundation": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/ai-foundation.verify.js",
     "verify:state-execution": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/state-execution.verify.js",
-    "verify:conversation-read-model": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/conversation-read-model.verify.js"
+    "verify:conversation-read-model": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/conversation-read-model.verify.js",
+    "verify:prototype-read-model-integration": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/prototype-read-model-integration.verify.js"
   },
   "dependencies": {
     "next": "16.2.10",

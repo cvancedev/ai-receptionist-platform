@@ -30,13 +30,16 @@ import { DuplicateProcessingGuard } from "../validation/duplicate-processing-gua
 import { PrototypeProposalValidator } from "../validation/proposal-validator";
 import { createAiPrototypeFixture } from "./fixtures";
 
+export interface AiFoundationPrototypeOptions {
+  executionManager?: ConversationStateManager;
+}
+
 export class AiFoundationPrototypeOrchestrator {
-  private readonly executionManager = createExecutionManager();
-  private readonly stateExecutor = new DeterministicStateExecutor(
-    this.executionManager,
-  );
+  private readonly executionManager: ConversationStateManager;
+  private readonly stateExecutor: DeterministicStateExecutor;
 
   constructor(
+    options: AiFoundationPrototypeOptions = {},
     private readonly duplicateGuard = new DuplicateProcessingGuard(),
     private readonly tasks = new TaskRegistry(),
     private readonly contracts = new OutputContractRegistry(),
@@ -46,11 +49,26 @@ export class AiFoundationPrototypeOrchestrator {
     private readonly parser = new BoundedRawOutputParser(),
     private readonly proposalValidator = new PrototypeProposalValidator(),
     private readonly decisionEngine = new ApplicationDecisionEngine(),
-  ) {}
+  ) {
+    this.executionManager =
+      options.executionManager ?? createExecutionManager();
+    this.stateExecutor = new DeterministicStateExecutor(this.executionManager);
+  }
 
   async run(scenario: MockProviderScenario): Promise<OperationResult<AiFoundationSnapshot>> {
+    return this.runFoundation(scenario);
+  }
+
+  private async runFoundation(
+    scenario: MockProviderScenario,
+    conversationState = initializedConversationState,
+  ): Promise<OperationResult<AiFoundationSnapshot>> {
     const taskIdentifier = taskForScenario(scenario);
-    const fixture = createAiPrototypeFixture(taskIdentifier, scenario);
+    const fixture = createAiPrototypeFixture(
+      taskIdentifier,
+      scenario,
+      conversationState,
+    );
     const taskResult = this.tasks.resolve(taskIdentifier, 1);
     if (taskResult.status === "failure") return taskResult;
     const task = taskResult.value;
@@ -140,7 +158,16 @@ export class AiFoundationPrototypeOrchestrator {
   async runWithExecution(
     scenario: MockProviderScenario,
   ): Promise<AiControlledExecutionResult> {
-    const foundation = await this.run(scenario);
+    const current = this.executionManager.snapshot({
+      conversationId: initializedConversationState.conversationId,
+      businessProfileId: initializedConversationState.businessProfileId,
+      businessProfileVersion:
+        initializedConversationState.businessProfileVersion,
+    });
+    if (current.status === "failure") {
+      return { status: "failure", reason: "ExecutionStateUnavailable" };
+    }
+    const foundation = await this.runFoundation(scenario, current.state);
     if (foundation.status === "failure") {
       return { status: "failure", reason: "ExecutionStateUnavailable" };
     }

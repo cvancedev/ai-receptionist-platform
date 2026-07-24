@@ -110,3 +110,9 @@ The certified Sprint 4 read-only path remains available and unchanged. No genera
 Milestone 5.2 adds a separate presentation boundary after state ownership. The fail-closed Conversation Read Model Projector validates a state snapshot and application-resolved required-field/service context, copies display-safe state data, derives only explicit deterministic status, and returns a deeply immutable data contract.
 
 The projector has no state manager, executor, provider, callback, persistence, network, external integration, or customer-release capability. It is not connected to the prototype UI or either orchestration path in this milestone. See [Conversation Read Model](CONVERSATION_READ_MODEL.md).
+
+## Sprint 5.3 Prototype Integration Status
+
+Milestone 5.3 makes the Prototype Chat Session the application-owned integration boundary. The session supplies its existing in-memory Conversation State Manager to the AI Foundation Orchestrator, calls only `runWithExecution()` for the registered AI-controlled transition, resolves projection context, and projects the latest snapshot before UI delivery.
+
+The UI-facing integration result contains only the immutable Conversation Read Model plus copied decision/execution summaries that omit raw state. Rejected execution still projects current valid state; projection failure returns no raw fallback. The certified read-only `run()` path and the one-transition registry remain unchanged. See [Prototype Read Model Integration](PROTOTYPE_READ_MODEL_INTEGRATION.md).

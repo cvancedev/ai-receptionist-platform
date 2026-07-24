@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 4 - AI Integration Prototype Foundation
+
+- Isolated provider-neutral `src/ai` contracts, registries, package builders, gateway, mock adapter, normalization, parsing, validation, duplicate guards, decisions, fixtures, and orchestration added.
+- Eight MVP tasks and eight proposal/Output Contract combinations enforced through immutable registries.
+- Deterministic fictional mock scenarios cover valid, malformed, unknown, cross-scope, stale, grounding, authority, refusal, incomplete, failed, and cancelled results.
+- Dedicated `verify:ai-foundation` command added without dependencies.
+- Prototype orchestration stops before authoritative mutation, escalation/completion effects, response release, networking, or persistence.
+- Sprint 4.5 marked complete while Sprint 4.6 certification remains deferred.
+- Existing public routes, UI, deterministic intake, Sprint 3 verification, and package dependencies remain unchanged.
+
 ### Sprint 4 - Model Output and Proposal Validation Architecture
 
 - Complete provider-neutral boundary from raw provider result through application decision, typed-operation construction, and customer release documented.
@@ -12,7 +22,7 @@ All notable changes to this project will be documented in this file. The format 
 - Contract-supported partial acceptance, deterministic repair, bounded retry, non-retryable failures, and exhaustion paths documented.
 - Customer response release, grounding, stale-state, duplicate mutation, and duplicate message safeguards defined.
 - Thirty-seven output failure categories plus audit and reproducibility requirements documented.
-- Sprint 4.1 through 4.4 marked complete while Sprint 4.5 remains deferred.
+- Sprint 4.1 through 4.4 completion recorded as the foundation for the AI Integration Prototype.
 - Certified Sprint 3 behavior, application code, configuration, routes, and dependencies remain unchanged.
 
 ### Sprint 4 - Prompt and Task Architecture

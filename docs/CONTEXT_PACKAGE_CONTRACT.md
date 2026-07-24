@@ -141,7 +141,7 @@ Output Validation later uses this immutable package identity and provenance to v
 
 ## Current Boundary
 
-This document creates no code contract. No interface, schema, Context Builder, validator, Prompt Composer, provider adapter, API route, or persistence mechanism is implemented.
+Milestone 4.5 implements a narrow prototype TypeScript `ContextPackage` aligned to this architecture. It is fixture-only and provider-neutral, with identity, state projection, evidence categories, knowledge references, history/current input, policy versions, provenance, budget, and validation metadata. No production schema, retrieval, API, database, or persistence mechanism is implemented.
 
 ## Related Documents
 
@@ -149,4 +149,5 @@ This document creates no code contract. No interface, schema, Context Builder, v
 - [Model Gateway Architecture](MODEL_GATEWAY_ARCHITECTURE.md)
 - [Prompt Architecture](PROMPT_ARCHITECTURE.md)
 - [Output Validation Pipeline](OUTPUT_VALIDATION_PIPELINE.md)
+- [AI Prototype Contracts](AI_PROTOTYPE_CONTRACTS.md)
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)

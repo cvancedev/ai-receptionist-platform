@@ -67,10 +67,10 @@ The numbered sequence after Sprint 3 remains provisional and must be reassessed 
 - Milestone 4.2: Context Assembly Architecture — Complete
 - Milestone 4.3: Prompt and Task Architecture — Complete
 - Milestone 4.4: Model Output and Proposal Validation Architecture — Complete
-- Milestone 4.5: AI Integration Prototype Foundation — Deferred pending architecture approval
+- Milestone 4.5: AI Integration Prototype Foundation — Complete
 - Milestone 4.6: Sprint 4 Certification — Deferred
 
-Sprint 4 keeps the deterministic application authoritative. Milestones 4.2 and 4.3 define approved model input; Milestone 4.4 defines provider-neutral output normalization, layered validation, deterministic decisions, typed-operation construction, bounded recovery, duplicate guards, and customer-release approval. No implementation, production schema, provider, model, SDK, API, networking, persistence, authentication, production prompt, or customer-facing AI capability is introduced. Milestone 4.5 remains deferred.
+Sprint 4 keeps the deterministic application authoritative. Milestone 4.5 implements the typed provider-neutral flow with immutable packages, allowlisted registries, a deterministic mock adapter, inert parsing, layered prototype validation, duplicate protection, and read-only decisions. It introduces no real provider/model/SDK, network, production prompt/schema, mutation, delivery, persistence, authentication, or customer-facing AI. Milestone 4.6 certification remains deferred.
 
 The detailed sequence and guardrails are defined in [Sprint 4 Plan](docs/SPRINT_4_PLAN.md).
 

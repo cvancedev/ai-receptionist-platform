@@ -75,4 +75,4 @@ Boundaries should return explicit identity, eligibility, validation, conflict, u
 
 ## Current Milestone Boundary
 
-These are architecture boundaries only. Milestone 4.4 adds internal provider-result normalization, contract-aware parsing, layered Output Validation, Application Decision, Typed Operation, and Response Release boundaries. They return explicit classified outcomes and never expose raw output as state authority. These are not endpoints, schemas, or TypeScript contracts. No endpoints, API routes, Context Builder, Prompt Composer, parser, validator, operation builder, release gate, provider calls, networking, authentication, persistence, retries, or streaming are implemented in Sprint 4.1 through 4.4.
+Milestone 4.5 implements internal provider-neutral TypeScript boundaries for the mock-only foundation. They are direct in-process modules, not APIs or routes. No endpoint, network transport, real provider call, authentication, persistence, production operation builder, release gate, retry execution, or streaming is added.

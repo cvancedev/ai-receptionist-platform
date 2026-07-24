@@ -96,10 +96,11 @@ Provider retry, network retry, duplicate callback, repeated application executio
 
 ## Current Boundary
 
-No audit store, parser, validator, duplicate guard, repair/retry engine, Typed Operation Builder, release gate, or monitoring integration is implemented.
+Milestone 4.5 implements the typed failure catalog, validation-stage metadata, deterministic fixture classifications, and in-memory duplicate guards. It adds no audit store, repair/retry engine, Typed Operation Builder, release gate, monitoring integration, or persistence.
 
 ## Related Documents
 
 - [Output Validation Pipeline](OUTPUT_VALIDATION_PIPELINE.md)
 - [Output Repair, Retry, and Partial Acceptance](OUTPUT_REPAIR_RETRY_AND_PARTIAL_ACCEPTANCE.md)
 - [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md)
+- [AI Prototype Verification](AI_PROTOTYPE_VERIFICATION.md)

@@ -250,6 +250,8 @@ Milestone 4.3 extends this boundary to Prompt Packages. Authority instructions, 
 
 Milestone 4.4 makes repair, retry, and alternate-provider attempts separately budgeted application decisions. Attempt count, failure category, latency, customer experience, and mutation/release status constrain eligibility; exhaustion uses fallback rather than indefinite spending.
 
+Milestone 4.5 represents cost/latency/retry classes and package size budgets as prototype metadata only. Mock usage is deterministic fixture metadata; no billing, metering, quotas, provider pricing, retry execution, or external usage occurs.
+
 ## Related Documents
 
 - [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md)
@@ -260,3 +262,4 @@ Milestone 4.4 makes repair, retry, and alternate-provider attempts separately bu
 - [Context Budgeting and Reduction](CONTEXT_BUDGETING_AND_REDUCTION.md)
 - [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)
 - [Output Repair, Retry, and Partial Acceptance](OUTPUT_REPAIR_RETRY_AND_PARTIAL_ACCEPTANCE.md)
+- [AI Prototype Contracts](AI_PROTOTYPE_CONTRACTS.md)

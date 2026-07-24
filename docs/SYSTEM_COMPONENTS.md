@@ -67,6 +67,8 @@ Parses and checks proposal structure, task type, business and conversation scope
 
 The future boundary is layered across contract-aware inert parsing, structural, scope, proposal, permission/prohibition, semantic, state, profile, grounding, customer-text, and duplicate validation. The existing `OutputValidator` interface and Sprint 3 proposal validator are deferred/placeholder prototype boundaries, not this implementation. See [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md).
 
+Milestone 4.5 implements these concepts in an isolated `src/ai` prototype rather than replacing existing Sprint 3 components. `AiFoundationPrototypeOrchestrator` coordinates fictional fixtures through a mock adapter and returns an immutable no-effect snapshot.
+
 ## Application Decision Layer
 
 Evaluates validated proposals against current deterministic state and may accept, partially accept, modify, request clarification, retry under policy, use deterministic fallback, escalate, or reject. Only this application-owned layer may authorize typed state operations or customer-response release.

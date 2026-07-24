@@ -88,4 +88,6 @@ Sprint 4.1 defines how future AI assistance remains provider-independent, applic
 
 Milestone 4.3 defines the MVP task allowlist, deterministic task selection, and provider-neutral Prompt Packages. Milestone 4.4 defines allowlisted proposals, narrow Output Contracts, layered validation, deterministic decisions, application-constructed operations, bounded recovery, duplicate guards, and customer-release approval.
 
-All four Sprint 4 milestones are documentation only. No Context Builder, Prompt Composer, production parser, validator, schema, TypeScript output contract, operation builder, release gate, provider, model, SDK, API, networking, persistence, or authentication has been implemented. The existing deterministic prototype remains unchanged. See [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md) and [Sprint 4 Plan](SPRINT_4_PLAN.md). Sprint 4.5 has not started.
+Milestone 4.5 implements only the provider-neutral mock foundation: typed prototype contracts, registries, immutable packages, a deterministic mock adapter, bounded parser, explicit validation, duplicate guard, decision classifier, and verification. It stops before state mutation or customer release and leaves the deterministic Sprint 3 prototype unchanged.
+
+No real provider/model/SDK, production prompt/schema, API/networking, persistence, authentication, billing, or delivery integration exists. See [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md) and [Sprint 4 Plan](SPRINT_4_PLAN.md). Sprint 4.6 certification has not started.

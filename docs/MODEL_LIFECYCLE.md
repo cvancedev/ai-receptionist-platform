@@ -221,7 +221,7 @@ Cancellation may occur before dispatch, during execution, during streaming, or b
 
 ## Current Boundary
 
-Milestones 4.1 through 4.4 define this lifecycle through output normalization, layered validation, deterministic decision, typed-operation construction, and response-release approval. Provider success is intermediate; raw and partial output remain untrusted. Stale or duplicate proposals fail before effects. No Context Builder, Prompt Composer, registry, gateway execution, provider call, production prompt/schema, parser, validator, repair/retry engine, operation builder, audit store, or response-release implementation is added.
+Milestone 4.5 exercises this lifecycle from approved task through immutable application decision using fictional fixtures and a deterministic mock adapter. It implements no authoritative state application, response release, repair/retry execution, real provider call, production prompt/schema, audit store, networking, or persistence.
 
 ## Related Documents
 
@@ -235,5 +235,6 @@ Milestones 4.1 through 4.4 define this lifecycle through output normalization, l
 - [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)
 - [Proposal Decision and Application](PROPOSAL_DECISION_AND_APPLICATION.md)
 - [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md)
+- [AI Prototype Verification](AI_PROTOTYPE_VERIFICATION.md)
 - [Conversation State](CONVERSATION_STATE.md)
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)

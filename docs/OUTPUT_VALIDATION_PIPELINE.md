@@ -107,8 +107,13 @@ Stable request/proposal identity and operation/release keys allow the applicatio
 
 The eight MVP task profiles use the validation expectations in [Model Proposal Catalog](MODEL_PROPOSAL_CATALOG.md). Unknown task/proposal pairs fail before decision input is produced.
 
+## Prototype Status
+
+Milestone 4.5 implements the safe executable subset: result normalization, bounded parsing, required/allowed/type checks, task/contract/scope/revision checks, field/service/message/knowledge compatibility, selected customer-text and authority checks, duplicate proposal processing, and deterministic classification. It performs no mutation or release.
+
 ## Related Documents
 
 - [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)
 - [Proposal Decision and Application](PROPOSAL_DECISION_AND_APPLICATION.md)
 - [Output Failure and Audit](OUTPUT_FAILURE_AND_AUDIT.md)
+- [AI Prototype Verification](AI_PROTOTYPE_VERIFICATION.md)

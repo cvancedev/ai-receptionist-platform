@@ -109,7 +109,7 @@ After a deterministic application decision, the application may construct typed 
 
 ## Current Boundary
 
-Milestone 4.4 defines architecture only. No parser, validator, schema, TypeScript output contract, Typed Operation Builder, release gate, repair/retry code, provider, model, API, networking, persistence, or authentication is implemented.
+Milestone 4.5 implements a focused prototype normalizer, bounded inert parser, explicit contract/scope/semantic/authority validator, duplicate proposal guard, and deterministic decision classifier. It does not implement production schemas/validators, Typed Operation Builder, release gate, repair/retry execution, real provider/model, API, networking, persistence, or authentication.
 
 ## Related Documents
 
@@ -119,3 +119,4 @@ Milestone 4.4 defines architecture only. No parser, validator, schema, TypeScrip
 - [Proposal Decision and Application](PROPOSAL_DECISION_AND_APPLICATION.md)
 - [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md)
 - [Output Failure and Audit](OUTPUT_FAILURE_AND_AUDIT.md)
+- [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md)

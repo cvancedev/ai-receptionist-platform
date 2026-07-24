@@ -356,7 +356,7 @@ Milestone 4.3 adds fail-closed prompt failures for unknown tasks, incompatible t
 
 Milestone 4.4 adds raw-output, contract, proposal, scope, authority, semantic, state, profile, grounding, safety, duplicate, repair, retry, and release failures. Recovery remains application-selected and fully revalidated; non-retryable contamination, authority, stale-state, and duplicate failures stop safely.
 
-No Context Builder, Prompt Composer, parser, validator, operation builder, release gate, retry code, provider fallback, networking, queue, persistence, monitoring vendor, or recovery implementation is added in Milestones 4.1 through 4.4.
+Milestone 4.5 implements typed failure results and deterministic classification for the mock prototype, including explicit refused, incomplete, failed, cancelled, malformed, scope, revision, grounding, authority, and duplicate paths. It does not implement repair, retry execution, fallback provider selection, mutation, release, networking, queues, persistence, or monitoring.
 
 ## Related Documents
 
@@ -368,3 +368,4 @@ No Context Builder, Prompt Composer, parser, validator, operation builder, relea
 - [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)
 - [Output Repair, Retry, and Partial Acceptance](OUTPUT_REPAIR_RETRY_AND_PARTIAL_ACCEPTANCE.md)
 - [Output Failure and Audit](OUTPUT_FAILURE_AND_AUDIT.md)
+- [AI Prototype Verification](AI_PROTOTYPE_VERIFICATION.md)

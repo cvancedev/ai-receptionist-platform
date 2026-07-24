@@ -106,8 +106,13 @@ Common audit records include the proposal identity/type, task and contract versi
 
 Any unknown type, mixed uncontracted type, generic operation, or task mismatch is rejected before application use. The platform never dynamically expands the allowlist because a model emitted a novel field or proposal.
 
+## Prototype Status
+
+Milestone 4.5 implements the eight proposal identifiers as a closed TypeScript union and one deterministic mock fixture shape per compatible task. Explicit validation rejects unknown proposal types and incompatible contracts. These are untrusted prototype records, not production schemas or authoritative operations.
+
 ## Related Documents
 
 - [Model Task Catalog](MODEL_TASK_CATALOG.md)
 - [Output Contract Architecture](OUTPUT_CONTRACT_ARCHITECTURE.md)
 - [Output Validation Pipeline](OUTPUT_VALIDATION_PIPELINE.md)
+- [AI Prototype Contracts](AI_PROTOTYPE_CONTRACTS.md)

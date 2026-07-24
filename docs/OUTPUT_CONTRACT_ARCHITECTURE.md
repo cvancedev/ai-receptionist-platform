@@ -86,6 +86,8 @@ Truncation or ambiguous multi-object output fails unless that exact shape is con
 
 No schema registry, code generator, JSON Schema, Zod schema, or rollout system is implemented.
 
+Milestone 4.5 implements eight immutable in-memory prototype Output Contract definitions with explicit fields, types, limits, references, extra-field rejection, and partial-acceptance policy. No dependency or production schema tooling is added.
+
 ## Validation Compatibility
 
 The Output Contract Registry must reject combinations where task permissions, Context/Prompt Package versions, or validator behavior disagree. A provider adapter may express an equivalent response format but cannot change contract semantics.
@@ -96,3 +98,4 @@ The Output Contract Registry must reject combinations where task permissions, Co
 - [Prompt Architecture](PROMPT_ARCHITECTURE.md)
 - [Output Validation Pipeline](OUTPUT_VALIDATION_PIPELINE.md)
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)
+- [AI Prototype Contracts](AI_PROTOTYPE_CONTRACTS.md)

@@ -245,3 +245,35 @@ Field-level acceptance is allowed only when the contract explicitly permits inde
 ## Duplicate Effects Fail Closed
 
 Stable proposal, mutation, and release identities prevent repeated processing from causing duplicate authoritative effects or customer messages.
+
+## Typed AI Boundaries Before Provider Integration
+
+Provider-neutral task, Context Package, Prompt Package, provider result, proposal, validation, and decision contracts must exist and pass deterministic verification before adding a real provider.
+
+## Mock Provider First
+
+AI orchestration is proven through an explicitly selected deterministic mock adapter before any external model integration or credential path.
+
+## Registries Enforce Allowlists
+
+Tasks and Output Contracts resolve through immutable application-owned registries. Unknown identifiers and unsupported versions fail closed.
+
+## Parsing Is Inert and Bounded
+
+Raw provider output is data. Prototype parsing accepts only a bounded plain JSON object and never executes code, repairs authority fields, follows links, or invokes tools.
+
+## Prototype Validation Is Explicit
+
+Understandable TypeScript checks enforce contract, scope, revision, profile, source, grounding, semantic, authority, and duplicate boundaries without trusting provider schema compliance.
+
+## Decision and Mutation Remain Separate
+
+An accepted proposal produces a read-only application decision only. It does not mutate Conversation State or construct an authoritative effect in this foundation.
+
+## No Customer Release in the Foundation
+
+Customer-facing text remains an unapproved draft. No release gate or delivery integration is implemented in Milestone 4.5.
+
+## Duplicate Processing Is Guarded Early
+
+In-memory proposal-processing deduplication is established before provider retries, state-operation construction, or delivery integrations are introduced.

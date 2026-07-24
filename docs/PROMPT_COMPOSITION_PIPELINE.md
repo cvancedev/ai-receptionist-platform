@@ -112,7 +112,7 @@ Optional examples, duplicate material, old history, and advisory summaries are r
 
 ## Current Boundary
 
-No Task Registry, Prompt Registry, Prompt Composer, Prompt Budgeter, Prompt Package Validator, provider request, TypeScript contract, or production prompt is implemented.
+Milestone 4.5 implements an immutable prototype Task Registry and deterministic Prompt Package Composer/validation boundary. It emits provider-neutral references and package metadata, not production prompt prose or provider messages. No production registry, prompt store, prompt experiment, or provider request is implemented.
 
 Milestone 4.4 defines that the bound Output Contract and package identities become immutable inputs to downstream validation. Composition never validates or authorizes model output.
 
@@ -123,3 +123,4 @@ Milestone 4.4 defines that the bound Output Contract and package identities beco
 - [Prompt Versioning and Change Control](PROMPT_VERSIONING_AND_CHANGE_CONTROL.md)
 - [Output Contract Architecture](OUTPUT_CONTRACT_ARCHITECTURE.md)
 - [Output Validation Pipeline](OUTPUT_VALIDATION_PIPELINE.md)
+- [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md)

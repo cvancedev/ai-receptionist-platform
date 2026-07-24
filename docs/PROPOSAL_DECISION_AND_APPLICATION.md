@@ -78,8 +78,13 @@ A retry is an application decision, not a model request. A later result does not
 
 The decision record identifies proposal, accepted/rejected fields, modification, fallback, retry approval, typed operations constructed/applied, current revision, and response-release dependency.
 
+## Prototype Status
+
+Milestone 4.5 implements deterministic decision classification only. Every result explicitly denies mutation and customer release. No Typed Operation Builder, Conversation State submission, escalation activation, completion, handoff, or release is implemented.
+
 ## Related Documents
 
 - [Output Repair, Retry, and Partial Acceptance](OUTPUT_REPAIR_RETRY_AND_PARTIAL_ACCEPTANCE.md)
 - [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md)
 - [Conversation State](CONVERSATION_STATE.md)
+- [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md)

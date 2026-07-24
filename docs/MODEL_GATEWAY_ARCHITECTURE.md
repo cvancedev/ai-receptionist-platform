@@ -290,6 +290,10 @@ The gateway normalizes transport, completion, refusal, truncation, usage, and pr
 
 Adapters cannot parse proposals into authority, select repair/retry, apply state, or release text. Provider-specific structured-output success and safety labels do not replace contract, semantic, scope, grounding, state, or customer-release validation.
 
+## Prototype Status
+
+Milestone 4.5 implements `PrototypeModelGateway` and a deterministic `MockModelProviderAdapter` behind a provider-neutral interface. The gateway accepts only validated Prompt Packages and approved task/contract combinations. The adapter uses explicit fictional fixtures, no network, SDK, credential, environment variable, or real model.
+
 ## Deferred Decisions
 
 - Provider and model selection
@@ -315,4 +319,5 @@ Adapters cannot parse proposals into authority, select repair/retry, apply state
 - [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)
 - [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)
 - [Output Failure and Audit](OUTPUT_FAILURE_AND_AUDIT.md)
+- [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md)
 - [API Boundaries](API_BOUNDARIES.md)

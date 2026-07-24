@@ -60,8 +60,13 @@ Streaming remains deferred. Partial output is untrusted and unreleased. A later 
 
 Unsafe, stale, ungrounded, contradictory, duplicate, or ambiguous content is rejected. The application uses deterministic wording, clarification, escalation, or safe stop without claiming a failed action occurred.
 
+## Prototype Status
+
+Milestone 4.5 intentionally implements no Response Release Gate or delivery. Decision and orchestration snapshots always set customer release authorization/occurrence to `false`; response-release attempt identities exist only to verify duplicate-guard behavior.
+
 ## Related Documents
 
 - [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)
 - [Proposal Decision and Application](PROPOSAL_DECISION_AND_APPLICATION.md)
 - [Output Failure and Audit](OUTPUT_FAILURE_AND_AUDIT.md)
+- [AI Prototype Verification](AI_PROTOTYPE_VERIFICATION.md)

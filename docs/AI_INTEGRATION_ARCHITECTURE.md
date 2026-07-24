@@ -241,7 +241,7 @@ Streaming is deferred. If introduced later:
 
 The current `MockModelGateway` is a deterministic local stand-in used by the certified Sprint 3 prototype. It performs no AI, prompt, API, or network work. The existing `ContextBuilder` and `OutputValidator` are deferred interfaces, not production implementations.
 
-Milestones 4.1 through 4.4 change documentation only. Model input remains application-selected and validated; Milestone 4.4 defines provider-neutral output normalization, parsing boundaries, layered validation, deterministic decision, application-constructed typed operations, bounded recovery, duplicate guards, and separate response-release approval. Model Gateway, Context Builder, Prompt Composer, registries, parser, validators, operation builder, and release gate remain unimplemented. No provider, model, SDK, production prompt/schema, API, networking, persistence, or authentication has been selected or implemented.
+Milestones 4.1 through 4.4 define architecture. Milestone 4.5 implements an isolated provider-neutral prototype of typed tasks/packages/results, allowlisted registries, deterministic package builders, mock-only gateway/adapter, normalization, inert parsing, explicit validation, duplicate processing, and read-only decisions. It does not implement production builders/composers/validators, typed operations, response release, a real provider/model/SDK, production prompt/schema, API, networking, persistence, or authentication.
 
 ## Related Documents
 
@@ -260,3 +260,4 @@ Milestones 4.1 through 4.4 change documentation only. Model input remains applic
 - [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)
 - [Output Validation Pipeline](OUTPUT_VALIDATION_PIPELINE.md)
 - [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md)
+- [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md)

@@ -126,7 +126,7 @@ Milestone 4.4 defines provider-neutral proposal contracts, layered validation, d
 
 ## Milestone 4.5: AI Integration Prototype Foundation
 
-**Status:** Deferred until architecture approval
+**Status:** Complete
 
 ### Potential Scope
 
@@ -142,6 +142,8 @@ Milestone 4.4 defines provider-neutral proposal contracts, layered validation, d
 - No production provider unless explicitly approved in a later decision.
 - No provider SDK types in application or domain contracts.
 - No customer-visible production AI capability.
+
+Milestone 4.5 implements isolated provider-neutral TypeScript contracts, immutable registries and packages, a deterministic mock adapter, bounded parsing, explicit prototype validation, duplicate processing protection, read-only decisions, and dedicated verification. It stops before mutation, customer release, real providers, networking, persistence, or production prompts.
 - No persistence, authentication, or real customer data.
 
 ## Milestone 4.6: Sprint 4 Certification
@@ -249,10 +251,13 @@ Sprint 4 is complete only when its final certification confirms:
 - [Output Repair, Retry, and Partial Acceptance](OUTPUT_REPAIR_RETRY_AND_PARTIAL_ACCEPTANCE.md)
 - [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md)
 - [Output Failure and Audit](OUTPUT_FAILURE_AND_AUDIT.md)
+- [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md)
+- [AI Prototype Contracts](AI_PROTOTYPE_CONTRACTS.md)
+- [AI Prototype Verification](AI_PROTOTYPE_VERIFICATION.md)
 - [Model Gateway Architecture](MODEL_GATEWAY_ARCHITECTURE.md)
 - [Model Lifecycle](MODEL_LIFECYCLE.md)
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
 - [Sprint 3 Certification](SPRINT_3_CERTIFICATION.md)
 
-Milestones 4.5 and 4.6 remain deferred. Sprint 4.5 has not started.
+Milestone 4.6 remains deferred. Sprint 4.6 certification has not started.

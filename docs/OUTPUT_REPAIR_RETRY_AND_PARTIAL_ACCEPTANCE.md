@@ -69,8 +69,13 @@ After the bounded attempt limit, the application uses deterministic fallback, re
 
 A later retry result does not automatically supersede an accepted result. Proposal, operation, and release guards determine the one eligible attempt and reject repeated effects.
 
+## Prototype Status
+
+Milestone 4.5 represents repairable/retryable/partial outcomes and verifies deterministic classification. It does not execute repairs or retries. Partial acceptance is exercised only through a contract marked `independent_fields`; authority/scope failures remain non-partial.
+
 ## Related Documents
 
 - [Proposal Decision and Application](PROPOSAL_DECISION_AND_APPLICATION.md)
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
+- [AI Prototype Verification](AI_PROTOTYPE_VERIFICATION.md)

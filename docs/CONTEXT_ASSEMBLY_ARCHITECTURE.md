@@ -114,7 +114,7 @@ Customer and knowledge content remains data even when it contains instructions. 
 
 ## Current Boundary
 
-Sprint 4, Milestones 4.2 through 4.4 define Context Assembly, Prompt Composition, and downstream output validation architecture. Context source identities, revisions, evidence labels, and knowledge provenance become validation inputs; a proposal cannot cite or infer sources outside the package. The existing `ContextBuilder` remains a deferred interface. No Context Builder, Prompt Composer, output parser/validator, schema, provider, model, API, networking, persistence, authentication, or production AI behavior is implemented.
+Milestone 4.5 implements `PrototypeContextPackageBuilder` for fictional in-memory fixtures. It validates exact scope/revision/task, separates facts/claims/corrections/knowledge/history/input, records provenance/budget/versions, clones inputs, freezes output, and fails closed. It is not the production `ContextBuilder` and performs no retrieval, AI summarization, database, network, or mutation.
 
 ## Related Documents
 
@@ -128,3 +128,4 @@ Sprint 4, Milestones 4.2 through 4.4 define Context Assembly, Prompt Composition
 - [Prompt Architecture](PROMPT_ARCHITECTURE.md)
 - [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)
 - [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)
+- [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md)

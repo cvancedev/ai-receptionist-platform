@@ -90,4 +90,4 @@ Milestone 4.3 defines the MVP task allowlist, deterministic task selection, and 
 
 Milestone 4.5 implements only the provider-neutral mock foundation: typed prototype contracts, registries, immutable packages, a deterministic mock adapter, bounded parser, explicit validation, duplicate guard, decision classifier, and verification. It stops before state mutation or customer release and leaves the deterministic Sprint 3 prototype unchanged.
 
-No real provider/model/SDK, production prompt/schema, API/networking, persistence, authentication, billing, or delivery integration exists. See [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md) and [Sprint 4 Plan](SPRINT_4_PLAN.md). Sprint 4.6 certification has not started.
+No real provider/model/SDK, production prompt/schema, API/networking, persistence, authentication, billing, or delivery integration exists. See [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md), [Sprint 4 Plan](SPRINT_4_PLAN.md), and [Sprint 4 Certification](certification/SPRINT4_CERTIFICATION.md). Sprint 4 is certified complete; Sprint 5 has not started.

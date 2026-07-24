@@ -10,18 +10,20 @@ The command compiles the existing `src` tree through `tsconfig.prototype.json` a
 
 ## Registry and Package Coverage
 
-- all eight tasks and contracts resolve;
+- all eight allowlisted tasks resolve with compatible contracts and all eight allowlisted proposal types have contracts;
 - unknown identifiers and unsupported versions fail;
 - incompatible contracts fail;
 - Context and Prompt Packages build from fictional fixtures;
 - invalid Context and Prompt scope fails;
 - policy references contain no production prompt prose; and
-- package snapshots are immutable and clone authoritative inputs.
+- package snapshots and nested structures are immutable and clone authoritative inputs; and
+- prompt-injection-like customer text remains context data and is not promoted into Prompt Package policy fields.
 
 ## Parsing and Validation Coverage
 
 - one plain JSON object succeeds;
-- malformed JSON, arrays, trailing prose, and dangerous keys fail;
+- empty, malformed, oversized, deeply nested, array, trailing-prose, and dangerous-key output fails;
+- missing required fields, invalid field types, and unexpected fields fail;
 - valid intent and fact proposals pass;
 - unknown proposal types and action-like extra fields fail;
 - business, conversation, profile, and state mismatches fail;
@@ -55,7 +57,7 @@ Verification proves:
 - no real provider/model/SDK;
 - no production prompt content;
 - no persistence;
-- deterministic equivalent results for identical fixtures;
+- deterministic equivalent results for identical fixtures at task, context, prompt, provider, normalization, parser, validator, duplicate-guard, decision, and final-snapshot stages;
 - immutable inputs remain unchanged; and
 - result snapshots are frozen.
 
@@ -76,3 +78,4 @@ This confirms the AI foundation has not changed deterministic intake, `/prototyp
 - [AI Integration Prototype Foundation](AI_INTEGRATION_PROTOTYPE_FOUNDATION.md)
 - [AI Prototype Contracts](AI_PROTOTYPE_CONTRACTS.md)
 - [Sprint 3 Certification](SPRINT_3_CERTIFICATION.md)
+- [Sprint 4 Certification](certification/SPRINT4_CERTIFICATION.md)

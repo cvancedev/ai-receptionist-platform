@@ -68,11 +68,11 @@ The numbered sequence after Sprint 3 remains provisional and must be reassessed 
 - Milestone 4.3: Prompt and Task Architecture — Complete
 - Milestone 4.4: Model Output and Proposal Validation Architecture — Complete
 - Milestone 4.5: AI Integration Prototype Foundation — Complete
-- Milestone 4.6: Sprint 4 Certification — Deferred
+- Milestone 4.6: Sprint 4 Certification — Complete
 
-Sprint 4 keeps the deterministic application authoritative. Milestone 4.5 implements the typed provider-neutral flow with immutable packages, allowlisted registries, a deterministic mock adapter, inert parsing, layered prototype validation, duplicate protection, and read-only decisions. It introduces no real provider/model/SDK, network, production prompt/schema, mutation, delivery, persistence, authentication, or customer-facing AI. Milestone 4.6 certification remains deferred.
+Sprint 4 keeps the deterministic application authoritative. Milestone 4.5 implements the typed provider-neutral flow with immutable packages, allowlisted registries, a deterministic mock adapter, inert parsing, layered prototype validation, duplicate protection, and read-only decisions. Milestone 4.6 certifies its architecture, fail-closed security, deterministic mock path, prohibited boundaries, regressions, and documentation. Sprint 4 introduces no real provider/model/SDK, network, production prompt/schema, mutation, delivery, persistence, authentication, or customer-facing AI.
 
-The detailed sequence and guardrails are defined in [Sprint 4 Plan](docs/SPRINT_4_PLAN.md).
+The detailed sequence and guardrails are defined in [Sprint 4 Plan](docs/SPRINT_4_PLAN.md), with results in [Sprint 4 Certification](docs/certification/SPRINT4_CERTIFICATION.md).
 
 ## Sprint 5: Lead Capture MVP
 

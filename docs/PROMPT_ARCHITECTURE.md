@@ -262,7 +262,7 @@ If a provider format cannot preserve mandatory boundaries, that provider/request
 
 ## Current Milestone Boundary
 
-Milestone 4.5 implements a deterministic prototype Prompt Package Composer using structured policy/task/context/contract references only. It contains no production prompt prose or provider message format. The immutable Task Registry is implemented for the eight MVP tasks, but no production registry/store, provider/model/SDK, API, networking, persistence, or authentication exists. Sprint 4.6 certification has not started.
+Milestone 4.5 implements a deterministic prototype Prompt Package Composer using structured policy/task/context/contract references only. It contains no production prompt prose or provider message format. The immutable Task Registry is implemented for the eight MVP tasks, but no production registry/store, provider/model/SDK, API, networking, persistence, or authentication exists. Milestone 4.6 certifies the deterministic mock path and its read-only boundaries; see [Sprint 4 Certification](certification/SPRINT4_CERTIFICATION.md).
 
 ## Related Documents
 

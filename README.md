@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4.1 through 4.4 define the provider-neutral architecture, and Sprint 4.5 implements its smallest typed, deterministic, mock-only foundation. AI remains advisory: the prototype stops at an application decision and performs no state mutation or customer release. No real AI provider, model, SDK, networking, persistence, authentication, integration, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4 is certified complete with provider-neutral architecture and its smallest typed, deterministic, mock-only foundation. AI remains advisory: the prototype stops at an application decision and performs no state mutation or customer release. No real AI provider, model, SDK, networking, persistence, authentication, integration, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -142,6 +142,11 @@ npm run verify:ai-foundation
 - [AI failure and recovery](docs/AI_FAILURE_AND_RECOVERY.md)
 - [AI cost and usage boundaries](docs/AI_COST_AND_USAGE_BOUNDARIES.md)
 - [Sprint 4 plan](docs/SPRINT_4_PLAN.md)
+- [Sprint 4 certification](docs/certification/SPRINT4_CERTIFICATION.md)
+- [Sprint 4 architecture audit](docs/certification/SPRINT4_ARCHITECTURE_AUDIT.md)
+- [Sprint 4 security audit](docs/certification/SPRINT4_SECURITY_AUDIT.md)
+- [Sprint 4 determinism audit](docs/certification/SPRINT4_DETERMINISM.md)
+- [Sprint 4 boundary audit](docs/certification/SPRINT4_BOUNDARIES.md)
 - [Implementation architecture](docs/IMPLEMENTATION_ARCHITECTURE.md)
 - [System components](docs/SYSTEM_COMPONENTS.md)
 - [Data and state ownership](docs/DATA_AND_STATE_OWNERSHIP.md)
@@ -172,4 +177,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3 remains certified complete. Sprint 4.1 through 4.5 are complete. The isolated `src/ai` foundation implements provider-neutral TypeScript contracts, allowlisted registries, immutable Context/Prompt Packages, a mock-only gateway/adapter, inert parsing, explicit validation, duplicate protection, and deterministic decisions. It uses fictional fixtures and stops before mutation or release. No real provider, model, SDK, production prompt/schema, API, networking, persistence, authentication, or customer delivery exists. The public website and `/prototype` remain unchanged. Sprint 4.6 certification has not started.
+Sprint 3 and Sprint 4 are certified complete. The isolated `src/ai` foundation implements provider-neutral TypeScript contracts, allowlisted registries, immutable Context/Prompt Packages, a mock-only gateway/adapter, inert parsing, explicit validation, duplicate protection, and deterministic decisions. It uses fictional fixtures and stops before mutation or release. No real provider, model, SDK, production prompt/schema, API, networking, persistence, authentication, or customer delivery exists. The public website and `/prototype` remain unchanged. Sprint 5 has not started.

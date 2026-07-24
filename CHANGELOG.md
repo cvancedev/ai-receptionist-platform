@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 4 - Certification
+
+- Provider independence, immutable packages/results, untrusted-output handling, fail-closed validation, deterministic mock processing, duplicate safety, and read-only decisions audited.
+- Focused verification added for all allowlisted task/contract pairs, parser limits, invalid schemas, injection-like context containment, and layer-by-layer determinism.
+- Prohibited mutation, persistence, networking, communication, scheduling, provider-call, and business-action boundaries verified.
+- Sprint 3 regressions, AI foundation verification, lint, TypeScript, production build, Markdown links, and diff checks pass.
+- Sprint 4 certified complete without authorizing Sprint 5 implementation or expanding system authority.
+
 ### Sprint 4 - AI Integration Prototype Foundation
 
 - Isolated provider-neutral `src/ai` contracts, registries, package builders, gateway, mock adapter, normalization, parsing, validation, duplicate guards, decisions, fixtures, and orchestration added.
@@ -11,7 +19,7 @@ All notable changes to this project will be documented in this file. The format 
 - Deterministic fictional mock scenarios cover valid, malformed, unknown, cross-scope, stale, grounding, authority, refusal, incomplete, failed, and cancelled results.
 - Dedicated `verify:ai-foundation` command added without dependencies.
 - Prototype orchestration stops before authoritative mutation, escalation/completion effects, response release, networking, or persistence.
-- Sprint 4.5 marked complete while Sprint 4.6 certification remains deferred.
+- At the Milestone 4.5 checkpoint, Sprint 4.5 was complete and Sprint 4.6 had not yet begun.
 - Existing public routes, UI, deterministic intake, Sprint 3 verification, and package dependencies remain unchanged.
 
 ### Sprint 4 - Model Output and Proposal Validation Architecture

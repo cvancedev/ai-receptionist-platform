@@ -148,7 +148,7 @@ Milestone 4.5 implements isolated provider-neutral TypeScript contracts, immutab
 
 ## Milestone 4.6: Sprint 4 Certification
 
-**Status:** Deferred
+**Status:** Complete
 
 ### Certification Areas
 
@@ -164,6 +164,8 @@ Milestone 4.5 implements isolated provider-neutral TypeScript contracts, immutab
 - Documentation consistency
 
 The milestone count may be refined only through an explicit roadmap and decision update. Refinement does not authorize implementation beyond the approved current milestone.
+
+Milestone 4.6 audits architecture, security and fail-closed behavior, deterministic mock processing, prohibited capability boundaries, regression coverage, and documentation consistency. The evidence-based result is recorded in [Sprint 4 Certification](certification/SPRINT4_CERTIFICATION.md). No provider networking, mutation, persistence, customer communication, or business action execution is introduced.
 
 ## Sprint-Wide Architecture Invariants
 
@@ -259,5 +261,10 @@ Sprint 4 is complete only when its final certification confirms:
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
 - [Sprint 3 Certification](SPRINT_3_CERTIFICATION.md)
+- [Sprint 4 Certification](certification/SPRINT4_CERTIFICATION.md)
+- [Sprint 4 Architecture Audit](certification/SPRINT4_ARCHITECTURE_AUDIT.md)
+- [Sprint 4 Security Audit](certification/SPRINT4_SECURITY_AUDIT.md)
+- [Sprint 4 Determinism Audit](certification/SPRINT4_DETERMINISM.md)
+- [Sprint 4 Boundary Audit](certification/SPRINT4_BOUNDARIES.md)
 
-Milestone 4.6 remains deferred. Sprint 4.6 certification has not started.
+Milestone 4.6 and Sprint 4 are complete. Sprint 5 has not started.

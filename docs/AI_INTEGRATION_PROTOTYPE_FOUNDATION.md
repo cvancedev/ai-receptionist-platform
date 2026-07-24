@@ -42,6 +42,8 @@ src/ai/
 
 Dedicated verification lives at `src/verification/ai-foundation.verify.ts`.
 
+Sprint 4 certification evidence is recorded in [Sprint 4 Certification](certification/SPRINT4_CERTIFICATION.md).
+
 ## Implemented Boundaries
 
 - Eight allowlisted task identifiers and task definitions.

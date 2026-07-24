@@ -72,8 +72,13 @@ Customer text and knowledge are delimited as content. Trace metadata and operati
 
 These variations optimize comprehension, not authority.
 
+## Prompt Composition Handoff
+
+Context order preserves source authority inside the Context Package. Prompt Composition adds application-authority, task, permission/prohibition, and output-contract instruction layers above context data. It cannot upgrade a context source or ask the model to resolve precedence. See [Instruction Precedence](INSTRUCTION_PRECEDENCE.md).
+
 ## Related Documents
 
 - [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md)
 - [Context Eligibility and Filtering](CONTEXT_ELIGIBILITY_AND_FILTERING.md)
 - [Context Budgeting and Reduction](CONTEXT_BUDGETING_AND_REDUCTION.md)
+- [Instruction Precedence](INSTRUCTION_PRECEDENCE.md)

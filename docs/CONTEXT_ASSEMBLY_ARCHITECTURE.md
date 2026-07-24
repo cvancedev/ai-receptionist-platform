@@ -114,7 +114,7 @@ Customer and knowledge content remains data even when it contains instructions. 
 
 ## Current Boundary
 
-Sprint 4, Milestone 4.2 defines architecture only. The existing `ContextBuilder` remains a deferred interface. No Context Builder, context contract, validator, prompt, provider, model, API, networking, persistence, authentication, or production AI behavior is implemented.
+Sprint 4, Milestone 4.2 defines Context Assembly architecture and Milestone 4.3 defines the downstream provider-neutral Prompt Composition boundary. The Context Package supplies one approved task profile and labeled data; Prompt Composition cannot broaden its sources or change authority. The existing `ContextBuilder` remains a deferred interface. No Context Builder, Prompt Composer, contract, validator, production prompt, provider, model, API, networking, persistence, authentication, or production AI behavior is implemented.
 
 ## Related Documents
 
@@ -125,3 +125,5 @@ Sprint 4, Milestone 4.2 defines architecture only. The existing `ContextBuilder`
 - [Context Package Contract](CONTEXT_PACKAGE_CONTRACT.md)
 - [Context Failure and Audit](CONTEXT_FAILURE_AND_AUDIT.md)
 - [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md)
+- [Prompt Architecture](PROMPT_ARCHITECTURE.md)
+- [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)

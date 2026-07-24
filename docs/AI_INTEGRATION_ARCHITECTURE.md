@@ -241,7 +241,7 @@ Streaming is deferred. If introduced later:
 
 The current `MockModelGateway` is a deterministic local stand-in used by the certified Sprint 3 prototype. It performs no AI, prompt, API, or network work. The existing `ContextBuilder` and `OutputValidator` are deferred interfaces, not production implementations.
 
-Milestones 4.1 and 4.2 change documentation only. Milestone 4.2 defines the application-owned pipeline that produces immutable, task-specific, business/conversation/profile-version-scoped, bounded, provider-neutral context packages. Model Gateway implementation, Context Builder implementation, Prompt Composer implementation, provider evaluation, and output-contract code remain deferred. No provider, model, production prompt, parser, API, networking, persistence, or authentication has been selected or implemented.
+Milestones 4.1 through 4.3 change documentation only. Milestone 4.2 defines validated provider-neutral Context Packages; Milestone 4.3 defines application-selected task allowlists and provider-neutral Prompt Packages with explicit authority, permissions, prohibitions, precedence, output-contract references, versioning, and content boundaries. Model Gateway, Context Builder, Prompt Composer, registries, and output validation remain unimplemented. No provider, model, SDK, production prompt, parser, API, networking, persistence, or authentication has been selected or implemented.
 
 ## Related Documents
 
@@ -253,4 +253,7 @@ Milestones 4.1 and 4.2 change documentation only. Milestone 4.2 defines the appl
 - [Context Assembly](CONTEXT_ASSEMBLY.md)
 - [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md)
 - [Context Package Contract](CONTEXT_PACKAGE_CONTRACT.md)
+- [Model Task Catalog](MODEL_TASK_CATALOG.md)
+- [Prompt Architecture](PROMPT_ARCHITECTURE.md)
+- [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)

@@ -352,7 +352,9 @@ Customer-facing handling should:
 
 Milestone 4.2 further defines fail-closed context failures: provider execution is blocked for unproven scope, incompatible profile versions, missing authoritative state, unsafe sensitive data, ambiguous authority, required context over budget, or invalid package contracts. Recovery may rebuild or reduce only through application-owned policy and never weakens isolation.
 
-No Context Builder, validator, retry code, provider fallback, networking, queue, persistence, monitoring vendor, or recovery implementation is added in Milestones 4.1 or 4.2.
+Milestone 4.3 adds fail-closed prompt failures for unknown tasks, incompatible task/context/output versions, missing authority layers, instruction conflicts, unsafe content boundaries, and essential prompt content over budget. Recovery may recompose only with approved versions and may never remove authority or weaken prohibitions.
+
+No Context Builder, Prompt Composer, validator, retry code, provider fallback, networking, queue, persistence, monitoring vendor, or recovery implementation is added in Milestones 4.1 through 4.3.
 
 ## Related Documents
 
@@ -361,3 +363,4 @@ No Context Builder, validator, retry code, provider fallback, networking, queue,
 - [Model Lifecycle](MODEL_LIFECYCLE.md)
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
 - [Context Failure and Audit](CONTEXT_FAILURE_AND_AUDIT.md)
+- [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)

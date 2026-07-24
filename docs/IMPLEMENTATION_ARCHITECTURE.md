@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document maps the approved architecture into implementation boundaries. Sprint 3 implements only the certified deterministic local prototype. Sprint 4.1 and 4.2 add provider-independent AI and Context Assembly architecture documentation and authorize no AI implementation, vendor, model, API, networking, persistence, or authentication work.
+This document maps the approved architecture into implementation boundaries. Sprint 3 implements only the certified deterministic local prototype. Sprint 4.1 through 4.3 add provider-independent AI, Context Assembly, and Prompt and Task architecture documentation and authorize no AI implementation, vendor, model, API, networking, persistence, or authentication work.
 
 ## Customer Experience Layer
 
@@ -97,4 +97,4 @@ The MVP receives an inquiry, understands the general request, gathers required i
 
 ## Sprint 4 Architecture Status
 
-Milestones 4.1 and 4.2 define architecture only. Future Context Assembly is application-owned and releases only validated, task-specific, provider-neutral packages with strict business, conversation, and profile-version isolation. The existing `ContextBuilder` remains a deferred interface. Context package types and validators, Prompt Composer implementation, Provider Adapters, real Model Gateway execution, output parsing, retries, streaming, persistence, authentication, and production observability remain deferred. See [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md), [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md), and [Sprint 4 Plan](SPRINT_4_PLAN.md). Sprint 4.3 has not started.
+Milestones 4.1 through 4.3 define architecture only. Context Assembly is application-owned; task selection is allowlisted and deterministic; Prompt Composition is provider-neutral, versioned, precedence-bound, and fail-closed. The existing `ContextBuilder` remains a deferred interface, and no Prompt Composer or registry exists. Context/prompt types and validators, production prompts, Provider Adapters, real Model Gateway execution, output parsing, retries, streaming, persistence, authentication, and observability remain deferred. See [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md), [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md), [Prompt Architecture](PROMPT_ARCHITECTURE.md), and [Sprint 4 Plan](SPRINT_4_PLAN.md). Sprint 4.4 has not started.

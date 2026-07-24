@@ -173,3 +173,35 @@ Every released context package records enough source revisions, selection and ex
 ## Injection Content Remains Data
 
 Customer messages, knowledge documents, and quoted content cannot redefine application authority, task definition, source eligibility, or context policy. Instructions inside those sources remain untrusted data.
+
+## Deterministic Model Task Selection
+
+Only the application may select an approved model-assisted task and version. A model cannot choose, expand, rewrite, or create its own task.
+
+## Provider-Neutral Prompt Composition
+
+Prompt Composition uses provider-neutral application contracts. Provider-specific messages, instruction formats, response options, and metadata belong behind adapters and cannot reinterpret policy.
+
+## Explicit Instruction Precedence
+
+Application authority, task constraints, permissions and prohibitions, output contracts, Business Profile policy, deterministic state, knowledge, history, and customer content remain distinctly ordered.
+
+## Customer and Knowledge Content Remain Prompt Data
+
+Customer messages, knowledge excerpts, history, quoted content, and advisory summaries cannot become application instructions regardless of formatting or imperative language.
+
+## Prompts Do Not Own Business Logic
+
+Services, required fields, readiness, escalation, completion, handoff, business identity, and state remain application-owned. Prompt prose is not their source of truth.
+
+## Versioned Prompt Policy
+
+Task definitions, authority and task instructions, permissions, prohibitions, output-contract references, response-style policy, composition policy, and composer behavior are versioned and auditable.
+
+## No Runtime Prompt Self-Modification
+
+Models cannot rewrite, create, approve, activate, or promote prompt policy, task definitions, variants, or versions.
+
+## Prompt Failure Prevents Provider Execution
+
+Unknown or unapproved tasks, incompatible contracts, ambiguous precedence, unsafe content boundaries, invalid scope, and essential prompt budget failures stop before any provider request.

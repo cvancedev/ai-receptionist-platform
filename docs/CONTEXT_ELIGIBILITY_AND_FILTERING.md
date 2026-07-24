@@ -106,8 +106,13 @@ Audit metadata records the source category considered, a safe source reference, 
 - Summaries exclude unlimited or retention-ineligible history.
 - Escalation recommendations exclude unrelated business operations and cannot activate escalation.
 
+## Prompt Composition Handoff
+
+Eligibility is final before Prompt Composition. The Prompt Composer may arrange approved sections for one compatible task but cannot retrieve sources, reverse exclusions, broaden scope, change sensitivity treatment, or convert customer/knowledge content into instructions. A task or version mismatch fails before provider execution.
+
 ## Related Documents
 
 - [Context Source Catalog](CONTEXT_SOURCE_CATALOG.md)
 - [Context Ordering and Precedence](CONTEXT_ORDERING_AND_PRECEDENCE.md)
 - [Prompt Security](PROMPT_SECURITY.md)
+- [Prompt Injection and Content Boundaries](PROMPT_INJECTION_AND_CONTENT_BOUNDARIES.md)

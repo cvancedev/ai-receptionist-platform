@@ -78,7 +78,7 @@ Milestone 4.2 establishes provider-neutral, task-specific packages; strict busin
 
 ## Milestone 4.3: Prompt and Task Architecture
 
-**Status:** Deferred
+**Status:** Complete
 
 ### Intended Scope
 
@@ -96,6 +96,8 @@ Milestone 4.2 establishes provider-neutral, task-specific packages; strict busin
 - No production prompts
 - No provider-specific message formats
 - No model tuning or provider selection
+
+Milestone 4.3 establishes the MVP task allowlist, provider-neutral Prompt Package layers, deterministic composition and precedence, content/injection boundaries, policy versioning, and fail-closed audit behavior. It adds documentation only and no production prompt text.
 
 ## Milestone 4.4: Model Output and Proposal Validation Architecture
 
@@ -230,10 +232,17 @@ Sprint 4 is complete only when its final certification confirms:
 - [Context Budgeting and Reduction](CONTEXT_BUDGETING_AND_REDUCTION.md)
 - [Context Package Contract](CONTEXT_PACKAGE_CONTRACT.md)
 - [Context Failure and Audit](CONTEXT_FAILURE_AND_AUDIT.md)
+- [Model Task Catalog](MODEL_TASK_CATALOG.md)
+- [Prompt Architecture](PROMPT_ARCHITECTURE.md)
+- [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)
+- [Instruction Precedence](INSTRUCTION_PRECEDENCE.md)
+- [Prompt Injection and Content Boundaries](PROMPT_INJECTION_AND_CONTENT_BOUNDARIES.md)
+- [Prompt Versioning and Change Control](PROMPT_VERSIONING_AND_CHANGE_CONTROL.md)
+- [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)
 - [Model Gateway Architecture](MODEL_GATEWAY_ARCHITECTURE.md)
 - [Model Lifecycle](MODEL_LIFECYCLE.md)
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
 - [Sprint 3 Certification](SPRINT_3_CERTIFICATION.md)
 
-Milestones 4.3 through 4.6 remain deferred. Sprint 4.3 has not started.
+Milestones 4.4 through 4.6 remain deferred. Sprint 4.4 has not started.

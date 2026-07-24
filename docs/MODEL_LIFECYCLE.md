@@ -221,7 +221,7 @@ Cancellation may occur before dispatch, during execution, during streaming, or b
 
 ## Current Boundary
 
-Milestones 4.1 and 4.2 define this lifecycle and its Context Assembly stage only. Request preparation now conceptually requires a validated, task-specific, provider-neutral package with scope, authority, budget, and provenance metadata. No Context Builder, request preparation, gateway execution, provider call, prompt system, output parsing, retry, audit storage, or response-release implementation is added.
+Milestones 4.1 through 4.3 define this lifecycle through Context Assembly and Prompt Composition. Request preparation requires an application-selected allowlisted task, validated Context Package, compatible output contract, and validated provider-neutral Prompt Package. Unknown tasks, incompatible versions, ambiguous authority, and unsafe content boundaries stop before gateway execution. No Context Builder, Prompt Composer, registry, gateway execution, provider call, production prompt, output parsing, retry, audit storage, or response-release implementation is added.
 
 ## Related Documents
 
@@ -230,5 +230,7 @@ Milestones 4.1 and 4.2 define this lifecycle and its Context Assembly stage only
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
 - [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md)
 - [Context Failure and Audit](CONTEXT_FAILURE_AND_AUDIT.md)
+- [Model Task Catalog](MODEL_TASK_CATALOG.md)
+- [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)
 - [Conversation State](CONVERSATION_STATE.md)
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)

@@ -278,6 +278,12 @@ The gateway may receive only a validated, immutable, provider-neutral context pa
 
 The gateway cannot retrieve more data, select sources, broaden scope, repair missing context, reinterpret customer or knowledge instructions as policy, or use provider memory as context. An invalid or stale package fails before provider execution.
 
+## Prompt Package Boundary
+
+The gateway accepts only a validated provider-neutral Prompt Package for an application-selected allowlisted task. The package carries fixed scope, task/version, authority layers, permissions, prohibitions, output-contract reference, labeled data, budget, provenance, and validation metadata.
+
+The gateway and adapter cannot choose a task, rewrite instructions, weaken prohibitions, add context, change precedence, substitute a contract, or promote customer/knowledge content into policy. If a provider format cannot preserve the package semantics, execution is ineligible.
+
 ## Deferred Decisions
 
 - Provider and model selection
@@ -299,4 +305,6 @@ The gateway cannot retrieve more data, select sources, broaden scope, repair mis
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
 - [Context Package Contract](CONTEXT_PACKAGE_CONTRACT.md)
+- [Prompt Architecture](PROMPT_ARCHITECTURE.md)
+- [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)
 - [API Boundaries](API_BOUNDARIES.md)

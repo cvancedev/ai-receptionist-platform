@@ -246,6 +246,8 @@ Cost optimization must not weaken validation, customer experience, or determinis
 
 Milestone 4.2 establishes application-owned task and section budget classes, deterministic reduction order, essential-authority preservation, bounded history strategies, and safe failure when required context cannot fit. It chooses no numeric or provider-specific limits and implements no budgeting or metering code.
 
+Milestone 4.3 extends this boundary to Prompt Packages. Authority instructions, task definition, scope, permissions/prohibitions, output-contract reference, required state/corrections, and task-required knowledge are preserved before optional examples, old history, or advisory content. No numeric prompt limit or production token counter is selected.
+
 ## Related Documents
 
 - [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md)
@@ -254,3 +256,4 @@ Milestone 4.2 establishes application-owned task and section budget classes, det
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
 - [Context Priority and Limits](CONTEXT_PRIORITY_AND_LIMITS.md)
 - [Context Budgeting and Reduction](CONTEXT_BUDGETING_AND_REDUCTION.md)
+- [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)

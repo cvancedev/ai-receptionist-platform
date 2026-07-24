@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 4 - Prompt and Task Architecture
+
+- MVP model-task allowlist, permissions, prohibitions, fallbacks, and deferred tasks documented.
+- Provider-neutral prompt layers and deterministic 18-step composition pipeline defined.
+- Stable instruction precedence and conflict-resolution rules established.
+- Customer, knowledge, history, quoted, and advisory content boundaries documented.
+- Prompt injection, exfiltration, hidden-instruction, and fail-closed safeguards defined.
+- Prompt versioning, review, rollback, experimentation, failure, audit, and reproducibility architecture added.
+- Sprint 4.1 through 4.3 marked complete while Sprint 4.4 remains deferred.
+- Certified Sprint 3 behavior, application code, configuration, routes, and dependencies remain unchanged.
+
 ### Sprint 4 - Context Assembly Architecture
 
 - Provider-neutral Context Assembly pipeline and component responsibilities documented.
@@ -12,7 +23,7 @@ All notable changes to this project will be documented in this file. The format 
 - Deterministic ordering, conflict resolution, budgeting, reduction, and safe failure rules defined.
 - Conceptual context package, provenance, validation, recovery, and audit contracts added.
 - Task-specific context profiles defined for seven future model-assisted operations.
-- Sprint 4.1 and 4.2 marked complete while Sprint 4.3 remains deferred.
+- Sprint 4.1 and 4.2 completion recorded as the foundation for Prompt and Task Architecture.
 - Certified Sprint 3 behavior, application code, configuration, and dependencies remain unchanged.
 
 ### Added

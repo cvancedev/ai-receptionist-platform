@@ -135,6 +135,8 @@ The package never becomes a universal payload. For example, extraction omits bro
 
 Future Prompt Composition may translate a valid package into provider-neutral prompt components, and an adapter may later serialize those components. Neither step may change scope, authority, content eligibility, or budget decisions.
 
+The Prompt Composer validates that the package task profile, contract version, business/conversation/profile/state identity, output-contract reference, and required sections are compatible with the selected task. Customer and knowledge sections remain typed data in the resulting Prompt Package.
+
 ## Current Boundary
 
 This document creates no code contract. No interface, schema, Context Builder, validator, Prompt Composer, provider adapter, API route, or persistence mechanism is implemented.
@@ -143,4 +145,5 @@ This document creates no code contract. No interface, schema, Context Builder, v
 
 - [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md)
 - [Model Gateway Architecture](MODEL_GATEWAY_ARCHITECTURE.md)
+- [Prompt Architecture](PROMPT_ARCHITECTURE.md)
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)

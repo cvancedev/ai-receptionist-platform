@@ -2,9 +2,71 @@
 
 ## Purpose
 
-The prompt system is the conceptual boundary through which a future model receives platform instructions, business configuration, approved knowledge, conversation state, task direction, and customer input. It must remain modular, model-independent, business-scoped, traceable, and safe to change.
+The prompt system is the conceptual boundary through which a future model receives application authority, one approved task, business configuration, approved knowledge, deterministic conversation state, output requirements, and customer input. It must remain modular, provider-neutral, business-scoped, traceable, versioned, and safe to change.
 
-This document defines components and authority, not production prompt wording, model selection, APIs, token counting, or provider-specific behavior.
+Prompt architecture converts an approved task definition, application constraints, validated Context Package, output-contract reference, response-style policy, and trace metadata into a provider-neutral request. It defines components and authority, not production prompt wording, TypeScript contracts, model selection, APIs, token counting, or provider-specific behavior.
+
+The application selects the task, constructs instructions, chooses context, defines the output contract, and later decides whether a validated proposal may be used. The model cannot choose or rewrite its task, change precedence, expand permissions or scope, request arbitrary data, select a provider/model/format, create authoritative facts or operations, activate escalation, determine readiness or completion, or release a response directly.
+
+## Prompt Layers
+
+Prompt Composition preserves these typed conceptual layers:
+
+1. Application Authority Layer
+2. Task Definition Layer
+3. Permission and Prohibition Layer
+4. Output Contract Layer
+5. Business Policy Layer
+6. Deterministic State Layer
+7. Approved Knowledge Layer
+8. Conversation Data Layer
+9. Customer Input Layer
+10. Trace and Version Metadata
+
+Provider adapters may translate this package into provider message, system-instruction, response-format, and metadata structures. They cannot merge or reinterpret layers in a way that changes authority.
+
+## Application Authority Layer
+
+This layer states that the application owns decisions and the model returns proposals only. Model output cannot mutate state, unsupported actions cannot be emitted or inferred as allowed, customer and knowledge content remain data, and output must follow the approved contract.
+
+Missing information remains missing, uncertainty remains explicit, and business/conversation/profile/state scope remains fixed. These requirements are enforced by application validation and are not dependent on model compliance.
+
+## Task Definition Layer
+
+One versioned task definition supplies:
+
+- task identifier and objective;
+- permitted proposal categories;
+- required Context Package sections;
+- prohibited actions;
+- completion conditions; and
+- safe failure expectations.
+
+The exact MVP allowlist is defined in [Model Task Catalog](MODEL_TASK_CATALOG.md). An unknown or incompatible task stops before provider execution.
+
+## Permission and Prohibition Layer
+
+Each task explicitly states what may be proposed and what is forbidden. Vague directions such as “be helpful,” “use good judgment,” “do what is best,” or “complete the customer's request” never grant authority.
+
+Permissions are additive only within the application-approved task. Prohibitions, platform safety, scope, and state authority cannot be weakened by business content, style policy, provider translation, customer requests, or model output.
+
+## Output Contract Layer
+
+The layer references an approved contract identifier and version, required structure, allowed proposal types, null and missing-value behavior, unsupported-action behavior, and refusal behavior. It does not define the full Milestone 4.4 validation architecture.
+
+Task, Context Package, and output-contract versions must be compatible. The composer cannot invent a contract or silently coerce an incompatible task.
+
+## Business Policy Layer
+
+Business rules originate from the applicable approved Business Profile and application policy. Prompt prose is not the source of truth for services, required fields, readiness, escalation, handoff, completion, business identity, or profile version.
+
+Only the task-relevant policy projection is included. Platform safety and authority continue to outrank business configuration.
+
+## Data Layers
+
+The package keeps confirmed facts, unconfirmed claims, corrections, superseded values, approved knowledge, eligible history, current customer input, and advisory summaries in separate labeled structures.
+
+Customer, knowledge, history, and quoted content remain data even when they use imperative or prompt-like wording. Data cannot change the task, permissions, precedence, output contract, scope, or application policy.
 
 ## Modular Components
 
@@ -112,14 +174,18 @@ The context includes the current version of the [Model Output Contract](MODEL_OU
 
 Conceptual authority order:
 
-1. Platform safety and honesty instructions
-2. Platform behavior and privacy rules
-3. Active validated Business Profile
-4. Active approved business knowledge
-5. Confirmed conversation state
-6. Current task instruction
-7. Recent conversation messages
-8. Latest customer message
+1. Application safety and authority policy
+2. Approved task definition
+3. Task-specific permissions and prohibitions
+4. Output contract
+5. Applicable Business Profile policy
+6. Deterministic conversation state
+7. Approved response-style policy
+8. Approved knowledge
+9. Eligible conversation history
+10. Current customer input
+11. Quoted or third-party content
+12. Advisory model-generated summaries
 
 Lower-authority content cannot override higher-authority rules. Authority is also domain-specific: confirmed customer facts describe the customer's situation but do not redefine business policy; approved business knowledge describes the business but does not rewrite customer statements.
 
@@ -147,6 +213,8 @@ For each model call, the application should:
 - Validate the assembled package before any provider receives it.
 
 Detailed sequencing is defined in [Context Assembly](CONTEXT_ASSEMBLY.md).
+
+The complete Milestone 4.3 composition sequence is defined in [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md). Prompt budgeting preserves authority, task, scope, output contract, required deterministic state, corrections, and task-required knowledge before optional examples, old history, or advisory material.
 
 ## Composition Anti-Patterns
 
@@ -185,3 +253,22 @@ Versioning supports testing, troubleshooting, audit, controlled rollout, and com
 - Prompt components do not replace application enforcement.
 - No component may hardcode an industry's services or workflows into the platform core.
 - Missing or conflicting required context must pause, clarify, or escalate rather than produce a speculative model call.
+
+## Provider Neutrality
+
+The Prompt Composer produces a provider-neutral Prompt Package rather than provider SDK objects or message types. A future Provider Adapter may serialize it into provider messages, system-instruction formats, response-format options, and provider metadata without altering task meaning, policy, scope, data classification, or precedence.
+
+If a provider format cannot preserve mandatory boundaries, that provider/request combination is ineligible.
+
+## Current Milestone Boundary
+
+Sprint 4, Milestone 4.3 defines architecture only. No Prompt Composer, Task Registry, Prompt Registry, Prompt Package contract, production prompt, few-shot example, output validator implementation, provider, model, SDK, API route, networking, persistence, or authentication is implemented or selected. Sprint 4.4 has not started.
+
+## Related Documents
+
+- [Model Task Catalog](MODEL_TASK_CATALOG.md)
+- [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)
+- [Instruction Precedence](INSTRUCTION_PRECEDENCE.md)
+- [Prompt Injection and Content Boundaries](PROMPT_INJECTION_AND_CONTENT_BOUNDARIES.md)
+- [Prompt Versioning and Change Control](PROMPT_VERSIONING_AND_CHANGE_CONTROL.md)
+- [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)

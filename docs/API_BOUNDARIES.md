@@ -75,4 +75,4 @@ Boundaries should return explicit identity, eligibility, validation, conflict, u
 
 ## Current Milestone Boundary
 
-These are architecture boundaries only. Milestone 4.2 defines a conceptual internal Context Assembly boundary: application-owned inputs produce one validated, immutable, provider-neutral package or an explicit fail-closed result. It is not an endpoint or TypeScript contract. No endpoints, API routes, Context Builder, context validators, provider calls, adapters, networking, authentication, persistence, retries, or streaming are implemented in Sprint 4.1 or 4.2.
+These are architecture boundaries only. Milestone 4.2 defines internal Context Assembly; Milestone 4.3 defines internal task validation and Prompt Composition. Application-owned inputs produce either a validated provider-neutral Prompt Package or an explicit fail-closed result. These are not endpoints or TypeScript contracts. No endpoints, API routes, Context Builder, Prompt Composer, registries, validators, provider calls, adapters, networking, authentication, persistence, retries, or streaming are implemented in Sprint 4.1 through 4.3.

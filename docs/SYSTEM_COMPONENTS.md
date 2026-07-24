@@ -41,6 +41,14 @@ Conceptually coordinates the application-owned Context Assembly pipeline for one
 
 The model cannot select sources. Released packages are immutable, provider-neutral, and advisory-model input only. The existing component is a deferred interface, not an implementation. See [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md).
 
+## Task Registry
+
+Conceptually validates application-selected task identifiers, versions, MVP allowlist status, compatible context profiles, output contracts, and provider policy. Unknown or deferred tasks fail before composition. No registry is implemented.
+
+## Prompt Composer
+
+Conceptually combines one approved task, validated Context Package, application authority, explicit permissions/prohibitions, compatible output-contract reference, response-style policy, and version metadata into a validated provider-neutral Prompt Package. It cannot select tasks or sources, reinterpret business policy, or promote data into instructions. No Prompt Composer or production prompt exists. See [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md).
+
 ## Model Gateway
 
 Provides a provider-independent execution boundary. It receives a validated provider-neutral request, application-approved task and model policy, enforces allowlists and execution limits, routes through one approved Provider Adapter, and returns normalized raw output, usage metadata, or explicit failure information.

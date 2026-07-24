@@ -122,8 +122,11 @@ Reproducibility does not promise identical bytes across provider adapters and do
 
 No failure class, Prompt Package validator, audit store, retry engine, provider call, monitoring vendor, or recovery implementation is added in Milestone 4.3.
 
+After a valid Prompt Package is released, Milestone 4.4 applies a separate fail-closed output boundary. Prompt success cannot excuse malformed, ungrounded, stale, prohibited, unsafe, or duplicate output.
+
 ## Related Documents
 
 - [Prompt Architecture](PROMPT_ARCHITECTURE.md)
 - [Prompt Injection and Content Boundaries](PROMPT_INJECTION_AND_CONTENT_BOUNDARIES.md)
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
+- [Output Failure and Audit](OUTPUT_FAILURE_AND_AUDIT.md)

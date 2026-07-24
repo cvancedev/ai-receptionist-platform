@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4.1 through 4.3 now define provider-independent AI integration, application-owned Context Assembly, and Prompt and Task Architecture: AI is advisory, the application selects every task, and all future model output must pass application validation before use. No real AI provider, model, API, persistence, authentication, integration, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4.1 through 4.4 now define provider-independent AI integration, application-owned Context Assembly, Prompt and Task Architecture, and Model Output and Proposal Validation Architecture. AI remains advisory: raw output has no authority, and only deterministic application decisions may construct typed operations or approve customer text. No real AI provider, model, API, persistence, authentication, integration, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -123,6 +123,14 @@ npm run verify:prototype
 - [Context failure and audit](docs/CONTEXT_FAILURE_AND_AUDIT.md)
 - [Prompt security](docs/PROMPT_SECURITY.md)
 - [Model output contract](docs/MODEL_OUTPUT_CONTRACT.md)
+- [Model output validation architecture](docs/MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)
+- [Model proposal catalog](docs/MODEL_PROPOSAL_CATALOG.md)
+- [Output contract architecture](docs/OUTPUT_CONTRACT_ARCHITECTURE.md)
+- [Output validation pipeline](docs/OUTPUT_VALIDATION_PIPELINE.md)
+- [Proposal decision and application](docs/PROPOSAL_DECISION_AND_APPLICATION.md)
+- [Output repair, retry, and partial acceptance](docs/OUTPUT_REPAIR_RETRY_AND_PARTIAL_ACCEPTANCE.md)
+- [Customer response release](docs/CUSTOMER_RESPONSE_RELEASE.md)
+- [Output failure and audit](docs/OUTPUT_FAILURE_AND_AUDIT.md)
 - [Prompt testing strategy](docs/PROMPT_TESTING_STRATEGY.md)
 - [AI integration architecture](docs/AI_INTEGRATION_ARCHITECTURE.md)
 - [Model Gateway architecture](docs/MODEL_GATEWAY_ARCHITECTURE.md)
@@ -160,4 +168,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3 remains certified complete. Sprint 4.1, 4.2, and 4.3 are complete as documentation architecture. Future model use is limited to application-selected allowlisted tasks, validated provider-neutral context and prompt packages, explicit instruction precedence, and versioned output-contract references. Customer and knowledge content remain data. No Context Builder, Prompt Composer, Task Registry, prompt contract, production prompt, output parser, provider, model, SDK, API, networking, persistence, or authentication has been implemented or selected. The public website and isolated `/prototype` remain unchanged. Sprint 4.4 has not started.
+Sprint 3 remains certified complete. Sprint 4.1 through 4.4 are complete as documentation architecture. Future model use is limited to application-selected tasks and contracts, validated provider-neutral packages, layered structural/semantic/scope/authority/grounding/state/safety/duplicate checks, deterministic application decisions, and separately approved customer release. No Context Builder, Prompt Composer, production parser, output validator, schema, TypeScript output contract, operation builder, release gate, provider, model, SDK, API, networking, persistence, or authentication has been implemented or selected. The public website and isolated `/prototype` remain unchanged. Sprint 4.5 has not started.

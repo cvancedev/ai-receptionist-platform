@@ -284,6 +284,12 @@ The gateway accepts only a validated provider-neutral Prompt Package for an appl
 
 The gateway and adapter cannot choose a task, rewrite instructions, weaken prohibitions, add context, change precedence, substitute a contract, or promote customer/knowledge content into policy. If a provider format cannot preserve the package semantics, execution is ineligible.
 
+## Provider Result Boundary
+
+The gateway normalizes transport, completion, refusal, truncation, usage, and provider metadata without interpreting business meaning. A normalized success only makes raw output available to the application-owned validation pipeline.
+
+Adapters cannot parse proposals into authority, select repair/retry, apply state, or release text. Provider-specific structured-output success and safety labels do not replace contract, semantic, scope, grounding, state, or customer-release validation.
+
 ## Deferred Decisions
 
 - Provider and model selection
@@ -307,4 +313,6 @@ The gateway and adapter cannot choose a task, rewrite instructions, weaken prohi
 - [Context Package Contract](CONTEXT_PACKAGE_CONTRACT.md)
 - [Prompt Architecture](PROMPT_ARCHITECTURE.md)
 - [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)
+- [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)
+- [Output Failure and Audit](OUTPUT_FAILURE_AND_AUDIT.md)
 - [API Boundaries](API_BOUNDARIES.md)

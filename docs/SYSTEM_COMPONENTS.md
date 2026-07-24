@@ -65,9 +65,13 @@ An adapter contains no business logic, does not choose providers or models, cann
 
 Parses and checks proposal structure, task type, business and conversation scope, stage, knowledge support, unsupported promises, restricted content, state consistency, correction handling, escalation, completion, and prohibited operations. It returns validation results; it does not trust model or provider labels.
 
+The future boundary is layered across contract-aware inert parsing, structural, scope, proposal, permission/prohibition, semantic, state, profile, grounding, customer-text, and duplicate validation. The existing `OutputValidator` interface and Sprint 3 proposal validator are deferred/placeholder prototype boundaries, not this implementation. See [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md).
+
 ## Application Decision Layer
 
 Evaluates validated proposals against current deterministic state and may accept, partially accept, modify, request clarification, retry under policy, use deterministic fallback, escalate, or reject. Only this application-owned layer may authorize typed state operations or customer-response release.
+
+Future partial acceptance requires explicit contract support. Typed Operation Builder and Response Release Gate are separate conceptual components; neither is implemented. See [Proposal Decision and Application](PROPOSAL_DECISION_AND_APPLICATION.md) and [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md).
 
 ## Handoff Builder
 

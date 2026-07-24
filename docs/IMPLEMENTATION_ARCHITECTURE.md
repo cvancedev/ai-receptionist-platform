@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document maps the approved architecture into implementation boundaries. Sprint 3 implements only the certified deterministic local prototype. Sprint 4.1 through 4.3 add provider-independent AI, Context Assembly, and Prompt and Task architecture documentation and authorize no AI implementation, vendor, model, API, networking, persistence, or authentication work.
+This document maps the approved architecture into implementation boundaries. Sprint 3 implements only the certified deterministic local prototype. Sprint 4.1 through 4.4 add provider-independent AI input and output architecture documentation and authorize no AI implementation, vendor, model, API, networking, persistence, or authentication work.
 
 ## Customer Experience Layer
 
@@ -97,4 +97,4 @@ The MVP receives an inquiry, understands the general request, gathers required i
 
 ## Sprint 4 Architecture Status
 
-Milestones 4.1 through 4.3 define architecture only. Context Assembly is application-owned; task selection is allowlisted and deterministic; Prompt Composition is provider-neutral, versioned, precedence-bound, and fail-closed. The existing `ContextBuilder` remains a deferred interface, and no Prompt Composer or registry exists. Context/prompt types and validators, production prompts, Provider Adapters, real Model Gateway execution, output parsing, retries, streaming, persistence, authentication, and observability remain deferred. See [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md), [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md), [Prompt Architecture](PROMPT_ARCHITECTURE.md), and [Sprint 4 Plan](SPRINT_4_PLAN.md). Sprint 4.4 has not started.
+Milestones 4.1 through 4.4 define architecture only. Raw output is normalized then validated structurally and semantically for scope, authority, task, profile, state, grounding, safety, and duplicates before deterministic decision. The application alone constructs typed operations and approves release. Existing `ContextBuilder`, `OutputValidator`, and proposal validation code remain certified deferred/placeholder Sprint 3 boundaries, not Milestone 4.4 implementation. No production parser, schema, validator, operation builder, release gate, retry engine, provider, model, API, networking, persistence, authentication, or observability is added. See [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md) and [Sprint 4 Plan](SPRINT_4_PLAN.md). Sprint 4.5 has not started.

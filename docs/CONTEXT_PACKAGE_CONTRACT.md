@@ -137,6 +137,8 @@ Future Prompt Composition may translate a valid package into provider-neutral pr
 
 The Prompt Composer validates that the package task profile, contract version, business/conversation/profile/state identity, output-contract reference, and required sections are compatible with the selected task. Customer and knowledge sections remain typed data in the resulting Prompt Package.
 
+Output Validation later uses this immutable package identity and provenance to validate source references, knowledge grounding, scope, state revision, and evidence authority. A model cannot introduce a source or newer scope merely by returning its identifier.
+
 ## Current Boundary
 
 This document creates no code contract. No interface, schema, Context Builder, validator, Prompt Composer, provider adapter, API route, or persistence mechanism is implemented.
@@ -146,4 +148,5 @@ This document creates no code contract. No interface, schema, Context Builder, v
 - [Context Assembly Architecture](CONTEXT_ASSEMBLY_ARCHITECTURE.md)
 - [Model Gateway Architecture](MODEL_GATEWAY_ARCHITECTURE.md)
 - [Prompt Architecture](PROMPT_ARCHITECTURE.md)
+- [Output Validation Pipeline](OUTPUT_VALIDATION_PIPELINE.md)
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)

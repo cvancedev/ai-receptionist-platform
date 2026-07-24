@@ -78,6 +78,8 @@ Model output that instructs the application, asks for tools, requests more data,
 
 Partial or streamed output has no authority.
 
+Milestone 4.4 requires authority, prohibition, source, grounding, customer-text, and duplicate validation of this output. Instruction-like fields or trailing prose cannot be silently repaired into an allowed proposal.
+
 ## Injection Failure
 
 When data/instruction separation, authority, or scope cannot be proven:
@@ -107,3 +109,4 @@ Provider execution is blocked for unresolved injection boundaries.
 - [Instruction Precedence](INSTRUCTION_PRECEDENCE.md)
 - [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)
 - [Prompt Security](PROMPT_SECURITY.md)
+- [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)

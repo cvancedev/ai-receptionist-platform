@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 4 - Model Output and Proposal Validation Architecture
+
+- Complete provider-neutral boundary from raw provider result through application decision, typed-operation construction, and customer release documented.
+- Eight MVP proposal types and narrow versioned Output Contract categories defined.
+- Thirty-step structural, scope, permission, authority, semantic, state, profile, grounding, safety, and duplicate validation pipeline added.
+- Contract-supported partial acceptance, deterministic repair, bounded retry, non-retryable failures, and exhaustion paths documented.
+- Customer response release, grounding, stale-state, duplicate mutation, and duplicate message safeguards defined.
+- Thirty-seven output failure categories plus audit and reproducibility requirements documented.
+- Sprint 4.1 through 4.4 marked complete while Sprint 4.5 remains deferred.
+- Certified Sprint 3 behavior, application code, configuration, routes, and dependencies remain unchanged.
+
 ### Sprint 4 - Prompt and Task Architecture
 
 - MVP model-task allowlist, permissions, prohibitions, fallbacks, and deferred tasks documented.
@@ -12,7 +23,7 @@ All notable changes to this project will be documented in this file. The format 
 - Customer, knowledge, history, quoted, and advisory content boundaries documented.
 - Prompt injection, exfiltration, hidden-instruction, and fail-closed safeguards defined.
 - Prompt versioning, review, rollback, experimentation, failure, audit, and reproducibility architecture added.
-- Sprint 4.1 through 4.3 marked complete while Sprint 4.4 remains deferred.
+- Sprint 4.1 through 4.3 completion recorded as the foundation for Model Output and Proposal Validation Architecture.
 - Certified Sprint 3 behavior, application code, configuration, routes, and dependencies remain unchanged.
 
 ### Sprint 4 - Context Assembly Architecture

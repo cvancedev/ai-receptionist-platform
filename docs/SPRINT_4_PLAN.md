@@ -101,7 +101,7 @@ Milestone 4.3 establishes the MVP task allowlist, provider-neutral Prompt Packag
 
 ## Milestone 4.4: Model Output and Proposal Validation Architecture
 
-**Status:** Deferred
+**Status:** Complete
 
 ### Intended Scope
 
@@ -121,6 +121,8 @@ Milestone 4.3 establishes the MVP task allowlist, provider-neutral Prompt Packag
 - No provider output parser
 - No production retry code
 - No direct state mutation from proposals
+
+Milestone 4.4 defines provider-neutral proposal contracts, layered validation, deterministic application decisions, application-constructed typed operations, bounded repair/retry/partial acceptance, duplicate guards, customer release approval, and failure/audit behavior. It adds documentation only.
 
 ## Milestone 4.5: AI Integration Prototype Foundation
 
@@ -239,10 +241,18 @@ Sprint 4 is complete only when its final certification confirms:
 - [Prompt Injection and Content Boundaries](PROMPT_INJECTION_AND_CONTENT_BOUNDARIES.md)
 - [Prompt Versioning and Change Control](PROMPT_VERSIONING_AND_CHANGE_CONTROL.md)
 - [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)
+- [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)
+- [Model Proposal Catalog](MODEL_PROPOSAL_CATALOG.md)
+- [Output Contract Architecture](OUTPUT_CONTRACT_ARCHITECTURE.md)
+- [Output Validation Pipeline](OUTPUT_VALIDATION_PIPELINE.md)
+- [Proposal Decision and Application](PROPOSAL_DECISION_AND_APPLICATION.md)
+- [Output Repair, Retry, and Partial Acceptance](OUTPUT_REPAIR_RETRY_AND_PARTIAL_ACCEPTANCE.md)
+- [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md)
+- [Output Failure and Audit](OUTPUT_FAILURE_AND_AUDIT.md)
 - [Model Gateway Architecture](MODEL_GATEWAY_ARCHITECTURE.md)
 - [Model Lifecycle](MODEL_LIFECYCLE.md)
 - [AI Failure and Recovery](AI_FAILURE_AND_RECOVERY.md)
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
 - [Sprint 3 Certification](SPRINT_3_CERTIFICATION.md)
 
-Milestones 4.4 through 4.6 remain deferred. Sprint 4.4 has not started.
+Milestones 4.5 and 4.6 remain deferred. Sprint 4.5 has not started.

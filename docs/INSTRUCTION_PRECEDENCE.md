@@ -65,6 +65,8 @@ The model is never asked to decide which source is authoritative. The applicatio
 
 Provider adapters may map layers into provider formats but cannot merge them in a way that changes precedence. If a provider cannot preserve required boundaries, that provider/request combination is ineligible.
 
+Model output cannot create a new instruction layer or claim higher precedence. Output that claims authority, policy override, additional data access, or completed effects fails downstream authority validation.
+
 ## Clear Boundaries
 
 Each layer carries a type, owner, version, scope, and authority label. Data sections retain source identity and classification. Delimiters improve clarity but do not create authority and are never the sole injection defense.
@@ -74,3 +76,4 @@ Each layer carries a type, owner, version, scope, and authority label. Data sect
 - [Prompt Architecture](PROMPT_ARCHITECTURE.md)
 - [Prompt Injection and Content Boundaries](PROMPT_INJECTION_AND_CONTENT_BOUNDARIES.md)
 - [Context Ordering and Precedence](CONTEXT_ORDERING_AND_PRECEDENCE.md)
+- [Output Validation Pipeline](OUTPUT_VALIDATION_PIPELINE.md)

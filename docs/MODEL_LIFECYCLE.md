@@ -221,7 +221,7 @@ Cancellation may occur before dispatch, during execution, during streaming, or b
 
 ## Current Boundary
 
-Milestones 4.1 through 4.3 define this lifecycle through Context Assembly and Prompt Composition. Request preparation requires an application-selected allowlisted task, validated Context Package, compatible output contract, and validated provider-neutral Prompt Package. Unknown tasks, incompatible versions, ambiguous authority, and unsafe content boundaries stop before gateway execution. No Context Builder, Prompt Composer, registry, gateway execution, provider call, production prompt, output parsing, retry, audit storage, or response-release implementation is added.
+Milestones 4.1 through 4.4 define this lifecycle through output normalization, layered validation, deterministic decision, typed-operation construction, and response-release approval. Provider success is intermediate; raw and partial output remain untrusted. Stale or duplicate proposals fail before effects. No Context Builder, Prompt Composer, registry, gateway execution, provider call, production prompt/schema, parser, validator, repair/retry engine, operation builder, audit store, or response-release implementation is added.
 
 ## Related Documents
 
@@ -232,5 +232,8 @@ Milestones 4.1 through 4.3 define this lifecycle through Context Assembly and Pr
 - [Context Failure and Audit](CONTEXT_FAILURE_AND_AUDIT.md)
 - [Model Task Catalog](MODEL_TASK_CATALOG.md)
 - [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)
+- [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)
+- [Proposal Decision and Application](PROPOSAL_DECISION_AND_APPLICATION.md)
+- [Customer Response Release](CUSTOMER_RESPONSE_RELEASE.md)
 - [Conversation State](CONVERSATION_STATE.md)
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)

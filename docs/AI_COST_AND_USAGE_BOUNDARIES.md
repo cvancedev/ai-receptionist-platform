@@ -248,6 +248,8 @@ Milestone 4.2 establishes application-owned task and section budget classes, det
 
 Milestone 4.3 extends this boundary to Prompt Packages. Authority instructions, task definition, scope, permissions/prohibitions, output-contract reference, required state/corrections, and task-required knowledge are preserved before optional examples, old history, or advisory content. No numeric prompt limit or production token counter is selected.
 
+Milestone 4.4 makes repair, retry, and alternate-provider attempts separately budgeted application decisions. Attempt count, failure category, latency, customer experience, and mutation/release status constrain eligibility; exhaustion uses fallback rather than indefinite spending.
+
 ## Related Documents
 
 - [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md)
@@ -257,3 +259,4 @@ Milestone 4.3 extends this boundary to Prompt Packages. Authority instructions, 
 - [Context Priority and Limits](CONTEXT_PRIORITY_AND_LIMITS.md)
 - [Context Budgeting and Reduction](CONTEXT_BUDGETING_AND_REDUCTION.md)
 - [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)
+- [Output Repair, Retry, and Partial Acceptance](OUTPUT_REPAIR_RETRY_AND_PARTIAL_ACCEPTANCE.md)

@@ -205,3 +205,43 @@ Models cannot rewrite, create, approve, activate, or promote prompt policy, task
 ## Prompt Failure Prevents Provider Execution
 
 Unknown or unapproved tasks, incompatible contracts, ambiguous precedence, unsafe content boundaries, invalid scope, and essential prompt budget failures stop before any provider request.
+
+## Raw Model Output Has No Authority
+
+Provider responses remain untrusted until application-owned parsing, layered validation, and deterministic decision logic complete. Provider success is not application acceptance.
+
+## Output Contracts Are Application-Owned
+
+The application selects and versions one narrow, task-compatible, provider-neutral Output Contract before execution. A model or adapter cannot widen, replace, or downgrade it.
+
+## Proposal Types Are Allowlisted
+
+Only approved task-compatible proposal types are eligible. Unknown, mixed, or unapproved proposal types fail closed rather than dynamically expanding capability.
+
+## Output Validation Is Layered
+
+Structural validity is insufficient. Scope, permissions, prohibitions, semantics, state and profile compatibility, knowledge grounding, customer safety, and duplicate effects must also pass.
+
+## State Operations Are Constructed by the Application
+
+A model supplies candidate inputs only. The application constructs typed authoritative operations after validation and rechecks the current state revision before submission.
+
+## Customer Responses Require Release Approval
+
+A valid draft is not automatically releasable. Customer-visible text passes a separate application-owned release gate against current state, grounding, safety, actual effects, and duplicate identity.
+
+## Output Repair and Retry Are Bounded
+
+Repair and retry are application-selected, task-specific, cost-aware, traceable, fully revalidated, and unable to duplicate mutations or messages.
+
+## Stale Proposals Cannot Mutate Current State
+
+A proposal validated against an older state revision is rejected or re-evaluated from a fresh snapshot before any operation or response release.
+
+## Partial Acceptance Requires Contract Support
+
+Field-level acceptance is allowed only when the contract explicitly permits independent validation and rejected fields cannot alter accepted meaning.
+
+## Duplicate Effects Fail Closed
+
+Stable proposal, mutation, and release identities prevent repeated processing from causing duplicate authoritative effects or customer messages.

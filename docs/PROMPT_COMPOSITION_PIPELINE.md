@@ -114,8 +114,12 @@ Optional examples, duplicate material, old history, and advisory summaries are r
 
 No Task Registry, Prompt Registry, Prompt Composer, Prompt Budgeter, Prompt Package Validator, provider request, TypeScript contract, or production prompt is implemented.
 
+Milestone 4.4 defines that the bound Output Contract and package identities become immutable inputs to downstream validation. Composition never validates or authorizes model output.
+
 ## Related Documents
 
 - [Prompt Architecture](PROMPT_ARCHITECTURE.md)
 - [Instruction Precedence](INSTRUCTION_PRECEDENCE.md)
 - [Prompt Versioning and Change Control](PROMPT_VERSIONING_AND_CHANGE_CONTROL.md)
+- [Output Contract Architecture](OUTPUT_CONTRACT_ARCHITECTURE.md)
+- [Output Validation Pipeline](OUTPUT_VALIDATION_PIPELINE.md)

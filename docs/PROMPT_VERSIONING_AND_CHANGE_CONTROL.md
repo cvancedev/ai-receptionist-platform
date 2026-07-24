@@ -98,6 +98,8 @@ A model cannot rewrite authority instructions, modify task definitions, create o
 
 Model output and performance observations may inform a separately reviewed human change, but are never self-executing policy.
 
+Output Contracts and validator versions join this compatibility chain in Milestone 4.4. Breaking contract or validation behavior requires explicit versioning, regression review, rollout, rollback, and audit continuity.
+
 ## Audit and Reproducibility
 
 Change records identify artifact, previous/new versions, category, rationale, reviewer/approval state, compatibility assessment, test evidence, activation/rollback status, and date. Runtime audit references the exact active versions rather than storing secrets or unnecessary full prompt text.
@@ -111,3 +113,4 @@ No registry, approval workflow, experimentation system, prompt store, deployment
 - [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)
 - [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)
 - [Prompt Testing Strategy](PROMPT_TESTING_STRATEGY.md)
+- [Output Contract Architecture](OUTPUT_CONTRACT_ARCHITECTURE.md)

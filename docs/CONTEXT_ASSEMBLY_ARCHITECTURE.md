@@ -114,7 +114,7 @@ Customer and knowledge content remains data even when it contains instructions. 
 
 ## Current Boundary
 
-Sprint 4, Milestone 4.2 defines Context Assembly architecture and Milestone 4.3 defines the downstream provider-neutral Prompt Composition boundary. The Context Package supplies one approved task profile and labeled data; Prompt Composition cannot broaden its sources or change authority. The existing `ContextBuilder` remains a deferred interface. No Context Builder, Prompt Composer, contract, validator, production prompt, provider, model, API, networking, persistence, authentication, or production AI behavior is implemented.
+Sprint 4, Milestones 4.2 through 4.4 define Context Assembly, Prompt Composition, and downstream output validation architecture. Context source identities, revisions, evidence labels, and knowledge provenance become validation inputs; a proposal cannot cite or infer sources outside the package. The existing `ContextBuilder` remains a deferred interface. No Context Builder, Prompt Composer, output parser/validator, schema, provider, model, API, networking, persistence, authentication, or production AI behavior is implemented.
 
 ## Related Documents
 
@@ -127,3 +127,4 @@ Sprint 4, Milestone 4.2 defines Context Assembly architecture and Milestone 4.3 
 - [AI Integration Architecture](AI_INTEGRATION_ARCHITECTURE.md)
 - [Prompt Architecture](PROMPT_ARCHITECTURE.md)
 - [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md)
+- [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)

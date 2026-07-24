@@ -262,7 +262,7 @@ If a provider format cannot preserve mandatory boundaries, that provider/request
 
 ## Current Milestone Boundary
 
-Sprint 4, Milestone 4.3 defines architecture only. No Prompt Composer, Task Registry, Prompt Registry, Prompt Package contract, production prompt, few-shot example, output validator implementation, provider, model, SDK, API route, networking, persistence, or authentication is implemented or selected. Sprint 4.4 has not started.
+Sprint 4, Milestone 4.3 defines Prompt and Task Architecture; Milestone 4.4 defines downstream Output Contract and layered validation architecture. Prompt Composition binds the contract but cannot approve returned output. No Prompt Composer, Task Registry, Prompt Registry, Prompt Package contract, production prompt, parser, output validator, production schema, provider, model, SDK, API route, networking, persistence, or authentication is implemented or selected. Sprint 4.5 has not started.
 
 ## Related Documents
 
@@ -272,3 +272,5 @@ Sprint 4, Milestone 4.3 defines architecture only. No Prompt Composer, Task Regi
 - [Prompt Injection and Content Boundaries](PROMPT_INJECTION_AND_CONTENT_BOUNDARIES.md)
 - [Prompt Versioning and Change Control](PROMPT_VERSIONING_AND_CHANGE_CONTROL.md)
 - [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)
+- [Output Contract Architecture](OUTPUT_CONTRACT_ARCHITECTURE.md)
+- [Model Output Validation Architecture](MODEL_OUTPUT_VALIDATION_ARCHITECTURE.md)

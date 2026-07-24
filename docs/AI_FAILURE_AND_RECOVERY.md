@@ -354,7 +354,9 @@ Milestone 4.2 further defines fail-closed context failures: provider execution i
 
 Milestone 4.3 adds fail-closed prompt failures for unknown tasks, incompatible task/context/output versions, missing authority layers, instruction conflicts, unsafe content boundaries, and essential prompt content over budget. Recovery may recompose only with approved versions and may never remove authority or weaken prohibitions.
 
-No Context Builder, Prompt Composer, validator, retry code, provider fallback, networking, queue, persistence, monitoring vendor, or recovery implementation is added in Milestones 4.1 through 4.3.
+Milestone 4.4 adds raw-output, contract, proposal, scope, authority, semantic, state, profile, grounding, safety, duplicate, repair, retry, and release failures. Recovery remains application-selected and fully revalidated; non-retryable contamination, authority, stale-state, and duplicate failures stop safely.
+
+No Context Builder, Prompt Composer, parser, validator, operation builder, release gate, retry code, provider fallback, networking, queue, persistence, monitoring vendor, or recovery implementation is added in Milestones 4.1 through 4.4.
 
 ## Related Documents
 
@@ -364,3 +366,5 @@ No Context Builder, Prompt Composer, validator, retry code, provider fallback, n
 - [AI Cost and Usage Boundaries](AI_COST_AND_USAGE_BOUNDARIES.md)
 - [Context Failure and Audit](CONTEXT_FAILURE_AND_AUDIT.md)
 - [Prompt Failure and Audit](PROMPT_FAILURE_AND_AUDIT.md)
+- [Output Repair, Retry, and Partial Acceptance](OUTPUT_REPAIR_RETRY_AND_PARTIAL_ACCEPTANCE.md)
+- [Output Failure and Audit](OUTPUT_FAILURE_AND_AUDIT.md)

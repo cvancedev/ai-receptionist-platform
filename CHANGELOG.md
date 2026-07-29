@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 5 Planning - Milestones 5.5 and 5.6
+
+- Formally defined Sprint 5.5 as the planned Deterministic Conversation Progress Engine.
+- Formally defined Sprint 5.6 as the planned evidence-based Sprint 5 Certification milestone.
+- Documented the complete Sprint 5 goal, authority boundaries, planned verification, completion criteria, and potential separately authorized `v0.6.0` release boundary.
+- Added no runtime functionality, production source, tests, dependencies, or release tag.
+
 ### Sprint 5.4 - Immutable Execution Journal
 
 - Added a deterministic, append-only, process-local journal for safe controlled-execution audit metadata.

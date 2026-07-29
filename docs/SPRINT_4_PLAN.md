@@ -267,4 +267,4 @@ Sprint 4 is complete only when its final certification confirms:
 - [Sprint 4 Determinism Audit](certification/SPRINT4_DETERMINISM.md)
 - [Sprint 4 Boundary Audit](certification/SPRINT4_BOUNDARIES.md)
 
-Milestone 4.6 and Sprint 4 are complete. Sprint 5 has not started.
+Historical checkpoint: when this Sprint 4 plan closed, Milestone 4.6 and Sprint 4 were complete and Sprint 5 had not started. Current Sprint 5 status is maintained in the [Sprint 5 Plan](SPRINT_5_PLAN.md).

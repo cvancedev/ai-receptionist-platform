@@ -81,6 +81,8 @@ The detailed sequence and guardrails are defined in [Sprint 4 Plan](docs/SPRINT_
 - Milestone 5.2: Immutable Conversation Read Model — Complete
 - Milestone 5.3: Prototype Read Model Integration — Complete
 - Milestone 5.4: Immutable Execution Journal — Complete
+- Milestone 5.5: Deterministic Conversation Progress Engine — Planned
+- Milestone 5.6: Sprint 5 Certification — Planned
 
 Milestone 5.1 appends an application-owned Transition Registry, Transition Validator, duplicate guard, and State Executor to the certified Sprint 4 pipeline. It implements one explicit deterministic in-memory `initialized -> intake` transition and immutable Execution Results. It introduces no persistence, networking, external integration, customer communication, authentication change, UI redesign, or real provider.
 
@@ -90,7 +92,11 @@ Milestone 5.3 connects the shared in-memory controlled-execution state to the re
 
 Milestone 5.4 records trusted immutable Execution Results in an isolated deterministic, append-only, process-local journal after execution. Entries contain only safe identity, revision, outcome, reason, and journal metadata; the journal has no execution, state, replay, persistence, external-action, or UI authority.
 
-Later Sprint 5 milestones have not started.
+Milestone 5.5 will add an application-authoritative deterministic Progress Engine that derives one allowlisted workflow intent from validated state, explicit policy, and required-field/service context. It will not mutate state or bypass the existing Transition Registry, Transition Validator, or State Executor.
+
+Milestone 5.6 will certify Sprint 5.1 through Sprint 5.5 through evidence-based architecture, state-integrity, determinism, execution, read-model, integration, journal, regression, boundary, and documentation audits. If certification passes, a separately authorized release publication may use `v0.6.0`.
+
+The complete sequence, boundaries, planned verification, and definitions of done are documented in the [Sprint 5 Plan](docs/SPRINT_5_PLAN.md).
 
 ## Sprint 6: AI Receptionist MVP
 

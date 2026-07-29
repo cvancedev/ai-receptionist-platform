@@ -125,7 +125,7 @@ The focused suite proves initialized and executed projection, revision updates, 
 
 ## Prohibited Capabilities
 
-Sprint 5.3 adds no persistence, database, local storage, network call, HTTP client, external API, real provider, email, SMS, telephony, scheduling, CRM integration, authentication change, customer communication, business action, execution journal, or customer-release authorization.
+Sprint 5.3 adds no persistence, database, local storage, network call, HTTP client, external API, real provider, email, SMS, telephony, scheduling, CRM integration, authentication change, customer communication, business action, or customer-release authorization. Sprint 5.4 adds a separate process-local [Execution Journal](EXECUTION_JOURNAL.md); it is not exposed through the UI-safe integration result.
 
 ## Current Limitations
 
@@ -135,3 +135,4 @@ Sprint 5.3 adds no persistence, database, local storage, network call, HTTP clie
 - The UI is a developer prototype, not a production customer experience.
 - The read model exposes a service identifier, not a display name.
 - Customer release remains unauthorized.
+- Execution journal history remains private to trusted internal code and verification.

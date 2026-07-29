@@ -1,5 +1,6 @@
 import type { StateExecutionRequest } from "../ai/execution/contracts";
 import { DeterministicStateExecutor } from "../ai/execution/state-executor";
+import { InMemoryExecutionJournal } from "../ai/execution-journal/in-memory-execution-journal";
 import { StateTransitionRegistry } from "../ai/execution/transition-registry";
 import { AiFoundationPrototypeOrchestrator } from "../ai/prototype/ai-foundation-orchestrator";
 import { PrototypeReadModelIntegration } from "../prototype-ui/prototype-read-model-integration";
@@ -302,9 +303,11 @@ function integrateExecution(
   execution: ReturnType<DeterministicStateExecutor["execute"]>,
   state: ConversationState,
 ) {
+  const journalAppend = new InMemoryExecutionJournal().append(execution);
   const integrated = integrator.project(state, {
     foundationDecision: request.applicationDecision,
     execution,
+    journalAppend,
     conversationState: state,
   });
   assert(integrated.status === "success", "execution result projects safely");

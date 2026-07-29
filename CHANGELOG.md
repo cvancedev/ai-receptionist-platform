@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 5.4 - Immutable Execution Journal
+
+- Added a deterministic, append-only, process-local journal for safe controlled-execution audit metadata.
+- Added allowlisted applied, rejected, duplicate, stale, invalid-transition, invalid-request, and policy-rejected outcomes derived from existing executor reasons.
+- Integrated journal append after immutable Execution Result creation and before the post-execution state snapshot without granting execution or state authority.
+- Added deeply frozen read snapshots, fail-closed untrusted/unknown-result handling, explicit append-failure reporting, and fresh-journal session reset semantics.
+- Preserved the read-only `run()` path, the one-transition registry, UI-safe read-model integration, customer-release denial, and all prohibited external boundaries.
+- Added focused execution-journal verification.
+
 ### Sprint 5.3 - Prototype Read Model Integration
 
 - Connected the existing deterministic mock AI `runWithExecution()` path to the prototype session's shared in-memory Conversation State Manager.

@@ -1,4 +1,5 @@
 import type { AiControlledExecutionSnapshot } from "../ai/execution/contracts";
+import type { ExecutionJournalSnapshot } from "../ai/execution-journal/contracts";
 import { AiFoundationPrototypeOrchestrator } from "../ai/prototype/ai-foundation-orchestrator";
 import type { QuestionSelectionResult } from "../domain/intake";
 import type { HandoffSummary } from "../domain/handoff-summary";
@@ -86,6 +87,10 @@ export class PrototypeChatSession {
     this.controlledExecutionAttempted = false;
     this.addAssistant("Prototype reset. What fictional service would you like help with?");
     return this.view();
+  }
+
+  executionJournalSnapshot(): ExecutionJournalSnapshot {
+    return this.aiOrchestrator.executionJournalSnapshot();
   }
 
   view(): PrototypeChatView {

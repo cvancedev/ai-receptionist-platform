@@ -11,7 +11,8 @@
     "verify:ai-foundation": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/ai-foundation.verify.js",
     "verify:state-execution": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/state-execution.verify.js",
     "verify:conversation-read-model": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/conversation-read-model.verify.js",
-    "verify:prototype-read-model-integration": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/prototype-read-model-integration.verify.js"
+    "verify:prototype-read-model-integration": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/prototype-read-model-integration.verify.js",
+    "verify:execution-journal": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/execution-journal.verify.js"
   },
   "dependencies": {
     "next": "16.2.10",

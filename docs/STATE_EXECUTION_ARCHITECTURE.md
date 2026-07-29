@@ -25,6 +25,7 @@ Application-selected task
   -> deterministic State Executor
   -> Conversation State Manager
   -> immutable Execution Result
+  -> append-only in-memory Execution Journal
 ```
 
 The certified Sprint 4 `AiFoundationPrototypeOrchestrator.run()` path remains read-only. Sprint 5.1 adds `runWithExecution()` to exercise the appended controlled-execution boundary without weakening the existing verification contract.
@@ -125,3 +126,5 @@ It adds no persistence, database, network call, HTTP client, external API, email
 Sprint 5.2 adds the separate read-only [Conversation Read Model](CONVERSATION_READ_MODEL.md). That projector may describe an already executed state snapshot, but it is not part of execution and receives no executor or state-manager capability.
 
 Sprint 5.3 connects the Prototype Chat Session to `runWithExecution()` using the session's existing in-memory manager. After execution, the session projects the current snapshot and gives the UI only a safe execution summary and immutable read model. Rejected execution is also projected without mutation. The UI cannot call the executor or construct an execution request. See [Prototype Read Model Integration](PROTOTYPE_READ_MODEL_INTEGRATION.md).
+
+Sprint 5.4 appends the immutable Execution Result to an application-owned, process-local [Execution Journal](EXECUTION_JOURNAL.md) before the controlled path reads current state. The journal observes trusted results but cannot validate, authorize, execute, replay, or mutate transitions. Append failure is reported separately and cannot rewrite the Execution Result.

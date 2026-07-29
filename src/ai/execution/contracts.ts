@@ -6,6 +6,7 @@ import type {
   ModelTaskIdentifier,
 } from "../contracts/identities";
 import type { ApplicationDecision, AiValidationResult } from "../contracts/results";
+import type { ExecutionJournalAppendResult } from "../execution-journal/contracts";
 
 export const STATE_TRANSITION_IDENTIFIERS = [
   "begin_intake_after_language_interpretation",
@@ -67,6 +68,9 @@ export interface StateExecutionMetadata {
   traceId: string | null;
   taskIdentifier: string | null;
   proposalId: string | null;
+  conversationId: string | null;
+  businessProfileId: string | null;
+  businessProfileVersion: number | null;
   expectedStateRevision: number | null;
   appliedStateRevision: number | null;
   failures: readonly StateExecutionReason[];
@@ -86,6 +90,7 @@ export interface StateExecutionResult {
 export interface AiControlledExecutionSnapshot {
   foundationDecision: ApplicationDecision;
   execution: StateExecutionResult;
+  journalAppend: ExecutionJournalAppendResult;
   conversationState: Readonly<ConversationState>;
 }
 

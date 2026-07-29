@@ -12,6 +12,12 @@ import { initializedConversationState } from "../../fixtures/conversation";
 import { CONVERSATION_STAGES } from "../../shared/constants";
 import { PrototypeContextPackageBuilder } from "../context/context-package-builder";
 import { ApplicationDecisionEngine } from "../decisions/application-decision-engine";
+import type {
+  ExecutionJournalAppendResult,
+  ExecutionJournalSnapshot,
+  ExecutionJournalWriter,
+} from "../execution-journal/contracts";
+import { InMemoryExecutionJournal } from "../execution-journal/in-memory-execution-journal";
 import type { AiControlledExecutionResult } from "../execution/contracts";
 import { DeterministicStateExecutor } from "../execution/state-executor";
 import { PrototypeModelGateway } from "../gateway/model-gateway";
@@ -32,11 +38,13 @@ import { createAiPrototypeFixture } from "./fixtures";
 
 export interface AiFoundationPrototypeOptions {
   executionManager?: ConversationStateManager;
+  executionJournal?: ExecutionJournalWriter;
 }
 
 export class AiFoundationPrototypeOrchestrator {
   private readonly executionManager: ConversationStateManager;
   private readonly stateExecutor: DeterministicStateExecutor;
+  private readonly executionJournal: ExecutionJournalWriter;
 
   constructor(
     options: AiFoundationPrototypeOptions = {},
@@ -53,6 +61,8 @@ export class AiFoundationPrototypeOrchestrator {
     this.executionManager =
       options.executionManager ?? createExecutionManager();
     this.stateExecutor = new DeterministicStateExecutor(this.executionManager);
+    this.executionJournal =
+      options.executionJournal ?? new InMemoryExecutionJournal();
   }
 
   async run(scenario: MockProviderScenario): Promise<OperationResult<AiFoundationSnapshot>> {
@@ -185,6 +195,10 @@ export class AiFoundationPrototypeOrchestrator {
       applicationDecision: snapshot.decision,
       validation: snapshot.validation,
     });
+    const journalAppend = appendExecutionResult(
+      this.executionJournal,
+      execution,
+    );
     const state = this.executionManager.snapshot({
       conversationId: snapshot.identity.conversationId,
       businessProfileId: snapshot.identity.businessId,
@@ -198,6 +212,7 @@ export class AiFoundationPrototypeOrchestrator {
       value: deepFreeze({
         foundationDecision: snapshot.decision,
         execution,
+        journalAppend,
         conversationState: state.state,
       }),
     };
@@ -205,6 +220,10 @@ export class AiFoundationPrototypeOrchestrator {
 
   duplicateSnapshot() {
     return this.duplicateGuard.snapshot();
+  }
+
+  executionJournalSnapshot(): ExecutionJournalSnapshot {
+    return this.executionJournal.snapshot();
   }
 
   private validateProviderResult(
@@ -235,6 +254,20 @@ export class AiFoundationPrototypeOrchestrator {
       promptPackageId,
       businessProfile,
     });
+  }
+}
+
+function appendExecutionResult(
+  journal: ExecutionJournalWriter,
+  execution: Parameters<ExecutionJournalWriter["append"]>[0],
+): ExecutionJournalAppendResult {
+  try {
+    return journal.append(execution);
+  } catch {
+    return deepFreeze({
+      status: "failure",
+      reason: "JournalAppendFailed",
+    } satisfies ExecutionJournalAppendResult);
   }
 }
 

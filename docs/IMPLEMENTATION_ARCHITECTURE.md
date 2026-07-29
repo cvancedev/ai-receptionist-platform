@@ -116,3 +116,9 @@ The projector has no state manager, executor, provider, callback, persistence, n
 Milestone 5.3 makes the Prototype Chat Session the application-owned integration boundary. The session supplies its existing in-memory Conversation State Manager to the AI Foundation Orchestrator, calls only `runWithExecution()` for the registered AI-controlled transition, resolves projection context, and projects the latest snapshot before UI delivery.
 
 The UI-facing integration result contains only the immutable Conversation Read Model plus copied decision/execution summaries that omit raw state. Rejected execution still projects current valid state; projection failure returns no raw fallback. The certified read-only `run()` path and the one-transition registry remain unchanged. See [Prototype Read Model Integration](PROTOTYPE_READ_MODEL_INTEGRATION.md).
+
+## Sprint 5.4 Execution Journal Status
+
+Milestone 5.4 gives each AI Foundation Prototype Orchestrator an isolated, append-only in-memory Execution Journal. `runWithExecution()` appends the immutable Execution Result after execution and before reading current state. Safe entries contain deterministic identity, sequence, scope, revisions, outcome, reason, and bounded metadata only.
+
+The journal has no executor, state manager, transition, replay, persistence, provider, external-action, customer-release, or UI authority. Malformed results without canonical audit metadata and unknown outcomes fail closed without an entry; append failure is reported separately without rollback. See [Immutable Execution Journal](EXECUTION_JOURNAL.md).

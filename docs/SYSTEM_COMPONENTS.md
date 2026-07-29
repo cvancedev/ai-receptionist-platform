@@ -101,6 +101,8 @@ Creates a concise human-readable handoff from validated state, including intent,
 
 Records material decisions and versions: request and trace identity, business, profile, state, task, context sources, provider policy, normalized result, usage, model proposal, validation, application decision, applied changes, fallback, escalation, response release, and handoff. Audit persistence remains deferred.
 
+Sprint 5.4 implements only the narrower process-local [Execution Journal](EXECUTION_JOURNAL.md). It records safe controlled-execution result metadata after the State Executor and does not implement this broader future recorder or any persistence.
+
 ## Configuration Administration
 
 A future component will let authorized business staff manage profiles and knowledge through draft, review, validation, activation, suspension, and history. Administration UI is outside the first implementation slice; Sprint 3 uses fictional fixtures.

@@ -121,7 +121,7 @@ The suite covers deterministic projection, source-state integrity, deep runtime 
 - The application must resolve required fields and active service before projection.
 - Service display names are not exposed because they do not exist in Conversation State.
 - Customer release remains unconditionally unauthorized because state contains no explicit release authorization.
-- There is no persistence, networking, execution journal, new transition, external integration, or production provider.
+- There is no persistence, networking, new transition, external integration, or production provider. The separate Sprint 5.4 [Execution Journal](EXECUTION_JOURNAL.md) does not change or feed the read model.
 
 ## Integration Boundary
 

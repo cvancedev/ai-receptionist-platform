@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4 is certified complete with provider-neutral architecture and its smallest typed, deterministic, mock-only foundation. Sprint 5.1 adds one explicit application-controlled in-memory transition after an accepted, validated decision. Sprint 5.2 adds a deeply immutable, fail-closed Conversation Read Model. Sprint 5.3 integrates that model into the existing prototype session and UI without exposing raw state or execution machinery. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, model, SDK, networking, persistence, authentication, external integration, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4 is certified complete with provider-neutral architecture and its smallest typed, deterministic, mock-only foundation. Sprint 5.1 adds one explicit application-controlled in-memory transition after an accepted, validated decision. Sprint 5.2 adds a deeply immutable, fail-closed Conversation Read Model. Sprint 5.3 integrates that model into the existing prototype session and UI without exposing raw state or execution machinery. Sprint 5.4 adds a safe append-only in-memory Execution Journal after controlled execution. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, model, SDK, networking, persistence, authentication, external integration, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -86,6 +86,7 @@ npm run verify:ai-foundation
 npm run verify:state-execution
 npm run verify:conversation-read-model
 npm run verify:prototype-read-model-integration
+npm run verify:execution-journal
 ```
 
 ## Documentation
@@ -153,6 +154,7 @@ npm run verify:prototype-read-model-integration
 - [Sprint 4 determinism audit](docs/certification/SPRINT4_DETERMINISM.md)
 - [Sprint 4 boundary audit](docs/certification/SPRINT4_BOUNDARIES.md)
 - [State execution architecture](docs/STATE_EXECUTION_ARCHITECTURE.md)
+- [Immutable Execution Journal](docs/EXECUTION_JOURNAL.md)
 - [Implementation architecture](docs/IMPLEMENTATION_ARCHITECTURE.md)
 - [System components](docs/SYSTEM_COMPONENTS.md)
 - [Data and state ownership](docs/DATA_AND_STATE_OWNERSHIP.md)
@@ -183,4 +185,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3 and Sprint 4 are certified complete. Sprint 5.1 implements a deterministic Transition Registry, Transition Validator, State Executor, immutable Execution Result, and one controlled `initialized -> intake` mutation. Sprint 5.2 implements the immutable Conversation Read Model and deterministic projector. Sprint 5.3 gives the prototype session shared ownership of controlled execution and projection, then supplies the existing `/prototype` components with only the read model and safe summaries. Raw or unvalidated output still has no authority, and customer release remains false. No real provider, model, SDK, production prompt/schema, API, networking, persistence, authentication, external action, or customer delivery exists. No later Sprint 5 milestone has started.
+Sprint 3 and Sprint 4 are certified complete. Sprint 5.1 implements a deterministic Transition Registry, Transition Validator, State Executor, immutable Execution Result, and one controlled `initialized -> intake` mutation. Sprint 5.2 implements the immutable Conversation Read Model and deterministic projector. Sprint 5.3 gives the prototype session shared ownership of controlled execution and projection, then supplies the existing `/prototype` components with only the read model and safe summaries. Sprint 5.4 records trusted execution results in a deeply immutable, deterministic, process-local journal that has no execution or state authority. Raw or unvalidated output still has no authority, and customer release remains false. No real provider, model, SDK, production prompt/schema, API, networking, persistence, authentication, external action, or customer delivery exists. No later Sprint 5 milestone has started.

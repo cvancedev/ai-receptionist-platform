@@ -57,7 +57,7 @@ Unknown executor outcomes fail closed and are not appended.
 
 ## Trusted Data Boundary
 
-The journal derives entries from the immutable Execution Result, not from raw caller input. A result must provide a canonical execution ID, request/trace/task identity, conversation and Business Profile scope, profile version, and expected revision.
+The journal derives entries from the immutable Execution Result, not from raw caller input. A result must provide a canonical execution ID, request/trace/task identity, conversation and Business Profile scope, positive profile version, and valid expected revision. Runtime validation requires exact result and metadata shapes, valid identifier and revision types, consistent applied/rejected semantics, and matching scope for any embedded state snapshots.
 
 Structurally trustworthy duplicate, stale, unknown-transition, scope, decision, proposal, task, type, and policy rejections are journaled. A malformed request without the required canonical audit metadata returns `UntrustedExecutionMetadata` and creates no entry. The journal does not manufacture identity or preserve raw malformed input to make logging possible.
 

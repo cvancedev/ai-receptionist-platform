@@ -25,8 +25,12 @@ Sprint 5.5 removes workflow-intent derivation from the projector. The projector 
 
 1. a structurally valid `ConversationState` snapshot that also passes the existing Conversation State validator; and
 2. an application-owned projection context containing:
-   - the exact required-field identifiers applicable to the current intake; and
-   - an already resolved active service identifier, or `null`.
+   - the exact required-field identifiers applicable to the current intake;
+   - an already resolved active service identifier, or `null`;
+   - application-resolved service status;
+   - correction-reopened required-field identifiers;
+   - explicit application completion eligibility; and
+   - immutable versioned Progress Engine policy.
 
 Required fields must be supplied explicitly because satisfied fields leave `missingFields`, while confirmed optional fields may also exist. Counting state collections without this context would produce incorrect progress. Service resolution remains application-owned because state alone cannot prove that a confirmed service identifier belongs to an active validated Business Profile.
 

@@ -142,7 +142,7 @@ The existing Conversation Read Model uses this descriptive recommended-action vo
 - `intake_complete`
 - `none`
 
-Sprint 5.5 will align Progress Decisions with these exact string values, but the architectural contracts remain distinct:
+Sprint 5.5 aligns Progress Decisions with these exact string values, but the architectural contracts remain distinct:
 
 - a **Conversation Read Model action** is a descriptive presentation projection with no authority;
 - a **Progress Decision** is an application-owned deterministic workflow intent with no mutation authority; and
@@ -250,11 +250,11 @@ Milestone 5.5 is complete only when:
 - no prohibited capability is introduced;
 - exactly one scoped commit is created for Sprint 5.5;
 - no release tag is created; and
-- Sprint 5.6 certification has not started.
+- Sprint 5.6 certification had not started before the scoped Sprint 5.5 commit.
 
 ## Milestone 5.6 — Sprint 5 Certification
 
-**Status: Planned**
+**Status: Complete**
 
 ### Objective
 
@@ -262,7 +262,7 @@ Certify Sprint 5.1 through Sprint 5.5 as one coherent controlled-conversation ar
 
 Certification is evidence-based and adds no product functionality.
 
-### Planned Certification Scope
+### Certification Scope
 
 Certification must include:
 
@@ -292,7 +292,7 @@ Certification must not be automatic. Process-local state, duplicate protection, 
 
 ### Release Boundary
 
-If certification passes, Sprint 5 may be proposed for release publication as `v0.6.0`.
+Certification passed, so Sprint 5 may be proposed for release publication as `v0.6.0`.
 
 Certification does not create or push the tag. Release publication requires separate authorization after the certification commit has been reviewed.
 

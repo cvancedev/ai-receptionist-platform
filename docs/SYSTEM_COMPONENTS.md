@@ -43,11 +43,11 @@ The model cannot select sources. Released packages are immutable, provider-neutr
 
 ## Task Registry
 
-Conceptually validates application-selected task identifiers, versions, MVP allowlist status, compatible context profiles, output contracts, and provider policy. Unknown or deferred tasks fail before composition. No registry is implemented.
+Conceptually validates application-selected task identifiers, versions, MVP allowlist status, compatible context profiles, output contracts, and provider policy. Unknown or deferred tasks fail before composition. Sprint 4 implements a narrow immutable prototype registry; no production registry or administration boundary exists.
 
 ## Prompt Composer
 
-Conceptually combines one approved task, validated Context Package, application authority, explicit permissions/prohibitions, compatible output-contract reference, response-style policy, and version metadata into a validated provider-neutral Prompt Package. It cannot select tasks or sources, reinterpret business policy, or promote data into instructions. No Prompt Composer or production prompt exists. See [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md).
+Conceptually combines one approved task, validated Context Package, application authority, explicit permissions/prohibitions, compatible output-contract reference, response-style policy, and version metadata into a validated provider-neutral Prompt Package. It cannot select tasks or sources, reinterpret business policy, or promote data into instructions. Sprint 4 implements a narrow prototype composer containing references rather than production prompt prose; no production Prompt Composer or prompt exists. See [Prompt Composition Pipeline](PROMPT_COMPOSITION_PIPELINE.md).
 
 ## Model Gateway
 

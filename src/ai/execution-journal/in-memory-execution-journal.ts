@@ -27,7 +27,7 @@ export class InMemoryExecutionJournal implements ExecutionJournalWriter {
       || !isNonEmptyString(metadata.taskIdentifier)
       || !isNonEmptyString(metadata.conversationId)
       || !isNonEmptyString(metadata.businessProfileId)
-      || !isNonNegativeInteger(metadata.businessProfileVersion)
+      || !isPositiveInteger(metadata.businessProfileVersion)
       || !isNonNegativeInteger(metadata.expectedStateRevision)
     ) {
       return untrustedMetadataFailure();
@@ -125,7 +125,7 @@ function cloneEntry(entry: Readonly<ExecutionJournalEntry>) {
 }
 
 function isNonEmptyString(value: unknown): value is string {
-  return typeof value === "string" && value.length > 0;
+  return typeof value === "string" && value.trim().length > 0;
 }
 
 function isNonNegativeInteger(value: unknown): value is number {
@@ -134,37 +134,135 @@ function isNonNegativeInteger(value: unknown): value is number {
     && value >= 0;
 }
 
+function isPositiveInteger(value: unknown): value is number {
+  return isNonNegativeInteger(value) && value > 0;
+}
+
 function isSafeExecutionResult(value: unknown): value is StateExecutionResult {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
-  const candidate = value as Partial<StateExecutionResult>;
+  if (
+    !isPlainRecord(value)
+    || !hasOnlyKeys(value, [
+      "success",
+      "reason",
+      "previousState",
+      "newState",
+      "transitionId",
+      "executionTimestamp",
+      "executionMetadata",
+    ])
+  ) {
+    return false;
+  }
+  const candidate = value as unknown as Partial<StateExecutionResult>;
   const metadata = candidate.executionMetadata;
-  return (
+  if (
+    !isPlainRecord(metadata)
+    || !hasOnlyKeys(metadata, [
+      "executionId",
+      "requestId",
+      "traceId",
+      "taskIdentifier",
+      "proposalId",
+      "conversationId",
+      "businessProfileId",
+      "businessProfileVersion",
+      "expectedStateRevision",
+      "appliedStateRevision",
+      "failures",
+      "details",
+    ])
+  ) {
+    return false;
+  }
+  const structurallyValid = (
     typeof candidate.success === "boolean"
     && isNonEmptyString(candidate.reason)
     && (candidate.transitionId === null
-      || typeof candidate.transitionId === "string")
+      || isNonEmptyString(candidate.transitionId))
     && isNonEmptyString(candidate.executionTimestamp)
-    && hasSafeRevision(candidate.previousState)
-    && hasSafeRevision(candidate.newState)
-    && Boolean(metadata)
-    && Array.isArray(metadata?.failures)
+    && isNullableNonEmptyString(metadata.executionId)
+    && isNullableNonEmptyString(metadata.requestId)
+    && isNullableNonEmptyString(metadata.traceId)
+    && isNullableNonEmptyString(metadata.taskIdentifier)
+    && isNullableNonEmptyString(metadata.proposalId)
+    && isNullableNonEmptyString(metadata.conversationId)
+    && isNullableNonEmptyString(metadata.businessProfileId)
+    && isNullablePositiveInteger(metadata.businessProfileVersion)
+    && isNullableNonNegativeInteger(metadata.expectedStateRevision)
+    && isNullableNonNegativeInteger(metadata.appliedStateRevision)
+    && Array.isArray(metadata.failures)
     && metadata.failures.every(isExecutionReason)
+    && Array.isArray(metadata.details)
+    && metadata.details.every((detail) => typeof detail === "string")
+    && hasSafeStateScope(candidate.previousState, metadata)
+    && hasSafeStateScope(candidate.newState, metadata)
   );
+  if (!structurallyValid || !isExecutionReason(candidate.reason)) {
+    return structurallyValid;
+  }
+  const applied = candidate.reason === "TransitionApplied";
+  if (candidate.success !== applied) return false;
+  if (!applied) {
+    return metadata.appliedStateRevision === null
+      && metadata.failures[0] === candidate.reason;
+  }
+  const previousState = candidate.previousState;
+  const newState = candidate.newState;
+  return previousState !== null
+    && previousState !== undefined
+    && newState !== null
+    && newState !== undefined
+    && candidate.transitionId !== null
+    && metadata.expectedStateRevision === previousState.revision
+    && metadata.appliedStateRevision === newState.revision
+    && newState.revision === previousState.revision + 1
+    && metadata.failures.length === 0;
 }
 
-function hasSafeRevision(
+function hasSafeStateScope(
   value: StateExecutionResult["previousState"] | undefined,
+  metadata: StateExecutionResult["executionMetadata"],
 ): boolean {
   return value === null
     || (
-      Boolean(value)
-      && isNonNegativeInteger(value?.revision)
+      isPlainRecord(value)
+      && isNonNegativeInteger(value.revision)
+      && value.conversationId === metadata.conversationId
+      && value.businessProfileId === metadata.businessProfileId
+      && value.businessProfileVersion === metadata.businessProfileVersion
     );
+}
+
+function isNullableNonEmptyString(value: unknown): value is string | null {
+  return value === null || isNonEmptyString(value);
+}
+
+function isNullableNonNegativeInteger(value: unknown): value is number | null {
+  return value === null || isNonNegativeInteger(value);
+}
+
+function isNullablePositiveInteger(value: unknown): value is number | null {
+  return value === null || isPositiveInteger(value);
 }
 
 function isExecutionReason(value: unknown): value is StateExecutionReason {
   return typeof value === "string"
     && (STATE_EXECUTION_REASONS as readonly string[]).includes(value);
+}
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null
+    && typeof value === "object"
+    && !Array.isArray(value)
+    && Object.getPrototypeOf(value) === Object.prototype;
+}
+
+function hasOnlyKeys(
+  value: Readonly<Record<string, unknown>>,
+  allowed: readonly string[],
+): boolean {
+  return Object.keys(value).every((key) => allowed.includes(key))
+    && allowed.every((key) => key in value);
 }
 
 function untrustedMetadataFailure(): ExecutionJournalAppendResult {

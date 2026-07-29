@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 5 - Certification
+
+- Audited Sprint 5.1 through Sprint 5.5 architecture, state integrity, determinism, Progress Engine, Execution Journal, prototype integration, regression, and prohibited-capability boundaries.
+- Hardened the existing Execution Journal trust boundary to reject malformed forged result metadata, including invalid scope versions, identifiers, revisions, success semantics, and embedded state scope.
+- Added focused negative journal assertions without adding a transition, mutation path, persistence, networking, customer communication, external action, or product feature.
+- Confirmed every Sprint 3, Sprint 4, and Sprint 5 verification suite, lint, strict TypeScript, production build, Markdown link, capability scan, and diff-integrity check passes.
+- Certified Sprint 5 complete and ready for separately authorized `v0.6.0` release publication.
+- Did not create a release tag, push changes, or begin Sprint 6.
+
 ### Sprint 5.5 - Deterministic Conversation Progress Engine
 
 - Added typed immutable Progress Engine input, policy, decision, result, and failure contracts.

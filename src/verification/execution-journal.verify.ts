@@ -217,6 +217,79 @@ async function verifyTrustBoundary() {
     before,
     "successful journal append has no conversation-state authority",
   );
+  const malformedTrustedResults: readonly [string, unknown][] = [
+    [
+      "zero Business Profile version",
+      {
+        ...execution,
+        executionMetadata: {
+          ...execution.executionMetadata,
+          businessProfileVersion: 0,
+        },
+      },
+    ],
+    [
+      "non-string proposal identity",
+      {
+        ...execution,
+        executionMetadata: {
+          ...execution.executionMetadata,
+          proposalId: { unsafe: true },
+        },
+      },
+    ],
+    [
+      "blank execution identity",
+      {
+        ...execution,
+        executionMetadata: {
+          ...execution.executionMetadata,
+          executionId: "   ",
+        },
+      },
+    ],
+    [
+      "empty transition identity",
+      { ...execution, transitionId: "" },
+    ],
+    [
+      "negative applied revision",
+      {
+        ...execution,
+        executionMetadata: {
+          ...execution.executionMetadata,
+          appliedStateRevision: -1,
+        },
+      },
+    ],
+    [
+      "inconsistent success flag",
+      { ...execution, success: false },
+    ],
+    [
+      "mismatched embedded state scope",
+      {
+        ...execution,
+        newState: execution.newState
+          ? { ...execution.newState, conversationId: "other-conversation" }
+          : null,
+      },
+    ],
+  ];
+  for (const [label, malformedTrustedResult] of malformedTrustedResults) {
+    const rejected = journal.append(
+      malformedTrustedResult as StateExecutionResult,
+    );
+    assert(
+      rejected.status === "failure"
+        && rejected.reason === "UntrustedExecutionMetadata",
+      `${label} fails closed`,
+    );
+  }
+  assert(
+    journal.snapshot().entries.length === 0,
+    "malformed trusted-result variants are not stored",
+  );
   const unknownOutcome = journal.append({
     ...execution,
     reason: "FutureExecutionReason",

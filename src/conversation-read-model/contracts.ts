@@ -3,14 +3,19 @@ import type {
   ConversationStage,
   EscalationState,
 } from "../shared/constants";
+import {
+  CONVERSATION_PROGRESS_DECISIONS,
+  type ConversationProgressPolicy,
+  type ConversationProgressServiceStatus,
+} from "../conversation-progress/contracts";
 
 export const CONVERSATION_READ_MODEL_ACTIONS = {
-  BEGIN_INTAKE: "begin_intake",
-  ASK_REQUIRED_FIELD: "ask_required_field",
-  CLARIFY_SERVICE: "clarify_service",
-  REVIEW_ESCALATION: "review_escalation",
-  INTAKE_COMPLETE: "intake_complete",
-  NONE: "none",
+  BEGIN_INTAKE: CONVERSATION_PROGRESS_DECISIONS.BEGIN_INTAKE,
+  ASK_REQUIRED_FIELD: CONVERSATION_PROGRESS_DECISIONS.ASK_REQUIRED_FIELD,
+  CLARIFY_SERVICE: CONVERSATION_PROGRESS_DECISIONS.CLARIFY_SERVICE,
+  REVIEW_ESCALATION: CONVERSATION_PROGRESS_DECISIONS.REVIEW_ESCALATION,
+  INTAKE_COMPLETE: CONVERSATION_PROGRESS_DECISIONS.INTAKE_COMPLETE,
+  NONE: CONVERSATION_PROGRESS_DECISIONS.NONE,
 } as const;
 
 export type ConversationReadModelAction =
@@ -89,6 +94,10 @@ export interface ConversationReadModel {
 export interface ConversationReadModelProjectionContext {
   readonly requiredFieldIds: readonly string[];
   readonly resolvedServiceId: string | null;
+  readonly serviceResolutionStatus: ConversationProgressServiceStatus;
+  readonly reopenedRequiredFieldIds: readonly string[];
+  readonly completionEligible: boolean;
+  readonly progressPolicy: Readonly<ConversationProgressPolicy>;
 }
 
 export type ConversationReadModelProjectionResult =

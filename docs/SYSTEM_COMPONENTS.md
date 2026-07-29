@@ -87,6 +87,12 @@ Milestone 5.2 implements an isolated fail-closed presentation boundary. It accep
 
 The projector has no reference to the Conversation State Manager or State Executor and cannot mutate state, execute transitions, authorize customer release, persist data, perform networking, or invoke external actions. See [Conversation Read Model](CONVERSATION_READ_MODEL.md).
 
+## Deterministic Conversation Progress Engine
+
+Milestone 5.5 implements a pure application-owned evaluator over trusted stage/revision, service status, required-field status, correction-reopened requirements, escalation, completion eligibility, and versioned policy.
+
+It returns one deeply immutable allowlisted Progress Decision with explicit mutation, execution, and release denial. The read-model projector maps that decision to presentation data. The engine cannot mutate state, execute transitions, append to the journal, invoke a provider, or perform an external action. See [Deterministic Conversation Progress Engine](CONVERSATION_PROGRESS_ENGINE.md).
+
 ## Prototype Read Model Integration
 
 Milestone 5.3 makes the Prototype Chat Session the owner of the shared in-memory manager, deterministic orchestration, controlled execution attempt, projection context, and UI-safe delivery. A dedicated integration component copies safe decision and execution metadata, omits raw execution snapshots, and returns either an immutable Conversation Read Model or deterministic projection errors.

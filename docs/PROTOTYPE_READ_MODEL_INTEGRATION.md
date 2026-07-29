@@ -18,6 +18,7 @@ fictional user input
   -> shared in-memory Conversation State Manager
   -> current immutable state snapshot
   -> application-owned projection context
+  -> Deterministic Conversation Progress Engine
   -> Conversation Read Model Projector
   -> UI-safe integration result
   -> prototype components
@@ -82,8 +83,11 @@ Projection context is application-owned:
 - `requested-service` is always required;
 - when an active service is resolved, its global and service-specific required intake fields are resolved through the existing intake-field architecture; and
 - only the active service identifier is supplied to the projector.
+- Sprint 5.5 also supplies deterministic service status, correction-reopened required fields, readiness-derived completion eligibility, and the immutable progress policy.
 
 No service display name is added to the read model.
+
+The Progress Engine returns workflow intent only. It cannot mutate state, execute a transition, append to the journal, or communicate with customers. Its decision is mapped to the existing UI-safe recommended action; no Progress Engine capability reaches the UI.
 
 ## UI Trust Boundary
 

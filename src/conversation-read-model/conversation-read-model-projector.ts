@@ -15,15 +15,23 @@ import {
   CONVERSATION_STAGES,
   ESCALATION_STATES,
 } from "../shared/constants";
+import {
+  DeterministicConversationProgressEngine,
+} from "../conversation-progress/conversation-progress-engine";
+import {
+  CONVERSATION_PROGRESS_SERVICE_STATUSES,
+  type ConversationProgressInput,
+} from "../conversation-progress/contracts";
 import { validateConversationState } from "../validation/conversation-state-validation";
 import {
-  CONVERSATION_READ_MODEL_ACTIONS,
   type ConversationCompletionProgress,
   type ConversationReadModel,
-  type ConversationReadModelAction,
   type ConversationReadModelProjectionContext,
   type ConversationReadModelProjectionResult,
 } from "./contracts";
+import {
+  mapProgressDecisionToReadModelAction,
+} from "./progress-decision-mapping";
 
 const ACTIVE_ESCALATION_STATES: readonly EscalationState[] = [
   ESCALATION_STATES.REQUIRED,
@@ -32,14 +40,10 @@ const ACTIVE_ESCALATION_STATES: readonly EscalationState[] = [
   ESCALATION_STATES.HANDED_OFF,
 ];
 
-const REVIEWABLE_ESCALATION_STATES: readonly EscalationState[] = [
-  ESCALATION_STATES.RECOMMENDED,
-  ESCALATION_STATES.REQUIRED,
-  ESCALATION_STATES.REQUESTED_BY_CUSTOMER,
-  ESCALATION_STATES.IN_PROGRESS,
-];
-
 export class ConversationReadModelProjector {
+  private readonly progressEngine =
+    new DeterministicConversationProgressEngine();
+
   project(
     stateInput: unknown,
     contextInput: unknown,
@@ -62,6 +66,23 @@ export class ConversationReadModelProjector {
     const errors = [...stateValidation.errors, ...projectionErrors];
     if (errors.length > 0) {
       return deepFreeze({ status: "failure", errors });
+    }
+    const progress = this.progressEngine.evaluate(
+      buildProgressInput(state, context),
+    );
+    if (progress.status === "failure") {
+      return deepFreeze({
+        status: "failure",
+        errors: [...progress.errors],
+      });
+    }
+    const recommendedNextAction =
+      mapProgressDecisionToReadModelAction(progress.value.decision);
+    if (!recommendedNextAction) {
+      return deepFreeze({
+        status: "failure",
+        errors: ["Progress Decision cannot be mapped to the read model."],
+      });
     }
 
     const readModel: ConversationReadModel = {
@@ -100,10 +121,7 @@ export class ConversationReadModelProjector {
         isComplete: state.completionState === COMPLETION_STATES.COMPLETED,
         canReleaseToCustomer: false,
       },
-      recommendedNextAction: deriveRecommendedNextAction(
-        state,
-        context.resolvedServiceId,
-      ),
+      recommendedNextAction,
       completionProgress: deriveCompletionProgress(
         state,
         context.requiredFieldIds,
@@ -130,8 +148,19 @@ function validateProjectionInput(
   if (
     !isRecord(context)
     || !isStringArray(context.requiredFieldIds)
+    || !isStringArray(context.reopenedRequiredFieldIds)
     || context.requiredFieldIds.some((field) => !field.trim())
     || new Set(context.requiredFieldIds).size !== context.requiredFieldIds.length
+    || context.reopenedRequiredFieldIds.some((field) => !field.trim())
+    || new Set(context.reopenedRequiredFieldIds).size
+      !== context.reopenedRequiredFieldIds.length
+    || !Object.values(CONVERSATION_PROGRESS_SERVICE_STATUSES).includes(
+      context.serviceResolutionStatus as typeof CONVERSATION_PROGRESS_SERVICE_STATUSES[
+        keyof typeof CONVERSATION_PROGRESS_SERVICE_STATUSES
+      ],
+    )
+    || typeof context.completionEligible !== "boolean"
+    || !isRecord(context.progressPolicy)
     || (
       context.resolvedServiceId !== null
       && !isNonEmptyString(context.resolvedServiceId)
@@ -178,7 +207,60 @@ function validateProjectionConsistency(
   ) {
     errors.push("Resolved service does not match confirmed conversation state.");
   }
+  if (
+    (context.serviceResolutionStatus
+      === CONVERSATION_PROGRESS_SERVICE_STATUSES.RESOLVED)
+      !== (resolvedServiceId !== null)
+  ) {
+    errors.push("Service status and resolved service identity contradict.");
+  }
+  if (
+    context.reopenedRequiredFieldIds.some(
+      (field) =>
+        !required.has(field)
+        || !state.missingFields.includes(field),
+    )
+  ) {
+    errors.push("Reopened required fields must remain required and missing.");
+  }
   return errors;
+}
+
+function buildProgressInput(
+  state: ConversationState,
+  context: ConversationReadModelProjectionContext,
+): ConversationProgressInput {
+  const satisfiedRequiredFieldIds = context.requiredFieldIds.filter(
+    (field) => Boolean(state.confirmedFacts[field]),
+  );
+  const missingRequiredFieldIds = context.requiredFieldIds.filter(
+    (field) => state.missingFields.includes(field),
+  );
+  return {
+    conversationId: state.conversationId,
+    businessProfileId: state.businessProfileId,
+    businessProfileVersion: state.businessProfileVersion,
+    revision: state.revision,
+    stage: state.stage,
+    serviceResolution: context.serviceResolutionStatus
+      === CONVERSATION_PROGRESS_SERVICE_STATUSES.RESOLVED
+      ? {
+          status: CONVERSATION_PROGRESS_SERVICE_STATUSES.RESOLVED,
+          resolvedServiceId: context.resolvedServiceId as string,
+        }
+      : {
+          status: context.serviceResolutionStatus,
+          resolvedServiceId: null,
+        },
+    requiredFieldIds: [...context.requiredFieldIds],
+    satisfiedRequiredFieldIds,
+    missingRequiredFieldIds,
+    reopenedRequiredFieldIds: [...context.reopenedRequiredFieldIds],
+    escalationState: state.escalation.status,
+    completionState: state.completionState,
+    completionEligible: context.completionEligible,
+    policy: context.progressPolicy,
+  };
 }
 
 function deriveCompletionProgress(
@@ -209,42 +291,6 @@ function deriveCompletionProgress(
     totalRequiredFields: requiredFieldIds.length,
     percentage,
   };
-}
-
-function deriveRecommendedNextAction(
-  state: ConversationState,
-  resolvedServiceId: string | null,
-): ConversationReadModelAction {
-  if (REVIEWABLE_ESCALATION_STATES.includes(state.escalation.status)) {
-    return CONVERSATION_READ_MODEL_ACTIONS.REVIEW_ESCALATION;
-  }
-  if (
-    state.completionState === COMPLETION_STATES.COMPLETED
-    || state.completionState === COMPLETION_STATES.READY_FOR_CONFIRMATION
-    || state.completionState === COMPLETION_STATES.READY_FOR_HANDOFF
-    || state.stage === CONVERSATION_STAGES.HANDOFF
-  ) {
-    return CONVERSATION_READ_MODEL_ACTIONS.INTAKE_COMPLETE;
-  }
-  if (
-    state.stage === CONVERSATION_STAGES.ABANDONED
-    || state.completionState === COMPLETION_STATES.ABANDONED
-  ) {
-    return CONVERSATION_READ_MODEL_ACTIONS.NONE;
-  }
-  if (state.stage === CONVERSATION_STAGES.INITIALIZED) {
-    return CONVERSATION_READ_MODEL_ACTIONS.BEGIN_INTAKE;
-  }
-  if (
-    state.stage === CONVERSATION_STAGES.CLARIFICATION
-    && !resolvedServiceId
-  ) {
-    return CONVERSATION_READ_MODEL_ACTIONS.CLARIFY_SERVICE;
-  }
-  if (state.missingFields.length > 0) {
-    return CONVERSATION_READ_MODEL_ACTIONS.ASK_REQUIRED_FIELD;
-  }
-  return CONVERSATION_READ_MODEL_ACTIONS.NONE;
 }
 
 function compareSequencedFields(

@@ -67,7 +67,7 @@ See [Immutable Execution Journal](EXECUTION_JOURNAL.md).
 
 ## Milestone 5.5 — Deterministic Conversation Progress Engine
 
-**Status: Planned**
+**Status: Complete**
 
 ### Objective
 
@@ -96,7 +96,7 @@ It does not answer:
 
 Mutation authority remains with the Transition Registry, Transition Validator, State Executor, and Conversation State Manager. A Progress Decision is not a transition identifier, execution request, state operation, customer message, or release authorization.
 
-### Planned Input and Policy Boundary
+### Input and Policy Boundary
 
 The implementation must define an explicit immutable input contract containing only the information required to evaluate progress, including:
 
@@ -115,7 +115,7 @@ The engine must not accept raw model output, prompts, arbitrary provider metadat
 
 Input validation must fail closed when identity, revision, stage, policy, required-field context, service context, or internally consistent progress facts cannot be established.
 
-### Planned Responsibilities
+### Responsibilities
 
 The engine is responsible only for deterministic evaluation of:
 
@@ -131,7 +131,7 @@ The engine is responsible only for deterministic evaluation of:
 
 The engine may select one allowlisted workflow intent. It may not construct arbitrary state operations, invent transitions, mutate state, execute a transition, communicate with customers, release content, persist data, or invoke a business action.
 
-### Planned Progress-Decision Vocabulary
+### Progress-Decision Vocabulary
 
 The existing Conversation Read Model uses this descriptive recommended-action vocabulary:
 
@@ -150,7 +150,7 @@ Sprint 5.5 will align Progress Decisions with these exact string values, but the
 
 A separate Progress Decision type is justified because the application layer must not depend on a presentation contract for workflow authority. The implementation should define an explicit, exhaustively verified mapping between the Progress Decision vocabulary and the read-model recommendation vocabulary rather than creating additional synonymous values.
 
-The planned decision meanings are:
+The decision meanings are:
 
 | Progress Decision | Deterministic meaning |
 | --- | --- |
@@ -163,7 +163,7 @@ The planned decision meanings are:
 
 `none` is a valid decision for a validated state with no applicable action. It must not be used as a fallback for malformed or contradictory input; those inputs require a fail-closed validation result.
 
-### Planned Decision Precedence
+### Evaluation Precedence
 
 The implementation must document and verify an explicit precedence order. At minimum, it must ensure:
 
@@ -209,7 +209,7 @@ Milestone 5.5 must not introduce:
 - direct state mutation from a Progress Decision; or
 - unrelated UI redesign.
 
-### Planned Verification
+### Verification
 
 The focused Sprint 5.5 verification must prove:
 

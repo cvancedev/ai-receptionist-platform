@@ -221,7 +221,7 @@ Cancellation may occur before dispatch, during execution, during streaming, or b
 
 ## Current Boundary
 
-Milestone 4.5 exercises this lifecycle from approved task through immutable application decision using fictional fixtures and a deterministic mock adapter. Milestone 5.1 appends one application-controlled, registry-backed, validated in-memory `initialized -> intake` transition and immutable Execution Result. Milestone 5.4 observes that result through a bounded process-local [Execution Journal](EXECUTION_JOURNAL.md). The model and application decision still cannot mutate state directly. No general state-operation builder, response release, repair/retry execution, real provider call, production prompt/schema, durable audit store, networking, or persistence is implemented. See [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md).
+Milestone 4.5 exercises this lifecycle from approved task through immutable application decision using fictional fixtures and a deterministic mock adapter. Milestone 5.1 appends one application-controlled, registry-backed, validated in-memory `initialized -> intake` transition and immutable Execution Result. Milestone 5.4 observes that result through a bounded process-local [Execution Journal](EXECUTION_JOURNAL.md). Milestone 5.5 derives the next application workflow intent through the mutation-free [Deterministic Conversation Progress Engine](CONVERSATION_PROGRESS_ENGINE.md). The model and application decision still cannot mutate state directly. No general state-operation builder, response release, repair/retry execution, real provider call, production prompt/schema, durable audit store, networking, or persistence is implemented. See [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md).
 
 ## Related Documents
 
@@ -240,3 +240,4 @@ Milestone 4.5 exercises this lifecycle from approved task through immutable appl
 - [Model Output Contract](MODEL_OUTPUT_CONTRACT.md)
 - [State Execution Architecture](STATE_EXECUTION_ARCHITECTURE.md)
 - [Immutable Execution Journal](EXECUTION_JOURNAL.md)
+- [Deterministic Conversation Progress Engine](CONVERSATION_PROGRESS_ENGINE.md)

@@ -123,8 +123,8 @@ Milestone 5.4 gives each AI Foundation Prototype Orchestrator an isolated, appen
 
 The journal has no executor, state manager, transition, replay, persistence, provider, external-action, customer-release, or UI authority. Malformed results without canonical audit metadata and unknown outcomes fail closed without an entry; append failure is reported separately without rollback. See [Immutable Execution Journal](EXECUTION_JOURNAL.md).
 
-## Planned Sprint 5.5 Progress Engine
+## Sprint 5.5 Progress Engine Status
 
-Milestone 5.5 is planned as an application-authoritative deterministic evaluator over validated Conversation State, explicit application policy, and required-field/service context. It will produce one allowlisted Progress Decision describing what the application should attempt next.
+Milestone 5.5 implements an application-authoritative deterministic evaluator over validated Conversation State, explicit application policy, and required-field/service context. It produces one deeply immutable allowlisted Progress Decision describing what the application should attempt next.
 
-A Progress Decision will not be a state operation, transition identifier, execution request, customer message, or release authorization. Any resulting mutation must still pass through the existing Transition Registry, Transition Validator, State Executor, and Conversation State Manager. Milestone 5.6 will then certify Sprint 5.1 through Sprint 5.5 without adding product functionality. See the [Sprint 5 Plan](SPRINT_5_PLAN.md).
+A Progress Decision is not a state operation, transition identifier, execution request, customer message, or release authorization. The Conversation Read Model maps it to descriptive presentation data. Any resulting mutation must still pass through the existing Transition Registry, Transition Validator, State Executor, and Conversation State Manager. Milestone 5.6 will certify Sprint 5.1 through Sprint 5.5 without adding product functionality. See the [Sprint 5 Plan](SPRINT_5_PLAN.md) and [Deterministic Conversation Progress Engine](CONVERSATION_PROGRESS_ENGINE.md).

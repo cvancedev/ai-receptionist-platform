@@ -102,6 +102,7 @@ Previously returned snapshots remain frozen detached values. They cannot mutate 
 - **Conversation State:** remains authoritative. Journal entries contain only identity and revision metadata, not state snapshots.
 - **Conversation Read Model:** remains the presentation boundary. It does not read the journal, and the customer-facing prototype receives no journal capability or history.
 - **Duplicate guard:** remains the execution replay-prevention boundary. The journal records duplicate outcomes but does not prevent or authorize execution.
+- **Conversation Progress Engine:** derives a mutation-free workflow intent before any separately authorized execution mapping. It cannot append to or read authority from the journal.
 
 ## Verification
 

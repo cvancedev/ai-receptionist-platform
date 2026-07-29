@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 5.5 - Deterministic Conversation Progress Engine
+
+- Added typed immutable Progress Engine input, policy, decision, result, and failure contracts.
+- Added deterministic fail-closed evaluation for initialized intake, required fields, service clarification, escalation review, completion eligibility, and explicit no-action states.
+- Centralized workflow-intent derivation in the Progress Engine and explicitly mapped its six-value allowlist to the read-model presentation vocabulary.
+- Preserved application-owned required-field/service context, correction reopening, transition validation, execution, journaling, state authority, and customer-release denial.
+- Added focused progress verification and retained every Sprint 3, Sprint 4, and Sprint 5.1–5.4 regression boundary.
+- Added no transition, persistence, networking, external action, real provider, customer communication, authentication change, or UI redesign.
+
 ### Sprint 5 Planning - Milestones 5.5 and 5.6
 
 - Formally defined Sprint 5.5 as the planned Deterministic Conversation Progress Engine.

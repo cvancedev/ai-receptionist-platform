@@ -14,6 +14,12 @@ import type {
   ConversationReadModelProjectionContext,
 } from "../conversation-read-model/contracts";
 import { resolveIntakeFields } from "../conversation/intake-field-resolution";
+import { evaluateIntakeReadiness } from "../conversation/intake-readiness";
+import {
+  CONVERSATION_PROGRESS_SERVICE_STATUSES,
+  DEFAULT_CONVERSATION_PROGRESS_POLICY,
+} from "../conversation-progress/contracts";
+import { CONVERSATION_STAGES } from "../shared/constants";
 
 export interface PrototypeDecisionSummary {
   readonly decision: ApplicationDecision["decision"];
@@ -104,16 +110,45 @@ export class PrototypeReadModelIntegration {
       return {
         requiredFieldIds: ["requested-service"],
         resolvedServiceId: null,
+        serviceResolutionStatus: requestedServiceId
+          ? CONVERSATION_PROGRESS_SERVICE_STATUSES.UNSUPPORTED
+          : stateInput.stage === CONVERSATION_STAGES.CLARIFICATION
+            ? CONVERSATION_PROGRESS_SERVICE_STATUSES.AMBIGUOUS
+            : CONVERSATION_PROGRESS_SERVICE_STATUSES.UNRESOLVED,
+        reopenedRequiredFieldIds: [],
+        completionEligible: false,
+        progressPolicy: DEFAULT_CONVERSATION_PROGRESS_POLICY,
       };
     }
     const fields = resolveIntakeFields(this.profile, service, stateInput);
     if (!fields) return null;
+    const requiredFieldIds = unique([
+      "requested-service",
+      ...fields.required.map((field) => field.id),
+    ]);
+    const readiness = evaluateIntakeReadiness(
+      this.profile,
+      stateInput,
+      service,
+    );
     return {
-      requiredFieldIds: unique([
-        "requested-service",
-        ...fields.required.map((field) => field.id),
-      ]),
+      requiredFieldIds,
       resolvedServiceId: service.id,
+      serviceResolutionStatus:
+        CONVERSATION_PROGRESS_SERVICE_STATUSES.RESOLVED,
+      reopenedRequiredFieldIds: unique(
+        stateInput.corrections
+          .map((correction) => correction.field)
+          .filter(
+            (field) =>
+              requiredFieldIds.includes(field)
+              && stateInput.missingFields.includes(field),
+          ),
+      ),
+      completionEligible:
+        readiness.status === "ready-for-confirmation"
+        || readiness.status === "ready-for-handoff",
+      progressPolicy: DEFAULT_CONVERSATION_PROGRESS_POLICY,
     };
   }
 }

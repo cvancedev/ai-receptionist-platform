@@ -17,6 +17,8 @@ validated Conversation State snapshot
 
 Sprint 5.3 integrates the projector through the Prototype Chat Session after controlled execution and before UI delivery. The projector itself remains pure and unchanged: integration code owns the state snapshot, context construction, and safe result mapping. See [Prototype Read Model Integration](PROTOTYPE_READ_MODEL_INTEGRATION.md).
 
+Sprint 5.5 removes workflow-intent derivation from the projector. The projector now supplies trusted application context to the [Deterministic Conversation Progress Engine](CONVERSATION_PROGRESS_ENGINE.md) and explicitly maps its allowlisted Progress Decision to the descriptive read-model action. Projection remains read-only.
+
 ## Inputs
 
 `ConversationReadModelProjector.project()` accepts `unknown` inputs and validates them before projection:
@@ -69,7 +71,7 @@ When no required fields exist, progress is explicitly `not-applicable`, with zer
 
 ### Recommended Next Action
 
-The projector returns exactly one allowlisted value:
+The Progress Engine returns one application-owned workflow intent, and the projector maps it to exactly one descriptive allowlisted value:
 
 - `review_escalation` for a recommended, required, customer-requested, or in-progress escalation;
 - `intake_complete` for completion readiness, completed state, or handoff;
@@ -79,7 +81,7 @@ The projector returns exactly one allowlisted value:
 - `ask_required_field` when required fields remain; or
 - `none` when no preceding state-derived rule applies.
 
-This is descriptive projection policy only. It is not an executable transition identifier and conveys no execution authority.
+The read-model value remains descriptive presentation data. The underlying Progress Decision is also mutation-free; neither value is an executable transition identifier or conveys execution authority.
 
 ### Status Flags
 
@@ -113,7 +115,7 @@ Run:
 npm.cmd run verify:conversation-read-model
 ```
 
-The suite covers deterministic projection, source-state integrity, deep runtime immutability, reference isolation, initialized and intake states, identity and revision, facts, corrections, missing fields, question history, service resolution, escalation, completion, release denial, bounded progress, allowlisted actions, malformed and inconsistent input rejection, and absence of execution during projection.
+The suite covers deterministic projection, source-state integrity, deep runtime immutability, reference isolation, initialized and intake states, identity and revision, facts, corrections, missing fields, question history, service resolution, escalation, completion, release denial, bounded progress, mapped allowlisted actions, malformed and inconsistent input rejection, and absence of execution during projection. Focused Progress Engine behavior is covered by `verify:conversation-progress`.
 
 ## Current Limitations
 
@@ -122,6 +124,7 @@ The suite covers deterministic projection, source-state integrity, deep runtime 
 - Service display names are not exposed because they do not exist in Conversation State.
 - Customer release remains unconditionally unauthorized because state contains no explicit release authorization.
 - There is no persistence, networking, new transition, external integration, or production provider. The separate Sprint 5.4 [Execution Journal](EXECUTION_JOURNAL.md) does not change or feed the read model.
+- Application integration must supply valid service status, required/reopened fields, completion eligibility, and progress policy.
 
 ## Integration Boundary
 

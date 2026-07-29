@@ -13,6 +13,13 @@ import {
   CONVERSATION_STAGES,
   ESCALATION_STATES,
 } from "../shared/constants";
+import {
+  CONVERSATION_PROGRESS_SERVICE_STATUSES,
+  DEFAULT_CONVERSATION_PROGRESS_POLICY,
+} from "../conversation-progress/contracts";
+import type {
+  ConversationReadModelProjectionContext,
+} from "../conversation-read-model/contracts";
 
 const requiredFieldIds = [
   "customer-name",
@@ -67,8 +74,8 @@ function verifyInitializedAndIntakeProjection() {
   assert(intakeModel.stage === CONVERSATION_STAGES.INTAKE, "intake stage projects");
   assert(
     intakeModel.recommendedNextAction
-      === CONVERSATION_READ_MODEL_ACTIONS.ASK_REQUIRED_FIELD,
-    "intake with unresolved requirements recommends a required field",
+      === CONVERSATION_READ_MODEL_ACTIONS.CLARIFY_SERVICE,
+    "intake without a resolved service requests service clarification",
   );
 
   const noRequirements = cloneState(source);
@@ -201,10 +208,10 @@ function verifyEscalationCompletionAndActions() {
 
 function verifyDeepImmutabilityAndIsolation() {
   const source = richIntakeState();
-  const result = new ConversationReadModelProjector().project(source, {
-    requiredFieldIds,
-    resolvedServiceId: "home-project-consultation",
-  });
+  const result = new ConversationReadModelProjector().project(
+    source,
+    contextFor(source, requiredFieldIds, "home-project-consultation"),
+  );
   assert(result.status === "success", "immutable fixture projects");
   const model = result.readModel;
 
@@ -279,8 +286,7 @@ function verifyMalformedInputFailsClosed() {
   inconsistent.missingFields = [...inconsistent.missingFields, "unknown-field"];
   assertFailure(
     projector.project(inconsistent, {
-      requiredFieldIds,
-      resolvedServiceId: null,
+      ...contextFor(inconsistent, requiredFieldIds, null),
     }),
   );
 
@@ -291,8 +297,7 @@ function verifyMalformedInputFailsClosed() {
     );
   assertFailure(
     projector.project(unresolvedNotMissing, {
-      requiredFieldIds,
-      resolvedServiceId: null,
+      ...contextFor(unresolvedNotMissing, requiredFieldIds, null),
     }),
   );
 
@@ -303,14 +308,21 @@ function verifyMalformedInputFailsClosed() {
   ];
   assertFailure(
     projector.project(contradictory, {
-      requiredFieldIds,
-      resolvedServiceId: "home-project-consultation",
+      ...contextFor(
+        contradictory,
+        requiredFieldIds,
+        "home-project-consultation",
+      ),
     }),
   );
 
   assertFailure(
     projector.project(richIntakeState(), {
-      requiredFieldIds,
+      ...contextFor(
+        richIntakeState(),
+        requiredFieldIds,
+        "seasonal-home-check-in",
+      ),
       resolvedServiceId: "seasonal-home-check-in",
     }),
   );
@@ -318,14 +330,13 @@ function verifyMalformedInputFailsClosed() {
 
 function verifyProjectionHasNoExecutionCapability() {
   let sideEffectCount = 0;
+  const state = cloneState(initializedConversationState);
   const context = {
-    requiredFieldIds,
-    resolvedServiceId: null,
+    ...contextFor(state, requiredFieldIds, null),
     execute: () => {
       sideEffectCount += 1;
     },
   };
-  const state = cloneState(initializedConversationState);
   const before = JSON.stringify(state);
   const result = new ConversationReadModelProjector().project(state, context);
   assert(result.status === "success", "projection succeeds without an executor");
@@ -439,12 +450,48 @@ function project(
   fields: readonly string[],
 ): ConversationReadModel {
   const result = projector.project(state, {
-    requiredFieldIds: fields,
-    resolvedServiceId:
+    ...contextFor(
+      state,
+      fields,
       state.confirmedFacts["requested-service"]?.value ?? null,
+    ),
   });
   assert(result.status === "success", "valid state projects successfully");
   return result.readModel;
+}
+
+function contextFor(
+  state: ConversationState,
+  fields: readonly string[],
+  resolvedServiceId: string | null,
+): ConversationReadModelProjectionContext {
+  const completionEligible =
+    resolvedServiceId !== null
+    && state.missingFields.length === 0
+    && (
+      state.completionState === COMPLETION_STATES.READY_FOR_CONFIRMATION
+      || state.completionState === COMPLETION_STATES.READY_FOR_HANDOFF
+      || state.completionState === COMPLETION_STATES.COMPLETED
+      || state.stage === CONVERSATION_STAGES.HANDOFF
+    );
+  return {
+    requiredFieldIds: fields,
+    resolvedServiceId,
+    serviceResolutionStatus: resolvedServiceId
+      ? CONVERSATION_PROGRESS_SERVICE_STATUSES.RESOLVED
+      : state.stage === CONVERSATION_STAGES.CLARIFICATION
+        ? CONVERSATION_PROGRESS_SERVICE_STATUSES.AMBIGUOUS
+        : CONVERSATION_PROGRESS_SERVICE_STATUSES.UNRESOLVED,
+    reopenedRequiredFieldIds: state.corrections
+      .map((correction) => correction.field)
+      .filter(
+        (field) =>
+          fields.includes(field)
+          && state.missingFields.includes(field),
+      ),
+    completionEligible,
+    progressPolicy: DEFAULT_CONVERSATION_PROGRESS_POLICY,
+  };
 }
 
 function assertFailure(

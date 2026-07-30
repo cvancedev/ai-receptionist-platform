@@ -95,6 +95,25 @@ Technology selection does not authorize implementation or grant application auth
 | Administration built too early | Optimizes configuration before workflow value | Use fixtures until conversation workflow validates | Before Phase 5 |
 | Recommendations confused with decisions | Allows unauthorized effects | Application-owned validation and audit | Phases 2–7 |
 
+### Temporary Accepted Dependency Risks
+
+The Next.js 16.2.12 security maintenance upgrade resolves the advisories
+affecting Next.js 16.2.10 itself. Two transitive dependency risks remain
+temporarily accepted because the current stable Next.js package continues to
+declare the vulnerable versions and overriding those declarations would move
+outside Next.js's supported dependency ranges:
+
+| Dependency | Installed vulnerable version | Patched floor | Current exposure and disposition |
+| --- | --- | --- | --- |
+| Next.js-nested PostCSS | `8.4.31` | `8.5.18` | The application processes repository-owned CSS during trusted builds and exposes no attacker-controlled CSS ingestion, transformation, theme upload, or runtime PostCSS path. This is a temporary accepted dependency risk, not permanent remediation. Reevaluate it on every future Next.js upgrade and resolve it before any production capability processes untrusted CSS. |
+| Next.js optional Sharp | `0.34.5` | `0.35.0` | The application does not use `next/image`, remote image patterns, image uploads, or another attacker-controlled image-processing path. This is a temporary accepted dependency risk, not permanent remediation. Reevaluate it on every future Next.js upgrade and resolve it before any production capability processes untrusted images. |
+
+The absence of a currently reachable untrusted-input path reduces exposure but
+does not make the vulnerable versions acceptable indefinitely. A future
+framework release that supports patched PostCSS and Sharp versions is preferred
+over unsupported overrides. Any relevant product or deployment change must
+reopen these risks before release.
+
 ## MVP Boundary
 
 The MVP receives an inquiry, understands the general request, gathers required information, confirms understanding, preserves corrections, explains approved next steps, escalates appropriately, and produces a complete human handoff. It is not a CRM, scheduler, payment system, phone system, marketing platform, general automation suite, autonomous employee, or industry-specific application.

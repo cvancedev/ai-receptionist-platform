@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Dependency Security Maintenance
+
+- Upgraded Next.js from `16.2.10` to `16.2.12` to resolve the advisories affecting the framework package itself.
+- Recorded temporary accepted risks for Next.js-nested PostCSS `8.4.31` and optional Sharp `0.34.5`, including their patched floors and production entry criteria.
+- Added no dependency override, new dependency, or application behavior.
+
 ### Sprint 6.1 - Persistence Contracts and Repository Boundaries
 
 - Added application-owned, technology-neutral Conversation Store and Execution Journal Store contracts without database-specific types.

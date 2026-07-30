@@ -17,7 +17,7 @@
     "verify:persistence-contracts": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/persistence-contracts.verify.js"
   },
   "dependencies": {
-    "next": "16.2.10",
+    "next": "16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },

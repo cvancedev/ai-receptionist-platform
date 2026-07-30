@@ -98,18 +98,28 @@ Milestone 5.6 certifies Sprint 5.1 through Sprint 5.5 through evidence-based arc
 
 The complete sequence, boundaries, planned verification, and definitions of done are documented in the [Sprint 5 Plan](docs/SPRINT_5_PLAN.md).
 
-## Sprint 6: AI Receptionist MVP
+## Sprint 6: Durable Persistence Foundation
 
-- Receive a customer interaction through the chosen communication provider
-- Gather required customer details
-- Produce a structured summary
-- Create a lead
-- Notify the business owner
-- Support clear escalation or human handoff
+- Milestone 6.0: Persistence Architecture and Storage Selection — Complete
+- Milestone 6.1: Persistence Contracts and Repository Boundaries — Not started
+- Milestone 6.2: Durable Conversation State — Not started
+- Milestone 6.3: Durable Execution Journal — Not started
+- Milestone 6.4: Transactional Execution and Concurrency — Not started
+- Milestone 6.5: Restart-Safe Prototype Integration — Not started
+- Milestone 6.6: Persistence Recovery and Failure Semantics — Not started
+- Milestone 6.7: Sprint 6 Certification — Not started
 
-Communication and AI providers will be selected only after technical and business evaluation.
+Sprint 6 implements Phase 4 of the [Implementation Sequence](docs/IMPLEMENTATION_SEQUENCE.md). It adds durable, business-scoped persistence only through explicitly authorized implementation milestones while preserving the application as the authority. The complete sequence and boundaries are defined in the [Sprint 6 Plan](docs/SPRINT_6_PLAN.md).
 
-## Sprint 7: Customer Validation
+## Sprint 7: Business Configuration
+
+Replace fictional configuration only after persistence and validation boundaries are proven. Scope remains limited to the minimum safe Business Profile and knowledge lifecycle required by Phase 5 of the implementation sequence.
+
+## Sprint 8: End-to-End MVP
+
+Connect the validated customer-to-human workflow only after the persistence and Business Configuration phases pass their entry and exit criteria. Communication and AI providers remain subject to separate technical and business evaluation.
+
+## Sprint 9: Customer Validation and Hardening
 
 - Real-world testing
 - Reliability improvements

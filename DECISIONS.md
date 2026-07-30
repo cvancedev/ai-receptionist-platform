@@ -277,3 +277,27 @@ Customer-facing text remains an unapproved draft. No release gate or delivery in
 ## Duplicate Processing Is Guarded Early
 
 In-memory proposal-processing deduplication is established before provider retries, state-operation construction, or delivery integrations are introduced.
+
+## PostgreSQL for Sprint 6 Durable Persistence
+
+### Decision
+
+PostgreSQL is selected as the relational durable persistence technology for Sprint 6.
+
+### Context
+
+The certified in-memory architecture now demonstrates durable-persistence requirements for structured domain data, Business Profile versions, Conversation State revisions, relational ownership, business-scoped isolation, optimistic concurrency, atomic transactions, uniqueness guarantees, durable audit history, migrations, and restart recovery.
+
+### Rationale
+
+PostgreSQL directly supports these demonstrated relational, transactional, concurrency, integrity, migration, isolation, and recovery requirements without introducing another persistence category.
+
+### Consequences
+
+PostgreSQL becomes the approved durable relational store for later Sprint 6 implementation milestones. Technology-neutral repository and application contracts must keep PostgreSQL-specific concerns outside domain authority and preserve the existing in-memory implementations for deterministic testing.
+
+This selection does not authorize production database implementation during Milestone 6.0, vector storage, queues, caches, analytics stores, real model providers, customer release, external business actions, or production authentication.
+
+### Status
+
+Accepted as part of Sprint 6.0.

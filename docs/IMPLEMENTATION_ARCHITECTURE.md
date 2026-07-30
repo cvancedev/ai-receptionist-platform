@@ -40,7 +40,11 @@ Enforces business scope, profile and knowledge eligibility, prompt security, out
 
 ## Persistence Layer
 
-Future persistence will be required for businesses, profile versions, services, knowledge sources, conversations, state, messages, corrections, escalations, handoffs, audit events, and prompt/context versions. Phase 1 uses in-memory fictional state; no database is selected.
+Durable persistence is required for business-scoped application state and audit history after the certified deterministic prototype. PostgreSQL was selected during Sprint 6.0 as the relational persistence technology for Sprint 6 because the demonstrated requirements include structured domain data, profile versions, state revisions, relational ownership, optimistic concurrency, atomic transactions, uniqueness, migrations, tenant isolation, durable audit history, and restart recovery.
+
+The Sprint 6.0 selection is architectural only. No PostgreSQL dependency, migration, schema, database, connection, or durable repository implementation exists. Existing in-memory stores and journals remain the implemented prototype behavior until a later explicitly authorized Sprint 6 milestone replaces or supplements them behind application-owned contracts.
+
+PostgreSQL provides durability and relational integrity defenses only. It does not own domain rules, transitions, state validation, workflow decisions, AI validation, application decisions, progress, presentation, customer release, or external actions.
 
 ## Observability Layer
 
@@ -63,10 +67,10 @@ Future observability should cover request and trace identity, task type, context
 
 ## Technology Decision Timing
 
-| Decision | Remains deferred until |
+| Decision | Current timing or status |
 | --- | --- |
 | AI provider and model | A later approved implementation milestone, after provider-neutral context, task, output, failure, and evaluation architecture is complete |
-| Database | Phase 4, after in-memory domain behavior proves persistence requirements |
+| Database | PostgreSQL selected architecturally in Sprint 6.0 after the in-memory domain behavior demonstrated Phase 4 requirements; implementation begins only in a later explicitly authorized Sprint 6 milestone |
 | Authentication provider | A later sprint requiring real business users and administration |
 | Hosting architecture | End-to-end MVP planning when runtime, security, and persistence needs are known |
 | Embedding system or vector database | Only if Knowledge Retrieval testing proves simpler structured retrieval insufficient |
@@ -74,7 +78,7 @@ Future observability should cover request and trace identity, task type, context
 | Monitoring vendor | Phase 7 production hardening, after required signals are defined |
 | SMS, voice, or email provider | When the corresponding validated communication channel enters scope |
 
-No vendor is selected merely to complete the architecture.
+Technology selection does not authorize implementation or grant application authority. Remaining vendors are selected only when their documented requirements and milestone boundaries justify them.
 
 ## Risk Register
 
@@ -128,3 +132,9 @@ The journal has no executor, state manager, transition, replay, persistence, pro
 Milestone 5.5 implements an application-authoritative deterministic evaluator over validated Conversation State, explicit application policy, and required-field/service context. It produces one deeply immutable allowlisted Progress Decision describing what the application should attempt next.
 
 A Progress Decision is not a state operation, transition identifier, execution request, customer message, or release authorization. The Conversation Read Model maps it to descriptive presentation data. Any resulting mutation must still pass through the existing Transition Registry, Transition Validator, State Executor, and Conversation State Manager. Milestone 5.6 certifies Sprint 5.1 through Sprint 5.5 without adding product functionality. See the [Sprint 5 Plan](SPRINT_5_PLAN.md), [Deterministic Conversation Progress Engine](CONVERSATION_PROGRESS_ENGINE.md), and [Sprint 5 Certification](certification/SPRINT5_CERTIFICATION.md).
+
+## Sprint 6.0 Persistence Architecture Status
+
+Milestone 6.0 selects PostgreSQL as Sprint 6's relational durable persistence technology and defines repository, transaction, revision, isolation, audit, migration, failure, and recovery boundaries. The application remains authoritative, and Conversation State remains the authoritative domain representation.
+
+This milestone changes documentation only. The certified in-memory Conversation State store, process-local duplicate guards, and in-memory Execution Journal remain the implemented behavior. No PostgreSQL implementation, dependency, migration, schema, database connection, durable repository, production authentication, provider, customer release, or external business action is added. See the [Sprint 6 Plan](SPRINT_6_PLAN.md).

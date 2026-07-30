@@ -138,3 +138,13 @@ A Progress Decision is not a state operation, transition identifier, execution r
 Milestone 6.0 selects PostgreSQL as Sprint 6's relational durable persistence technology and defines repository, transaction, revision, isolation, audit, migration, failure, and recovery boundaries. The application remains authoritative, and Conversation State remains the authoritative domain representation.
 
 This milestone changes documentation only. The certified in-memory Conversation State store, process-local duplicate guards, and in-memory Execution Journal remain the implemented behavior. No PostgreSQL implementation, dependency, migration, schema, database connection, durable repository, production authentication, provider, customer release, or external business action is added. See the [Sprint 6 Plan](SPRINT_6_PLAN.md).
+
+## Sprint 6.1 Persistence Contract Status
+
+Milestone 6.1 introduces an application-owned `ConversationStore` contract for complete scoped Conversation State creation, reads, and revision-aware replacement. `ConversationStateManager` depends on that contract and still defaults to `InMemoryConversationStore`. Replacement requires the expected stored revision and a candidate that advances exactly one revision; stale, wrong-scope, duplicate, invalid-increment, invalid-record, incompatible-record, and infrastructure outcomes remain explicit without moving transition legality into storage.
+
+The application-owned `ExecutionJournalStore` contract remains limited to trusted-result append and explicitly business/profile/conversation-scoped detached immutable snapshot retrieval. `InMemoryExecutionJournal` remains the default observer and retains its existing metadata validation. It gains no mutation, execution, replay, retry, release, or external-action capability.
+
+These contracts are technology-neutral and expose no SQL, connection, transaction, ORM, driver, or PostgreSQL error type. Milestone 6.1 adds no durability, PostgreSQL implementation, dependency, migration, schema, database connection, transaction coordinator, production authentication, real provider, customer release, or external action. Milestone 6.2 has not started.
+
+Future atomic execution will not add transaction control to either domain-facing store contract. Milestone 6.4 may introduce a separate application-owned coordinator that supplies transaction-bound store implementations and alone decides commit or rollback, preserving the existing State Manager, State Executor, and journal responsibilities.

@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 6.1 - Persistence Contracts and Repository Boundaries
+
+- Added application-owned, technology-neutral Conversation Store and Execution Journal Store contracts without database-specific types.
+- Refactored the Conversation State Manager and existing in-memory stores to depend on those contracts while preserving deterministic prototype defaults.
+- Added explicit duplicate, scope, revision-conflict, invalid-increment, invalid-record, incompatible-record, and persistence failure outcomes.
+- Required revision-aware replacement to match the stored expected revision and advance exactly once without moving transition legality into storage.
+- Added focused contract, isolation, immutability, conflict, failure, and prohibited-capability verification.
+- Added no durable persistence, PostgreSQL adapter, dependency, migration, schema, connection, transaction coordinator, replay, retry, customer release, or external action.
+
 ### Sprint 5 - Certification
 
 - Audited Sprint 5.1 through Sprint 5.5 architecture, state integrity, determinism, Progress Engine, Execution Journal, prototype integration, regression, and prohibited-capability boundaries.

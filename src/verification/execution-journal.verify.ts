@@ -1,7 +1,7 @@
 import type {
   ExecutionJournalAppendResult,
   ExecutionJournalSnapshot,
-  ExecutionJournalWriter,
+  ExecutionJournalStore,
 } from "../ai/execution-journal/contracts";
 import { InMemoryExecutionJournal } from "../ai/execution-journal/in-memory-execution-journal";
 import type {
@@ -135,11 +135,11 @@ async function verifyOrderingAndImmutability() {
 
   const firstAppend = journal.append(applied);
   assert(firstAppend.status === "success", "first result appends");
-  const firstSnapshot = journal.snapshot();
+  const firstSnapshot = journal.snapshot(scope());
   const firstSerialized = JSON.stringify(firstSnapshot);
   const secondAppend = journal.append(duplicate);
   assert(secondAppend.status === "success", "second result appends");
-  const secondSnapshot = journal.snapshot();
+  const secondSnapshot = journal.snapshot(scope());
 
   assert(
     secondSnapshot.entries.map((entry) => entry.sequence).join(",") === "1,2",
@@ -175,8 +175,8 @@ async function verifyOrderingAndImmutability() {
   firstJournal.append(firstResult);
   secondJournal.append(secondResult);
   assertEquivalent(
-    firstJournal.snapshot(),
-    secondJournal.snapshot(),
+    firstJournal.snapshot(scope()),
+    secondJournal.snapshot(scope()),
     "identical fresh scenarios produce equivalent journals",
   );
 }
@@ -193,7 +193,10 @@ async function verifyTrustBoundary() {
       && malformedAppend.reason === "UntrustedExecutionMetadata",
     "malformed input without canonical audit identity fails closed",
   );
-  assert(journal.snapshot().entries.length === 0, "failed append records nothing");
+  assert(
+    journal.snapshot(scope()).entries.length === 0,
+    "failed append records nothing",
+  );
   assertEquivalent(snapshot(manager), before, "journal cannot mutate state");
   const malformedResult = journal.append(
     null as unknown as StateExecutionResult,
@@ -287,7 +290,7 @@ async function verifyTrustBoundary() {
     );
   }
   assert(
-    journal.snapshot().entries.length === 0,
+    journal.snapshot(scope()).entries.length === 0,
     "malformed trusted-result variants are not stored",
   );
   const unknownOutcome = journal.append({
@@ -299,7 +302,10 @@ async function verifyTrustBoundary() {
       && unknownOutcome.reason === "UnknownExecutionOutcome",
     "unknown outcomes fail closed",
   );
-  assert(journal.snapshot().entries.length === 0, "unknown outcome is not stored");
+  assert(
+    journal.snapshot(scope()).entries.length === 0,
+    "unknown outcome is not stored",
+  );
 
   const capabilities = journal as unknown as Record<string, unknown>;
   assert(
@@ -311,14 +317,14 @@ async function verifyTrustBoundary() {
     "journal exposes no execution, state, update, delete, or replace authority",
   );
   assert(
-    !containsKey(journal.snapshot(), "customerReleaseAuthorized"),
+    !containsKey(journal.snapshot(scope()), "customerReleaseAuthorized"),
     "journal cannot authorize customer release",
   );
   assert(
-    !containsKey(journal.snapshot(), "previousState")
-      && !containsKey(journal.snapshot(), "newState")
-      && !containsKey(journal.snapshot(), "rawOutput")
-      && !containsKey(journal.snapshot(), "prompt"),
+    !containsKey(journal.snapshot(scope()), "previousState")
+      && !containsKey(journal.snapshot(scope()), "newState")
+      && !containsKey(journal.snapshot(scope()), "rawOutput")
+      && !containsKey(journal.snapshot(scope()), "prompt"),
     "safe reads contain no raw state, output, or prompts",
   );
 }
@@ -434,7 +440,7 @@ function snapshot(manager: ConversationStateManager): ConversationState {
   return result.state;
 }
 
-class ThrowingExecutionJournal implements ExecutionJournalWriter {
+class ThrowingExecutionJournal implements ExecutionJournalStore {
   append(): ExecutionJournalAppendResult {
     throw new Error("controlled journal failure");
   }

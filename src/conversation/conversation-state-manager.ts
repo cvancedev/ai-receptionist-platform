@@ -5,7 +5,12 @@ import {
   ESCALATION_STATES,
 } from "../shared/constants";
 import { validateConversationState } from "../validation/conversation-state-validation";
-import { InMemoryConversationStore, type StoreResult } from "./in-memory-conversation-store";
+import type {
+  ConversationStore,
+  ConversationStoreFailureReason,
+  ConversationStoreResult,
+} from "./conversation-store";
+import { InMemoryConversationStore } from "./in-memory-conversation-store";
 import {
   applyConversationStateUpdate,
   cloneConversationState,
@@ -19,10 +24,29 @@ export interface InitializeConversationInput extends ConversationScope {
   authorizedEscalationDestination?: string | null;
 }
 
-export class ConversationStateManager {
-  constructor(private readonly store = new InMemoryConversationStore()) {}
+export type ConversationStateAccessResult =
+  | { readonly status: "success"; readonly state: ConversationState }
+  | {
+      readonly status: "failure";
+      readonly errors: readonly string[];
+      readonly persistenceFailure?: ConversationStoreFailureReason;
+    };
 
-  initialize(input: InitializeConversationInput): StoreResult {
+export type ConversationStateManagerUpdateResult =
+  | Extract<StateUpdateResult, { status: "success" }>
+  | Extract<StateUpdateResult, { status: "no-op" }>
+  | (
+      Extract<StateUpdateResult, { status: "failure" }>
+      & { readonly persistenceFailure?: ConversationStoreFailureReason }
+    );
+
+export class ConversationStateManager {
+  constructor(
+    private readonly store: ConversationStore =
+      new InMemoryConversationStore(),
+  ) {}
+
+  initialize(input: InitializeConversationInput): ConversationStateAccessResult {
     const inputErrors = validateInitialization(input);
     if (inputErrors.length > 0) return { status: "failure", errors: inputErrors };
     const state: ConversationState = {
@@ -47,37 +71,66 @@ export class ConversationStateManager {
       finalSnapshot: null,
     };
     const validation = validateConversationState(state, input);
-    return validation.valid
-      ? this.store.create(state)
-      : { status: "failure", errors: validation.errors };
+    if (!validation.valid) {
+      return { status: "failure", errors: validation.errors };
+    }
+    return accessResult(this.store.create(state));
   }
 
-  read(scope: ConversationScope): StoreResult {
-    const result = this.store.read(scope.conversationId, scope.businessProfileId);
-    if (result.status === "failure") return result;
+  read(scope: ConversationScope): ConversationStateAccessResult {
+    const result = this.store.read(scope);
+    if (result.status === "failure") return accessResult(result);
     const validation = validateConversationState(result.state, scope);
     return validation.valid ? result : { status: "failure", errors: validation.errors };
   }
 
-  apply(update: ConversationStateUpdate): StateUpdateResult {
+  apply(update: ConversationStateUpdate): ConversationStateManagerUpdateResult {
     const readResult = this.read(update.scope);
     if (readResult.status === "failure") {
-      return { status: "failure", state: emptyFailureState(update.scope), errors: readResult.errors };
+      return {
+        status: "failure",
+        state: emptyFailureState(update.scope),
+        errors: readResult.errors,
+        ...(readResult.persistenceFailure
+          ? { persistenceFailure: readResult.persistenceFailure }
+          : {}),
+      };
     }
     const result = applyConversationStateUpdate(readResult.state, update);
     if (result.status !== "success") return result;
-    const stored = this.store.replace(result.state, update.scope.businessProfileId);
+    const stored = this.store.replace({
+      scope: update.scope,
+      expectedRevision: readResult.state.revision,
+      state: result.state,
+    });
     return stored.status === "success"
       ? { status: "success", state: stored.state }
-      : { status: "failure", state: readResult.state, errors: stored.errors };
+      : {
+          status: "failure",
+          state: readResult.state,
+          errors: stored.errors,
+          persistenceFailure: stored.reason,
+        };
   }
 
-  snapshot(scope: ConversationScope): StoreResult {
+  snapshot(scope: ConversationScope): ConversationStateAccessResult {
     const result = this.read(scope);
     return result.status === "success"
       ? { status: "success", state: cloneConversationState(result.state) }
       : result;
   }
+}
+
+function accessResult(
+  result: ConversationStoreResult,
+): ConversationStateAccessResult {
+  return result.status === "success"
+    ? result
+    : {
+        status: "failure",
+        errors: result.errors,
+        persistenceFailure: result.reason,
+      };
 }
 
 function validateInitialization(input: InitializeConversationInput): string[] {

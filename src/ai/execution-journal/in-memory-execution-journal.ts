@@ -9,10 +9,11 @@ import type {
   ExecutionJournalEntry,
   ExecutionJournalOutcome,
   ExecutionJournalSnapshot,
-  ExecutionJournalWriter,
+  ExecutionJournalStore,
+  ExecutionJournalStoreScope,
 } from "./contracts";
 
-export class InMemoryExecutionJournal implements ExecutionJournalWriter {
+export class InMemoryExecutionJournal implements ExecutionJournalStore {
   private readonly entries: Readonly<ExecutionJournalEntry>[] = [];
 
   append(result: StateExecutionResult): ExecutionJournalAppendResult {
@@ -74,11 +75,24 @@ export class InMemoryExecutionJournal implements ExecutionJournalWriter {
     return deepFreeze({ status: "success", entry: frozen });
   }
 
-  snapshot(): ExecutionJournalSnapshot {
+  snapshot(
+    scope: Readonly<ExecutionJournalStoreScope>,
+  ): ExecutionJournalSnapshot {
     return deepFreeze({
-      entries: this.entries.map(cloneEntry),
+      entries: this.entries
+        .filter((entry) => matchesScope(entry, scope))
+        .map(cloneEntry),
     });
   }
+}
+
+function matchesScope(
+  entry: Readonly<ExecutionJournalEntry>,
+  scope: Readonly<ExecutionJournalStoreScope>,
+): boolean {
+  return entry.conversationId === scope.conversationId
+    && entry.businessProfileId === scope.businessProfileId
+    && entry.businessProfileVersion === scope.businessProfileVersion;
 }
 
 function outcomeFor(

@@ -15,7 +15,7 @@ import { ApplicationDecisionEngine } from "../decisions/application-decision-eng
 import type {
   ExecutionJournalAppendResult,
   ExecutionJournalSnapshot,
-  ExecutionJournalWriter,
+  ExecutionJournalStore,
 } from "../execution-journal/contracts";
 import { InMemoryExecutionJournal } from "../execution-journal/in-memory-execution-journal";
 import type { AiControlledExecutionResult } from "../execution/contracts";
@@ -38,13 +38,13 @@ import { createAiPrototypeFixture } from "./fixtures";
 
 export interface AiFoundationPrototypeOptions {
   executionManager?: ConversationStateManager;
-  executionJournal?: ExecutionJournalWriter;
+  executionJournal?: ExecutionJournalStore;
 }
 
 export class AiFoundationPrototypeOrchestrator {
   private readonly executionManager: ConversationStateManager;
   private readonly stateExecutor: DeterministicStateExecutor;
-  private readonly executionJournal: ExecutionJournalWriter;
+  private readonly executionJournal: ExecutionJournalStore;
 
   constructor(
     options: AiFoundationPrototypeOptions = {},
@@ -223,7 +223,12 @@ export class AiFoundationPrototypeOrchestrator {
   }
 
   executionJournalSnapshot(): ExecutionJournalSnapshot {
-    return this.executionJournal.snapshot();
+    return this.executionJournal.snapshot({
+      conversationId: initializedConversationState.conversationId,
+      businessProfileId: initializedConversationState.businessProfileId,
+      businessProfileVersion:
+        initializedConversationState.businessProfileVersion,
+    });
   }
 
   private validateProviderResult(
@@ -258,8 +263,8 @@ export class AiFoundationPrototypeOrchestrator {
 }
 
 function appendExecutionResult(
-  journal: ExecutionJournalWriter,
-  execution: Parameters<ExecutionJournalWriter["append"]>[0],
+  journal: ExecutionJournalStore,
+  execution: Parameters<ExecutionJournalStore["append"]>[0],
 ): ExecutionJournalAppendResult {
   try {
     return journal.append(execution);

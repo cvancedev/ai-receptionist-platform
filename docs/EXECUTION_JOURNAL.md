@@ -66,7 +66,7 @@ Structurally trustworthy duplicate, stale, unknown-transition, scope, decision, 
 The in-memory journal provides only:
 
 - `append(immutableExecutionResult)`; and
-- `snapshot()`.
+- `snapshot(businessProfileConversationScope)`.
 
 There is no update, delete, replacement, replay, retry, or dispatch operation. Sequence numbers begin at one and increase by one. Entry IDs use:
 
@@ -77,6 +77,8 @@ execution-journal-{sequence}-{canonical execution ID}
 The execution timestamp and journal recording timestamp follow the existing `prototype-deterministic` convention. Identical controlled scenarios against fresh equivalent instances therefore produce equivalent journal snapshots.
 
 Every entry, append result, nested metadata object, and returned snapshot is deeply frozen. Reads clone entry metadata into a new immutable collection, so callers never receive the journal's internal array or internal entry references. Later appends cannot change an earlier snapshot.
+
+Milestone 6.1 formalizes these operations as the technology-neutral `ExecutionJournalStore` contract and requires explicit Business Profile, profile-version, and conversation scope for snapshot retrieval. The in-memory journal remains the default implementation and preserves the certified append, trust, ordering, detachment, and authority behavior.
 
 ## Failure and Atomicity
 

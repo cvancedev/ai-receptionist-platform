@@ -101,7 +101,7 @@ The complete sequence, boundaries, planned verification, and definitions of done
 ## Sprint 6: Durable Persistence Foundation
 
 - Milestone 6.0: Persistence Architecture and Storage Selection — Complete
-- Milestone 6.1: Persistence Contracts and Repository Boundaries — Not started
+- Milestone 6.1: Persistence Contracts and Repository Boundaries — Complete
 - Milestone 6.2: Durable Conversation State — Not started
 - Milestone 6.3: Durable Execution Journal — Not started
 - Milestone 6.4: Transactional Execution and Concurrency — Not started

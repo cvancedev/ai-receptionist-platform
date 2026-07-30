@@ -178,7 +178,7 @@ Database roles or PostgreSQL row-level security may later provide defense in dep
 
 ## Repository Boundaries
 
-Milestone 6.1 will define technology-neutral application contracts for two responsibilities.
+Milestone 6.1 defines technology-neutral application contracts for two responsibilities.
 
 ### Conversation State persistence
 
@@ -313,7 +313,7 @@ Database locking or transaction isolation may support the operation, but it must
 
 The existing process-local duplicate guards remain valid deterministic safeguards, but they are insufficient after restart or across application instances.
 
-Sprint 6 will add durable uniqueness for canonical execution identity within explicit business and conversation scope. The exact key will be derived from the existing execution contract and verified against request, proposal, transition, profile version, and expected revision semantics during Milestone 6.1 design.
+Sprint 6 will add durable uniqueness for canonical execution identity within explicit business and conversation scope. Milestone 6.1 establishes the future durable identity as the canonical execution ID within its Business Profile and conversation scope. Request, proposal, transition, profile-version, and expected-revision metadata remain required integrity evidence rather than alternate caller-selected identities. Durable enforcement begins only in a later explicitly authorized milestone.
 
 Required behavior:
 
@@ -434,7 +434,7 @@ Milestone 6.0 does not implement a repository contract, install a database packa
 
 ### 6.1 - Persistence Contracts and Repository Boundaries
 
-**Status: Not started**
+**Status: Complete**
 
 Define technology-neutral application-owned contracts for Conversation State persistence, Execution Journal persistence, and the minimum transaction participation required for atomic execution.
 
@@ -448,6 +448,12 @@ The milestone must:
 - state which guarantees are common and which are adapter-specific;
 - retain existing in-memory implementations for deterministic tests; and
 - add no PostgreSQL implementation beyond what that milestone explicitly authorizes.
+
+Milestone 6.1 implements the Conversation Store and Execution Journal Store contracts, refactors both in-memory stores to satisfy them, and makes the Conversation State Manager depend on the Conversation Store abstraction. Replacement requires explicit business/profile/conversation scope, an expected current revision, and exactly one revision increment. Journal retrieval also requires explicit business/profile/conversation scope. Duplicate, missing-scope, scope-mismatch, revision-conflict, invalid-increment, invalid-record, incompatible-record, and persistence failures are explicit contract outcomes.
+
+The in-memory adapters remain the default deterministic prototype behavior. The contracts add no durability, transaction coordinator, PostgreSQL adapter, dependency, migration, schema, database connection, replay, retry, release, or external-action authority.
+
+The persistence contracts intentionally expose no transaction object. A later Milestone 6.4 application-owned coordinator may supply transaction-bound implementations of both contracts so state replacement and required journal append share one unit of work. This preserves the Milestone 6.1 contracts and keeps transaction lifecycle and commit authority outside the domain, State Manager, State Executor, and journal.
 
 ### 6.2 - Durable Conversation State
 

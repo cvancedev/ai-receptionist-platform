@@ -47,6 +47,12 @@ export interface ExecutionJournalSnapshot {
   readonly entries: readonly Readonly<ExecutionJournalEntry>[];
 }
 
+export interface ExecutionJournalStoreScope {
+  readonly conversationId: string;
+  readonly businessProfileId: string;
+  readonly businessProfileVersion: number;
+}
+
 export type ExecutionJournalAppendFailureReason =
   | "UntrustedExecutionMetadata"
   | "UnknownExecutionOutcome"
@@ -62,7 +68,14 @@ export type ExecutionJournalAppendResult =
       readonly reason: ExecutionJournalAppendFailureReason;
     };
 
-export interface ExecutionJournalWriter {
+/**
+ * Application-owned append-only persistence boundary. Implementations observe
+ * trusted execution results and expose detached history; they own no execution
+ * or state authority.
+ */
+export interface ExecutionJournalStore {
   append(result: StateExecutionResult): ExecutionJournalAppendResult;
-  snapshot(): ExecutionJournalSnapshot;
+  snapshot(
+    scope: Readonly<ExecutionJournalStoreScope>,
+  ): ExecutionJournalSnapshot;
 }

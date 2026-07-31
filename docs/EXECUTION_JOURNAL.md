@@ -94,7 +94,9 @@ Durable snapshot failures are explicit as `InvalidJournalScope`, `InvalidStoredJ
 
 A journal failure never changes a rejected execution into success. It also does not roll back a successful conversation transition. The in-memory Conversation State Manager and journal are separate process-local components with no transaction spanning them, so execution may succeed while journaling fails. `runWithExecution()` returns both the immutable Execution Result and append result so the limitation is never silently hidden.
 
-The PostgreSQL adapter may use a transaction only to allocate sequence and append one journal entry. It does not receive a Conversation Store or transaction handle and cannot coordinate Conversation State. Atomic state-and-journal commit remains deferred to Milestone 6.4.
+The standalone PostgreSQL journal adapter uses a journal-local transaction only to allocate sequence and append one journal entry. It does not receive a Conversation Store or transaction handle and cannot coordinate Conversation State.
+
+Milestone 6.4 adds a separate opt-in application-owned coordination contract and PostgreSQL implementation. For one already-approved applied Execution Result, that coordinator validates the existing bounded journal draft before persistence, rejects a durable duplicate execution identity in exact scope, and performs expected-revision state replacement plus journal append within one transaction. A state failure, journal failure, revision conflict, duplicate conflict, infrastructure failure, or commit failure cannot return partial success. This does not change the standalone adapter or the default in-memory journal behavior.
 
 ## Reset
 
@@ -117,12 +119,13 @@ Run:
 ```powershell
 npm.cmd run verify:execution-journal
 npm.cmd run verify:postgresql-execution-journal
+npm.cmd run verify:postgresql-transactional-execution
 ```
 
 The focused suites cover successful and rejected entries, duplicate/stale/invalid-transition outcomes, deterministic identity/order, deep immutability, reference isolation, append-only history, trusted metadata failure, unknown outcomes, explicit persistence failures, migration ordering, scoped durable reload, corruption rejection, asynchronous injection, lack of authority, session reset, read-only `run()`, execution-enabled `runWithExecution()`, and the unchanged single-transition registry.
 
 ## Prohibited Capabilities and Limitations
 
-Milestone 6.3 adds only the selected PostgreSQL persistence path for safe journal entries. It adds no transition, Conversation State mutation, shared transaction coordinator, browser storage, cookies, external API, email, SMS, telephony, scheduling, CRM integration, customer communication, customer-release authorization, real provider, authentication change, replay, retry, background worker, event bus, or UI redesign.
+Milestone 6.4 adds only opt-in atomic persistence coordination for an already-approved applied Execution Result. It adds no transition, execution authority, browser storage, cookies, external API, email, SMS, telephony, scheduling, CRM integration, customer communication, customer-release authorization, real provider, authentication change, replay, retry, background worker, event bus, or UI redesign.
 
-The prototype journal remains process-local and non-durable by default. The opt-in PostgreSQL adapter survives store recreation, but it is not a complete production audit system and cannot provide atomic persistence with conversation execution. Production connection management, coordinated commit, retention, operational recovery, and Sprint 6.4 behavior remain deferred.
+The prototype journal remains process-local and non-durable by default. The opt-in PostgreSQL stores and coordinator survive independent instance recreation and provide the tested atomic write boundary, but they are not wired into ordinary prototype execution. Production connection management, restart-safe prototype integration, retention, operational recovery, and Sprint 6.5 behavior remain deferred.

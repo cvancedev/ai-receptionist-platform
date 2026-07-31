@@ -104,7 +104,7 @@ The complete sequence, boundaries, planned verification, and definitions of done
 - Milestone 6.1: Persistence Contracts and Repository Boundaries — Complete
 - Milestone 6.2: Durable Conversation State — Complete
 - Milestone 6.3: Durable Execution Journal — Complete
-- Milestone 6.4: Transactional Execution and Concurrency — Not started
+- Milestone 6.4: Transactional Execution and Concurrency — Complete
 - Milestone 6.5: Restart-Safe Prototype Integration — Not started
 - Milestone 6.6: Persistence Recovery and Failure Semantics — Not started
 - Milestone 6.7: Sprint 6 Certification — Not started

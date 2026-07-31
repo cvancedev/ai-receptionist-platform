@@ -42,7 +42,7 @@ Enforces business scope, profile and knowledge eligibility, prompt security, out
 
 Durable persistence is required for business-scoped application state and audit history after the certified deterministic prototype. PostgreSQL was selected during Sprint 6.0 as the relational persistence technology for Sprint 6 because the demonstrated requirements include structured domain data, profile versions, state revisions, relational ownership, optimistic concurrency, atomic transactions, uniqueness, migrations, tenant isolation, durable audit history, and restart recovery.
 
-Milestone 6.2 implements the first approved durable slice for Conversation State. Milestone 6.3 adds the separately injected PostgreSQL Execution Journal adapter, bounded journal migration, shared trusted-result mapper, and scoped immutable decoder. Both adapters are opt-in; the prototype continues to default to in-memory state and journal stores. No state-and-journal transaction coordinator, production database connection, or Sprint 6.4 implementation exists.
+Milestone 6.2 implements the first approved durable slice for Conversation State. Milestone 6.3 adds the separately injected PostgreSQL Execution Journal adapter, bounded journal migration, shared trusted-result mapper, and scoped immutable decoder. Milestone 6.4 adds a separate opt-in PostgreSQL transaction coordinator that atomically persists an already-approved state replacement and its required journal entry. The standalone adapters remain available, and the prototype continues to default to in-memory state and journal stores. No production database connection or Sprint 6.5 implementation exists.
 
 PostgreSQL provides durability and relational integrity defenses only. It does not own domain rules, transitions, state validation, workflow decisions, AI validation, application decisions, progress, presentation, customer release, or external actions.
 
@@ -70,7 +70,7 @@ Future observability should cover request and trace identity, task type, context
 | Decision | Current timing or status |
 | --- | --- |
 | AI provider and model | A later approved implementation milestone, after provider-neutral context, task, output, failure, and evaluation architecture is complete |
-| Database | PostgreSQL selected architecturally in Sprint 6.0; Milestones 6.2 and 6.3 implement separate opt-in Conversation State and Execution Journal adapters while transaction coordination and later persistence milestones remain deferred |
+| Database | PostgreSQL selected architecturally in Sprint 6.0; Milestones 6.2 and 6.3 implement separate opt-in stores, and Milestone 6.4 implements opt-in atomic state-and-journal coordination while restart-safe prototype integration and later persistence work remain deferred |
 | Authentication provider | A later sprint requiring real business users and administration |
 | Hosting architecture | End-to-end MVP planning when runtime, security, and persistence needs are known |
 | Embedding system or vector database | Only if Knowledge Retrieval testing proves simpler structured retrieval insufficient |
@@ -223,3 +223,29 @@ controlled execution path. The journal remains unable to execute, mutate,
 replay, retry, release, dispatch, or decide business behavior. Milestone 6.3
 adds no state-and-journal coordinator, production database connection, or
 Sprint 6.4 implementation. See [PostgreSQL Development](POSTGRESQL_DEVELOPMENT.md).
+
+## Sprint 6.4 Transactional Execution Status
+
+Milestone 6.4 introduces the technology-neutral
+`TransactionalExecutionPersistenceCoordinator` application contract. It
+accepts an explicit scope and one already-approved state-changing Execution
+Result, then returns only atomic success or an explicit invalid-input, missing,
+revision-conflict, journal-rejection, duplicate, infrastructure, or commit
+failure. It exposes no SQL, connection, driver, transaction, executor,
+validator, replay, retry, response-release, or external-action capability.
+
+`PostgresqlTransactionalExecutionCoordinator` owns one database client and one
+transaction for the durable unit of work. It reuses the existing application
+state decoder and journal trust mapper, locks journal identity allocation,
+rejects a previously persisted scoped execution identity before mutation,
+updates Conversation State only when the stored revision equals the approved
+expected revision, appends one bounded journal entry, and commits only after
+both writes succeed. Every pre-commit failure rolls back; a commit error is
+reported as `TransactionCommitFailed`, never success. No application execution
+retry or replay is performed.
+
+The coordinator is opt-in and is not wired into the ordinary prototype. The
+existing in-memory stores and standalone PostgreSQL stores remain available.
+Migrations 001 and 002 already support the required transaction, scope,
+revision, and journal constraints, so Milestone 6.4 adds no migration. See
+[PostgreSQL Development](POSTGRESQL_DEVELOPMENT.md).

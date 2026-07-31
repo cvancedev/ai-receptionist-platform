@@ -130,3 +130,19 @@ Sprint 5.3 connects the Prototype Chat Session to `runWithExecution()` using the
 Sprint 5.4 appends the immutable Execution Result to an application-owned, process-local [Execution Journal](EXECUTION_JOURNAL.md) before the controlled path reads current state. The journal observes trusted results but cannot validate, authorize, execute, replay, or mutate transitions. Append failure is reported separately and cannot rewrite the Execution Result.
 
 Sprint 5.5 adds the separate read-only [Deterministic Conversation Progress Engine](CONVERSATION_PROGRESS_ENGINE.md). A Progress Decision may describe that the application should attempt `begin_intake`, but it is not an execution request and cannot call this boundary. The registry remains unchanged with exactly one `initialized -> intake` transition.
+
+## Sprint 6.4 Durable Persistence Coordination
+
+Milestone 6.4 does not change the State Executor, Transition Registry,
+Transition Validator, or the single registered transition. A separate
+application-owned persistence coordinator may receive an already-approved
+successful Execution Result plus exact business/profile/conversation scope. It
+can only coordinate durable state replacement and the corresponding journal
+append in one PostgreSQL transaction.
+
+The coordinator cannot validate a proposal, decide transition legality,
+construct or execute a state operation, authorize completion or escalation,
+release a customer response, replay or retry execution, or dispatch an
+external action. Revision conflict and duplicate durable execution identity
+fail closed without automatic retry. The ordinary State Executor path remains
+in-memory and database-independent by default.

@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 6.4 - Transactional Execution and Concurrency
+
+- Added a technology-neutral application coordination contract for atomically persisting one already-approved state-changing Execution Result.
+- Added an opt-in PostgreSQL coordinator that uses one transaction for exact expected-revision state replacement and the required bounded journal append.
+- Added durable scoped execution-identity conflict detection without changing standalone Conversation Store or Execution Journal behavior.
+- Added explicit invalid-input, missing-state, revision-conflict, journal-rejection, duplicate, infrastructure, and commit-failure outcomes without leaking PostgreSQL types.
+- Added real-PostgreSQL verification proving atomic commit, restart visibility, state and journal rollback, deferred commit rollback, stale-writer rejection, durable duplicate protection, tenant isolation, and unchanged prototype defaults.
+- Added no migration, production connection, retry, replay, execution authority, customer release, external action, or Sprint 6.5 implementation.
+
 ### Sprint 6.3 - Durable Execution Journal
 
 - Added a PostgreSQL Execution Journal adapter and versioned migration for bounded, append-only audit entries.

@@ -18,7 +18,7 @@ Suggested customer responses, state updates, actions, escalation, completion rea
 
 ## Application-Owned Decisions
 
-The application owns accepted state updates, allowed responses, escalation activation, completion determination, handoff creation, audit events, and retry, repair, rejection, or failure behavior.
+The application owns accepted state updates, allowed responses, escalation activation, completion determination, handoff creation, audit events, transaction coordination, and retry, repair, rejection, or failure behavior. Persistence infrastructure may commit already-approved state and audit inputs atomically but cannot decide their business meaning.
 
 ## Derived Data
 
@@ -43,6 +43,7 @@ Derived data remains traceable and cannot silently replace its authoritative inp
 - Cross-business reads and mutations are prohibited.
 - State updates should be revision-aware and applied consistently with the accepted customer response.
 - Rejected proposals remain audit evidence but have no operational authority.
+- An approved durable state replacement and its required audit entry commit together or neither commits; storage cannot invent a retry or alternate transition.
 
 ## Human Authority
 

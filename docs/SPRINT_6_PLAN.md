@@ -542,7 +542,7 @@ external action, production database connection, or Sprint 6.4 implementation.
 
 ### 6.4 - Transactional Execution and Concurrency
 
-**Status: Not started**
+**Status: Complete**
 
 Integrate application-owned transaction coordination so an authorized revision-aware state replacement and required audit append commit atomically.
 
@@ -557,6 +557,26 @@ The milestone must prove:
 - rollback on every intermediate failure;
 - explicit transaction ambiguity handling; and
 - no silently invented retry authority.
+
+Milestone 6.4 adds a technology-neutral application coordination contract and
+an opt-in PostgreSQL implementation for persisting one already-approved
+state-changing Execution Result. The coordinator validates exact
+business/profile/conversation scope and compatible state/journal inputs before
+opening one database transaction. Within that transaction it serializes the
+durable execution-identity check, performs the expected-revision state
+replacement, appends the required bounded journal entry, and commits both
+writes together. Duplicate execution identity, missing state, stale revision,
+journal rejection, infrastructure failure, and commit failure return explicit
+fail-closed outcomes with no partial success and no automatic retry.
+
+Real-PostgreSQL verification proves atomic success and restart visibility,
+durable duplicate protection, stale-writer rejection, tenant isolation, state
+failure rollback, journal failure rollback after an in-transaction state
+update, and deferred commit failure rollback. Migrations 001 and 002 already
+provide the required state and journal storage shape, so this milestone adds no
+schema migration. Standalone stores remain available, and the ordinary
+prototype remains synchronous, in-memory, and database-independent by default.
+Milestone 6.5 has not started.
 
 ### 6.5 - Restart-Safe Prototype Integration
 

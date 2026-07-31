@@ -75,4 +75,9 @@ Boundaries should return explicit identity, eligibility, validation, conflict, u
 
 ## Current Milestone Boundary
 
-Milestone 4.5 implements internal provider-neutral TypeScript boundaries for the mock-only foundation. They are direct in-process modules, not APIs or routes. No endpoint, network transport, real provider call, authentication, persistence, production operation builder, release gate, retry execution, or streaming is added.
+Milestone 6.4 adds one internal application-owned persistence coordination
+contract, not an endpoint, route, or public API. It accepts only exact scope and
+an already-approved applied Execution Result, and it can request only atomic
+state-and-journal persistence. PostgreSQL client and transaction types remain
+inside infrastructure. The boundary cannot execute or validate transitions,
+retry or replay, release responses, or dispatch external actions.

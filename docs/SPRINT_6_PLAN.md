@@ -580,7 +580,7 @@ Milestone 6.5 has not started.
 
 ### 6.5 - Restart-Safe Prototype Integration
 
-**Status: Not started**
+**Status: Complete**
 
 Create a persistence-backed fictional prototype path demonstrating:
 
@@ -593,6 +593,32 @@ Create a persistence-backed fictional prototype path demonstrating:
 7. continued deterministic progression.
 
 The deterministic mock adapter remains the only AI provider. The integration uses fictional data, adds no customer communication, and must keep the UI outside repository and execution authority.
+
+Milestone 6.5 adds an explicitly injected, technology-neutral
+`PersistenceBackedPrototypeIntegration`. Initialization remains delegated to
+the Conversation State Manager and its configured asynchronous Conversation
+Store. Each progression attempt reloads the exact scoped, decoded, validated
+Conversation State and durable journal before application logic runs. When the
+existing Progress Engine returns `begin_intake`, the integration seeds a new
+temporary in-memory execution workspace only from that recovered state, invokes
+the certified mock-only controlled execution path, and submits its already
+approved Execution Result to the Milestone 6.4 atomic coordinator.
+
+Focused real-PostgreSQL verification closes the first state, journal, and
+coordinator instances after the first commit; constructs new application and
+persistence objects; reloads complete revision-one state and the required
+journal entry; and derives `clarify_service` from the recovered revision. The
+single certified transition remains `initialized -> intake`, so no second
+state-changing execution is authorized after restart. The integration returns
+an explicit progress-only result, performs no write, and another fresh runtime
+confirms state revision and audit history remain unchanged. Missing durable
+state fails without an in-memory fallback, and wrong business, profile version,
+or conversation scope fails closed.
+
+The ordinary prototype remains synchronous, in-memory, deterministic, and
+database-independent. Milestone 6.5 adds no migration, dependency, UI wiring,
+real provider, replay, retry, customer release, external action, or Milestone
+6.6 behavior. Milestone 6.6 has not started.
 
 ### 6.6 - Persistence Recovery and Failure Semantics
 

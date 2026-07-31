@@ -81,6 +81,7 @@ Every returned view then projects the latest current snapshot, so later determin
 Projection context is application-owned:
 
 - `requested-service` is always required;
+- before service resolution, other missing fields are included only when they are configured by the active Business Profile;
 - when an active service is resolved, its global and service-specific required intake fields are resolved through the existing intake-field architecture; and
 - only the active service identifier is supplied to the projector.
 - Sprint 5.5 also supplies deterministic service status, correction-reopened required fields, readiness-derived completion eligibility, and the immutable progress policy.
@@ -133,10 +134,19 @@ Sprint 5.3 adds no persistence, database, local storage, network call, HTTP clie
 
 ## Current Limitations
 
-- All state remains process-local and in memory.
+- The ordinary UI path remains process-local and in memory. Milestone 6.5 adds a separate opt-in persistence-backed verification path without wiring database authority into the UI.
 - The AI path remains a deterministic fictional mock.
 - Exactly one AI-controlled transition exists.
 - The UI is a developer prototype, not a production customer experience.
 - The read model exposes a service identifier, not a display name.
 - Customer release remains unauthorized.
 - Execution journal history remains private to trusted internal code and verification.
+
+## Sprint 6.5 Recovery Relationship
+
+The opt-in persistence-backed integration reuses this boundary to evaluate the
+existing Progress Engine from a freshly reloaded, application-validated state.
+It does not expose the persistence integration or journal to React components.
+Before service resolution, projection context admits only missing field
+identifiers configured by the active Business Profile; unknown identifiers
+continue to fail closed.

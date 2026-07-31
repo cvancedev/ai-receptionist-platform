@@ -6,9 +6,11 @@ Milestone 6.2 adds a PostgreSQL adapter for Conversation State. Milestone 6.3
 adds a separate PostgreSQL adapter for the bounded Execution Journal. Milestone
 6.4 adds an opt-in PostgreSQL coordinator that atomically persists one
 already-approved state replacement and its required journal entry. The
-prototype, `ConversationStateManager`, and AI orchestrator continue to use
-in-memory storage by default. No production database connection or Sprint 6.5
-integration exists.
+Milestone 6.5 integration composes these contracts only when explicitly
+injected and demonstrates restart through newly constructed application and
+persistence objects. The ordinary prototype, `ConversationStateManager`, and
+AI orchestrator continue to use in-memory storage by default. No production
+database connection or Sprint 6.6 implementation exists.
 
 ## Integration Verification
 
@@ -21,6 +23,7 @@ $env:TEST_DATABASE_URL = "postgresql://test_user:test_password@127.0.0.1:5432/te
 npm.cmd run verify:postgresql-conversation-store
 npm.cmd run verify:postgresql-execution-journal
 npm.cmd run verify:postgresql-transactional-execution
+npm.cmd run verify:postgresql-restart-safe-prototype
 ```
 
 Do not commit the connection URL or place it in application source. The
@@ -62,3 +65,12 @@ expected-revision replacement, appends the journal entry, and commits both or
 neither. It performs no retry or replay. Focused verification uses temporary
 failure triggers to prove state-write, journal-write-after-state, and deferred
 commit rollback. Migrations 001 and 002 require no change for this milestone.
+
+The restart-safe verifier initializes through the PostgreSQL-backed State
+Manager, commits the existing controlled transition through the transaction
+coordinator, closes all three persistence pools, and creates a new integration
+with new stores and coordinator. It reloads state directly from Conversation
+State storage and journal history independently, then evaluates deterministic
+progress from the recovered revision. It does not use the journal to rebuild
+state or fall back to a new in-memory conversation when durable state is
+missing.

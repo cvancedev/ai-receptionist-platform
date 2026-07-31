@@ -146,3 +146,17 @@ release a customer response, replay or retry execution, or dispatch an
 external action. Revision conflict and duplicate durable execution identity
 fail closed without automatic retry. The ordinary State Executor path remains
 in-memory and database-independent by default.
+
+## Sprint 6.5 Restart-Safe Integration
+
+The opt-in persistence-backed fictional integration reloads validated
+Conversation State before evaluating progress. It creates a temporary
+in-memory State Executor workspace only from that recovered snapshot; the
+workspace is not an authoritative fallback and is discarded after producing
+the already-approved Execution Result for the transactional coordinator.
+
+After restart, the recovered state is `intake` at revision one. The existing
+Progress Engine returns `clarify_service`, while the registry still contains
+only `initialized -> intake`. The integration therefore performs no second
+execution or durable write. It does not reinterpret the journal, synthesize a
+transition, or retry the first execution.

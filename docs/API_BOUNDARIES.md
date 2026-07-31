@@ -75,9 +75,10 @@ Boundaries should return explicit identity, eligibility, validation, conflict, u
 
 ## Current Milestone Boundary
 
-Milestone 6.4 adds one internal application-owned persistence coordination
-contract, not an endpoint, route, or public API. It accepts only exact scope and
-an already-approved applied Execution Result, and it can request only atomic
-state-and-journal persistence. PostgreSQL client and transaction types remain
-inside infrastructure. The boundary cannot execute or validate transitions,
-retry or replay, release responses, or dispatch external actions.
+Milestone 6.5 adds one explicitly injected internal prototype integration, not
+an endpoint, route, or public API. It coordinates existing application-owned
+state, journal, transaction, controlled-execution, and Progress Engine
+boundaries through technology-neutral contracts. Recovery always requires
+exact business/profile/conversation scope and validated Conversation State;
+journal history is never replayed as state. The integration cannot invent a
+transition, retry, replay, release a response, or dispatch an external action.

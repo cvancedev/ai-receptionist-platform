@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 6.5 - Restart-Safe Prototype Integration
+
+- Added an explicitly opt-in, technology-neutral persistence-backed fictional prototype integration.
+- Delegated durable initialization to the existing Conversation State Manager and rejected duplicate initialization without resetting state.
+- Reloaded exact scoped, decoded state and journal history before deterministic progression and controlled execution.
+- Recreated application and PostgreSQL persistence objects after atomic commit and proved complete revision-one state and required audit history survive.
+- Continued the existing Progress Engine from recovered revision one and returned progress-only `clarify_service` because no second state-changing transition is registered.
+- Added fail-closed missing-state and business/profile/conversation-isolation verification with no fresh in-memory fallback or journal replay.
+- Corrected unresolved-service projection context to include only Business-Profile-configured missing fields while preserving unknown-field rejection.
+- Added no migration, dependency, UI integration, retry, replay, real provider, customer release, external action, or Sprint 6.6 implementation.
+
 ### Sprint 6.4 - Transactional Execution and Concurrency
 
 - Added a technology-neutral application coordination contract for atomically persisting one already-approved state-changing Execution Result.

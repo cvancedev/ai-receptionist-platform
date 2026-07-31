@@ -276,6 +276,7 @@ async function verifyExecutionJournalContract() {
 }
 
 class RecordingConversationStore implements ConversationStore {
+  readonly operationMode = "synchronous";
   private readonly delegate = new InMemoryConversationStore();
   lastExpectedRevision: number | null = null;
 
@@ -298,6 +299,7 @@ class RecordingConversationStore implements ConversationStore {
 }
 
 class RejectingReplaceStore implements ConversationStore {
+  readonly operationMode = "synchronous";
   private readonly delegate = new InMemoryConversationStore();
 
   constructor(

@@ -7,28 +7,40 @@ import type {
   ConversationStoreScope,
 } from "./conversation-store";
 import { cloneConversationState } from "./conversation-state-updates";
+import { decodeConversationState } from "../validation/conversation-state-codec";
 
 /** Prototype-only in-memory storage. It performs no persistence or network work. */
-export class InMemoryConversationStore implements ConversationStore {
+export class InMemoryConversationStore implements ConversationStore<"synchronous"> {
+  readonly operationMode = "synchronous";
   private readonly states = new Map<string, ConversationState>();
 
   create(state: Readonly<ConversationState>): ConversationStoreResult {
-    if (this.states.has(state.conversationId)) {
+    const decoded = decodeConversationState(state, state);
+    if (decoded.status === "failure") {
+      return {
+        status: "failure",
+        reason: "InvalidConversationState",
+        errors: decoded.errors,
+      };
+    }
+    const candidate = decoded.state;
+    const key = scopeKey(candidate);
+    if (this.states.has(key)) {
       return failure(
         "ConversationAlreadyExists",
         "Conversation already exists.",
       );
     }
-    const stored = cloneConversationState(state);
-    this.states.set(state.conversationId, stored);
+    const stored = cloneConversationState(candidate);
+    this.states.set(key, stored);
     return { status: "success", state: cloneConversationState(stored) };
   }
 
   read(
     scope: Readonly<ConversationStoreScope>,
   ): ConversationStoreResult {
-    const state = this.states.get(scope.conversationId);
-    if (!state || !matchesScope(state, scope)) {
+    const state = this.states.get(scopeKey(scope));
+    if (!state) {
       return failure(
         "ConversationNotFound",
         "Conversation was not found in the requested business scope.",
@@ -40,8 +52,9 @@ export class InMemoryConversationStore implements ConversationStore {
   replace(
     input: Readonly<ConversationStoreReplaceInput>,
   ): ConversationStoreResult {
-    const existing = this.states.get(input.scope.conversationId);
-    if (!existing || !matchesScope(existing, input.scope)) {
+    const key = scopeKey(input.scope);
+    const existing = this.states.get(key);
+    if (!existing) {
       return failure(
         "ConversationNotFound",
         "Conversation cannot be replaced in the requested business scope.",
@@ -69,10 +82,26 @@ export class InMemoryConversationStore implements ConversationStore {
         "Conversation revision does not match the expected revision.",
       );
     }
-    const stored = cloneConversationState(input.state);
-    this.states.set(input.scope.conversationId, stored);
+    const decoded = decodeConversationState(input.state, input.scope);
+    if (decoded.status === "failure") {
+      return {
+        status: "failure",
+        reason: "InvalidConversationState",
+        errors: decoded.errors,
+      };
+    }
+    const stored = cloneConversationState(decoded.state);
+    this.states.set(key, stored);
     return { status: "success", state: cloneConversationState(stored) };
   }
+}
+
+function scopeKey(scope: Readonly<ConversationStoreScope>): string {
+  return JSON.stringify([
+    scope.businessProfileId,
+    scope.businessProfileVersion,
+    scope.conversationId,
+  ]);
 }
 
 function matchesScope(

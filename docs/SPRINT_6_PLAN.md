@@ -457,7 +457,7 @@ The persistence contracts intentionally expose no transaction object. A later Mi
 
 ### 6.2 - Durable Conversation State
 
-**Status: Not started**
+**Status: Complete**
 
 Implement and verify PostgreSQL persistence for every existing Conversation State field using the approved repository contract and storage shape.
 
@@ -471,6 +471,25 @@ The milestone must prove:
 - duplicate initialization is rejected;
 - missing and wrong-scope reads are safe; and
 - the deterministic in-memory suite remains unchanged and passing.
+
+Milestone 6.2 implements a direct `pg` adapter behind the application-owned
+Conversation Store contract. A versioned migration stores the relational
+business/profile/conversation identity, revision, state-format version, and one
+complete JSONB Conversation State document. Application-owned decoding and
+validation run after retrieval, and an atomic `UPDATE ... WHERE revision =`
+predicate rejects stale replacement without mutation.
+
+The Conversation Store contract now distinguishes synchronous and asynchronous
+adapter operation modes without exposing PostgreSQL types. The default
+Conversation State Manager remains synchronous and in-memory; an explicitly
+injected PostgreSQL store uses awaited manager operations. Dedicated
+real-PostgreSQL verification uses an isolated temporary schema and proves
+migration, scope isolation, round-trip fidelity, detached reads, restart
+recovery, optimistic concurrency, and malformed/incompatible record rejection.
+
+This milestone adds no durable Execution Journal, state-and-journal transaction
+coordinator, prototype database dependency, customer release, external action,
+or Sprint 6.3 implementation.
 
 ### 6.3 - Durable Execution Journal
 

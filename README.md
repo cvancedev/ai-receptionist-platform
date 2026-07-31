@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4 is certified complete with provider-neutral architecture and its smallest typed, deterministic, mock-only foundation. Sprint 5 is certified complete with one controlled in-memory transition, an immutable Conversation Read Model, UI-safe prototype integration, an append-only in-memory Execution Journal, and deterministic application-owned progress decisions. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, model, SDK, networking, persistence, authentication, external integration, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4 is certified complete with provider-neutral architecture and its smallest typed, deterministic, mock-only foundation. Sprint 5 is certified complete with one controlled in-memory transition, an immutable Conversation Read Model, UI-safe prototype integration, an append-only in-memory Execution Journal, and deterministic application-owned progress decisions. Sprint 6.2 adds an opt-in PostgreSQL Conversation State store while the prototype remains in-memory by default. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, model, production database connection, authentication, external integration, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -20,6 +20,7 @@ Version 1 is intentionally small and focused. It will not be developed as an all
 - Tailwind CSS
 - ESLint
 - npm
+- PostgreSQL with the direct `pg` driver for opt-in Conversation State durability
 
 ## Local Development
 
@@ -37,7 +38,10 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in a browser.
 
-No environment variables are currently required.
+No environment variables are required for the website, prototype, or default
+in-memory verification. PostgreSQL integration verification requires an
+isolated test database through `TEST_DATABASE_URL`; see
+[PostgreSQL Development](docs/POSTGRESQL_DEVELOPMENT.md).
 
 ## Available Routes
 
@@ -88,6 +92,8 @@ npm run verify:conversation-read-model
 npm run verify:prototype-read-model-integration
 npm run verify:execution-journal
 npm run verify:conversation-progress
+npm run verify:persistence-contracts
+npm run verify:postgresql-conversation-store
 ```
 
 ## Documentation
@@ -150,6 +156,8 @@ npm run verify:conversation-progress
 - [AI cost and usage boundaries](docs/AI_COST_AND_USAGE_BOUNDARIES.md)
 - [Sprint 4 plan](docs/SPRINT_4_PLAN.md)
 - [Sprint 5 plan](docs/SPRINT_5_PLAN.md)
+- [Sprint 6 plan](docs/SPRINT_6_PLAN.md)
+- [PostgreSQL development](docs/POSTGRESQL_DEVELOPMENT.md)
 - [Sprint 4 certification](docs/certification/SPRINT4_CERTIFICATION.md)
 - [Sprint 4 architecture audit](docs/certification/SPRINT4_ARCHITECTURE_AUDIT.md)
 - [Sprint 4 security audit](docs/certification/SPRINT4_SECURITY_AUDIT.md)
@@ -195,4 +203,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3, Sprint 4, and Sprint 5 are certified complete. Sprint 5.1 implements a deterministic Transition Registry, Transition Validator, State Executor, immutable Execution Result, and one controlled `initialized -> intake` mutation. Sprint 5.2 implements the immutable Conversation Read Model and deterministic projector. Sprint 5.3 gives the prototype session shared ownership of controlled execution and projection, then supplies the existing `/prototype` components with only the read model and safe summaries. Sprint 5.4 records trusted execution results in a deeply immutable, deterministic, process-local journal that has no execution or state authority. Sprint 5.5 implements the deterministic Progress Engine and explicit mapping to read-model actions without adding mutation or execution authority. Sprint 5.6 certifies those boundaries without adding product functionality. Raw or unvalidated output still has no authority, and customer release remains false. Sprint 6.0 defines the Durable Persistence Foundation and selects PostgreSQL architecturally. Milestone 6.1 implements technology-neutral Conversation Store and Execution Journal Store contracts, revision-aware in-memory replacement, and focused contract verification while preserving the existing in-memory defaults. No durable persistence, PostgreSQL implementation, dependency, migration, schema, database connection, Sprint 6.2 implementation, real provider, customer release, external action, or production authentication exists.
+Sprint 3, Sprint 4, and Sprint 5 are certified complete. Sprint 6.0 defines the Durable Persistence Foundation and selects PostgreSQL architecturally. Milestone 6.1 implements technology-neutral Conversation Store and Execution Journal Store contracts. Milestone 6.2 implements and verifies an opt-in PostgreSQL Conversation Store, versioned migration, complete state-document decoding, exact business/profile/conversation scope, and atomic revision-aware replacement. `ConversationStateManager` and the prototype still default to synchronous in-memory storage. Raw or unvalidated output has no authority, and customer release remains false. No durable Execution Journal, state-and-journal transaction coordinator, production database connection, Sprint 6.3 implementation, real provider, customer release, external action, or production authentication exists.

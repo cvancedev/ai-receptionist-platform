@@ -18,6 +18,7 @@ export type ConversationStoreFailureReason =
   | "ScopeMismatch"
   | "RevisionConflict"
   | "InvalidRevisionIncrement"
+  | "InvalidConversationState"
   | "InvalidStoredState"
   | "IncompatibleStoredState"
   | "PersistenceFailure";
@@ -30,17 +31,30 @@ export type ConversationStoreResult =
       readonly errors: readonly string[];
     };
 
+export type ConversationStoreOperationMode = "synchronous" | "asynchronous";
+
+export type ConversationStoreOperation<
+  Mode extends ConversationStoreOperationMode,
+> = Mode extends "asynchronous"
+  ? Promise<ConversationStoreResult>
+  : ConversationStoreResult;
+
 /**
  * Application-owned persistence boundary for complete Conversation State
  * snapshots. Implementations provide storage mechanics only; they do not decide
  * transition legality or construct state updates.
  */
-export interface ConversationStore {
-  create(state: Readonly<ConversationState>): ConversationStoreResult;
+export interface ConversationStore<
+  Mode extends ConversationStoreOperationMode = "synchronous",
+> {
+  readonly operationMode: Mode;
+  create(
+    state: Readonly<ConversationState>,
+  ): ConversationStoreOperation<Mode>;
   read(
     scope: Readonly<ConversationStoreScope>,
-  ): ConversationStoreResult;
+  ): ConversationStoreOperation<Mode>;
   replace(
     input: Readonly<ConversationStoreReplaceInput>,
-  ): ConversationStoreResult;
+  ): ConversationStoreOperation<Mode>;
 }

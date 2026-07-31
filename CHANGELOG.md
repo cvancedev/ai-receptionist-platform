@@ -10,6 +10,16 @@ All notable changes to this project will be documented in this file. The format 
 - Recorded temporary accepted risks for Next.js-nested PostCSS `8.4.31` and optional Sharp `0.34.5`, including their patched floors and production entry criteria.
 - Added no dependency override, new dependency, or application behavior.
 
+### Sprint 6.2 - Durable Conversation State
+
+- Added a direct PostgreSQL Conversation Store adapter and the minimum versioned Conversation State migration.
+- Preserved complete state documents with business/profile/conversation scope, explicit format and revision envelopes, application-owned decoding, and fail-closed validation.
+- Added duplicate, missing, wrong-scope, malformed, incompatible, and infrastructure outcomes without leaking PostgreSQL types into application or domain contracts.
+- Implemented atomic expected-revision replacement so stale and invalid-increment writes fail without mutating durable state.
+- Added isolated real-PostgreSQL verification for migration, complete nested round trips, detached reads, store and manager recreation, scope isolation, optimistic concurrency, and corrupted records.
+- Kept the Conversation State Manager synchronous and in-memory by default; PostgreSQL is opt-in and asynchronous.
+- Added no durable Execution Journal, state-and-journal transaction coordinator, production database connection, customer release, external action, or Sprint 6.3 implementation.
+
 ### Sprint 6.1 - Persistence Contracts and Repository Boundaries
 
 - Added application-owned, technology-neutral Conversation Store and Execution Journal Store contracts without database-specific types.

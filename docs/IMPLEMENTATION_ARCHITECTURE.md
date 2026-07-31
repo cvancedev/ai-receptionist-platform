@@ -42,7 +42,7 @@ Enforces business scope, profile and knowledge eligibility, prompt security, out
 
 Durable persistence is required for business-scoped application state and audit history after the certified deterministic prototype. PostgreSQL was selected during Sprint 6.0 as the relational persistence technology for Sprint 6 because the demonstrated requirements include structured domain data, profile versions, state revisions, relational ownership, optimistic concurrency, atomic transactions, uniqueness, migrations, tenant isolation, durable audit history, and restart recovery.
 
-The Sprint 6.0 selection is architectural only. No PostgreSQL dependency, migration, schema, database, connection, or durable repository implementation exists. Existing in-memory stores and journals remain the implemented prototype behavior until a later explicitly authorized Sprint 6 milestone replaces or supplements them behind application-owned contracts.
+Milestone 6.2 implements the first approved durable slice: a direct PostgreSQL adapter, versioned Conversation State migration, canonical state-document decoder, and real-database verification. The adapter is opt-in; the prototype and Conversation State Manager continue to default to the in-memory store. No durable Execution Journal, state-and-journal transaction coordinator, production database connection, or Sprint 6.3 implementation exists.
 
 PostgreSQL provides durability and relational integrity defenses only. It does not own domain rules, transitions, state validation, workflow decisions, AI validation, application decisions, progress, presentation, customer release, or external actions.
 
@@ -70,7 +70,7 @@ Future observability should cover request and trace identity, task type, context
 | Decision | Current timing or status |
 | --- | --- |
 | AI provider and model | A later approved implementation milestone, after provider-neutral context, task, output, failure, and evaluation architecture is complete |
-| Database | PostgreSQL selected architecturally in Sprint 6.0 after the in-memory domain behavior demonstrated Phase 4 requirements; implementation begins only in a later explicitly authorized Sprint 6 milestone |
+| Database | PostgreSQL selected architecturally in Sprint 6.0; Milestone 6.2 implements only the approved durable Conversation State adapter and migration while later persistence milestones remain deferred |
 | Authentication provider | A later sprint requiring real business users and administration |
 | Hosting architecture | End-to-end MVP planning when runtime, security, and persistence needs are known |
 | Embedding system or vector database | Only if Knowledge Retrieval testing proves simpler structured retrieval insufficient |
@@ -164,6 +164,29 @@ Milestone 6.1 introduces an application-owned `ConversationStore` contract for c
 
 The application-owned `ExecutionJournalStore` contract remains limited to trusted-result append and explicitly business/profile/conversation-scoped detached immutable snapshot retrieval. `InMemoryExecutionJournal` remains the default observer and retains its existing metadata validation. It gains no mutation, execution, replay, retry, release, or external-action capability.
 
-These contracts are technology-neutral and expose no SQL, connection, transaction, ORM, driver, or PostgreSQL error type. Milestone 6.1 adds no durability, PostgreSQL implementation, dependency, migration, schema, database connection, transaction coordinator, production authentication, real provider, customer release, or external action. Milestone 6.2 has not started.
+These contracts are technology-neutral and expose no SQL, connection, transaction, ORM, driver, or PostgreSQL error type. Milestone 6.1 adds no durability, PostgreSQL implementation, dependency, migration, schema, database connection, transaction coordinator, production authentication, real provider, customer release, or external action. At the completion of Milestone 6.1, Milestone 6.2 had not started.
 
 Future atomic execution will not add transaction control to either domain-facing store contract. Milestone 6.4 may introduce a separate application-owned coordinator that supplies transaction-bound store implementations and alone decides commit or rollback, preserving the existing State Manager, State Executor, and journal responsibilities.
+
+## Sprint 6.2 Durable Conversation State Status
+
+Milestone 6.2 adds a PostgreSQL Conversation Store behind the technology-neutral
+application contract. The schema uses a composite
+business/profile-version/conversation key, an explicit revision and state
+format, and one complete JSONB state document. Create rejects duplicates,
+reads require exact scope, and replacement uses an atomic expected-revision
+condition with exactly one application-validated revision increment.
+
+Rows remain untrusted storage records. The adapter checks the relational
+envelope and state-format version, structurally decodes the complete document,
+and runs application-owned Conversation State validation before returning a
+detached domain value. Known storage outcomes are translated into contract
+failures without exposing SQL, connection, transaction, or driver types.
+
+The Conversation Store contract explicitly supports synchronous and
+asynchronous adapters. Existing default manager and prototype behavior remain
+synchronous and in-memory; PostgreSQL is used only when its adapter is
+explicitly injected and awaited. Milestone 6.2 introduces no journal
+durability, broader transaction coordination, new transition, business-rule
+authority, customer release, external action, or Sprint 6.3 work. See
+[PostgreSQL Development](POSTGRESQL_DEVELOPMENT.md).

@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4 is certified complete with provider-neutral architecture and its smallest typed, deterministic, mock-only foundation. Sprint 5 is certified complete with one controlled in-memory transition, an immutable Conversation Read Model, UI-safe prototype integration, an append-only in-memory Execution Journal, and deterministic application-owned progress decisions. Sprint 6.2 adds an opt-in PostgreSQL Conversation State store while the prototype remains in-memory by default. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, model, production database connection, authentication, external integration, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprint 3 is certified complete with a local, fictional, in-memory deterministic intake prototype and isolated developer chat interface. Sprint 4 is certified complete with provider-neutral architecture and its smallest typed, deterministic, mock-only foundation. Sprint 5 is certified complete with one controlled in-memory transition, an immutable Conversation Read Model, UI-safe prototype integration, an append-only in-memory Execution Journal, and deterministic application-owned progress decisions. Sprint 6.2 adds opt-in PostgreSQL Conversation State storage, and Sprint 6.3 adds an opt-in durable Execution Journal while the prototype remains in-memory by default. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, model, production database connection, authentication, external integration, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -20,7 +20,7 @@ Version 1 is intentionally small and focused. It will not be developed as an all
 - Tailwind CSS
 - ESLint
 - npm
-- PostgreSQL with the direct `pg` driver for opt-in Conversation State durability
+- PostgreSQL with the direct `pg` driver for opt-in Conversation State and Execution Journal durability
 
 ## Local Development
 
@@ -94,6 +94,7 @@ npm run verify:execution-journal
 npm run verify:conversation-progress
 npm run verify:persistence-contracts
 npm run verify:postgresql-conversation-store
+npm run verify:postgresql-execution-journal
 ```
 
 ## Documentation
@@ -203,4 +204,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3, Sprint 4, and Sprint 5 are certified complete. Sprint 6.0 defines the Durable Persistence Foundation and selects PostgreSQL architecturally. Milestone 6.1 implements technology-neutral Conversation Store and Execution Journal Store contracts. Milestone 6.2 implements and verifies an opt-in PostgreSQL Conversation Store, versioned migration, complete state-document decoding, exact business/profile/conversation scope, and atomic revision-aware replacement. `ConversationStateManager` and the prototype still default to synchronous in-memory storage. Raw or unvalidated output has no authority, and customer release remains false. No durable Execution Journal, state-and-journal transaction coordinator, production database connection, Sprint 6.3 implementation, real provider, customer release, external action, or production authentication exists.
+Sprint 3, Sprint 4, and Sprint 5 are certified complete. Sprint 6.0 defines the Durable Persistence Foundation and selects PostgreSQL architecturally. Milestone 6.1 implements technology-neutral Conversation Store and Execution Journal Store contracts. Milestone 6.2 implements the opt-in PostgreSQL Conversation Store. Milestone 6.3 implements an opt-in PostgreSQL Execution Journal with bounded trusted metadata, deterministic append ordering, exact scoped retrieval, immutable decoding, and isolated verification. The prototype still defaults to synchronous in-memory state and journal storage. Raw or unvalidated output has no authority, and customer release remains false. No state-and-journal transaction coordinator, production database connection, Sprint 6.4 implementation, real provider, customer release, external action, or production authentication exists.

@@ -257,7 +257,7 @@ Any malformed, unsupported, contradictory, or scope-inconsistent record fails cl
 
 ## Durable Execution Journal
 
-Milestone 6.3 will replace process-local journal storage with a durable append-only adapter while preserving the certified journal trust boundary.
+Milestone 6.3 adds an opt-in durable append-only adapter while preserving the certified journal trust boundary and the process-local default.
 
 The durable journal:
 
@@ -493,7 +493,7 @@ or Sprint 6.3 implementation.
 
 ### 6.3 - Durable Execution Journal
 
-**Status: Not started**
+**Status: Complete**
 
 Implement and verify durable append-only audit storage behind the approved journal contract.
 
@@ -506,6 +506,39 @@ The milestone must prove:
 - append-only application capabilities;
 - explicit append failures; and
 - no execution, mutation, replay, retry, release, provider, or external-action authority.
+
+Milestone 6.3 implements a direct `pg` adapter behind the application-owned
+Execution Journal Store contract. Migration 002 stores every bounded safe
+journal-entry field, an explicit journal schema version, and a scoped ordering
+index without storing state snapshots, prompts, raw model output, arbitrary
+customer input, or credentials.
+
+The existing trusted-result rules are centralized in the application-owned
+journal entry mapper and shared by both adapters. PostgreSQL append validates
+before insertion, allocates a contiguous committed sequence inside exact
+business/profile/conversation scope and a journal-local transaction, and
+creates a scope-unique sequence-qualified immutable journal identity. Snapshot
+retrieval requires exact business/profile/conversation
+scope, orders by sequence, reconstructs detached immutable entries, and fails
+closed for invalid scope, incompatible format, malformed storage, or database
+failure.
+
+The technology-neutral contract supports synchronous and asynchronous journal
+adapters. `InMemoryExecutionJournal` remains the prototype default; an
+explicitly injected PostgreSQL journal is awaited by the controlled execution
+path. The journal-local append transaction does not include Conversation State
+and creates no shared transaction object. Atomic state-and-journal commit,
+durable execution identity coordination, and competing-writer integration
+remain Milestone 6.4 work.
+
+Dedicated real-PostgreSQL verification proves ordered migrations, trusted and
+rejected append behavior, duplicate-outcome preservation, deterministic
+sequence and identity, complete safe-field round trips, scoped isolation,
+store recreation, async injection, corruption rejection, explicit persistence
+failures, default in-memory compatibility, and prohibited-capability absence.
+
+This milestone adds no execution, mutation, replay, retry, customer release,
+external action, production database connection, or Sprint 6.4 implementation.
 
 ### 6.4 - Transactional Execution and Concurrency
 

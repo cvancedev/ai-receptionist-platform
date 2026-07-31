@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 6.3 - Durable Execution Journal
+
+- Added a PostgreSQL Execution Journal adapter and versioned migration for bounded, append-only audit entries.
+- Centralized the existing application-owned trusted-result mapping so in-memory and PostgreSQL journals preserve identical validation, outcome, and safe-metadata rules.
+- Added deterministic journal-local sequence allocation, exact business/profile/conversation-scoped retrieval, detached immutable snapshots, and fail-closed stored-entry decoding.
+- Extended the technology-neutral journal contract for synchronous and asynchronous adapters while retaining the in-memory journal as the default.
+- Added isolated real-PostgreSQL verification for migrations, append and duplicate outcomes, ordering, restart durability, scope isolation, corruption handling, persistence failures, and prohibited authority.
+- Added no state-and-journal transaction coordinator, durable execution authority, replay, retry, customer release, external action, or Sprint 6.4 implementation.
+
 ### Dependency Security Maintenance
 
 - Upgraded Next.js from `16.2.10` to `16.2.12` to resolve the advisories affecting the framework package itself.

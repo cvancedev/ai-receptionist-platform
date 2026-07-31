@@ -45,6 +45,7 @@ export interface ExecutionJournalEntry {
 
 export interface ExecutionJournalSnapshot {
   readonly entries: readonly Readonly<ExecutionJournalEntry>[];
+  readonly failure?: ExecutionJournalSnapshotFailureReason;
 }
 
 export interface ExecutionJournalStoreScope {
@@ -58,6 +59,12 @@ export type ExecutionJournalAppendFailureReason =
   | "UnknownExecutionOutcome"
   | "JournalAppendFailed";
 
+export type ExecutionJournalSnapshotFailureReason =
+  | "InvalidJournalScope"
+  | "InvalidStoredJournalEntry"
+  | "IncompatibleStoredJournalEntry"
+  | "JournalReadFailed";
+
 export type ExecutionJournalAppendResult =
   | {
       readonly status: "success";
@@ -68,14 +75,26 @@ export type ExecutionJournalAppendResult =
       readonly reason: ExecutionJournalAppendFailureReason;
     };
 
+export type ExecutionJournalOperationMode = "synchronous" | "asynchronous";
+
+export type ExecutionJournalOperation<
+  Mode extends ExecutionJournalOperationMode,
+  Result,
+> = Mode extends "asynchronous" ? Promise<Result> : Result;
+
 /**
  * Application-owned append-only persistence boundary. Implementations observe
  * trusted execution results and expose detached history; they own no execution
  * or state authority.
  */
-export interface ExecutionJournalStore {
-  append(result: StateExecutionResult): ExecutionJournalAppendResult;
+export interface ExecutionJournalStore<
+  Mode extends ExecutionJournalOperationMode = "synchronous",
+> {
+  readonly operationMode: Mode;
+  append(
+    result: StateExecutionResult,
+  ): ExecutionJournalOperation<Mode, ExecutionJournalAppendResult>;
   snapshot(
     scope: Readonly<ExecutionJournalStoreScope>,
-  ): ExecutionJournalSnapshot;
+  ): ExecutionJournalOperation<Mode, ExecutionJournalSnapshot>;
 }

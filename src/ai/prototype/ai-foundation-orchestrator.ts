@@ -14,6 +14,8 @@ import { PrototypeContextPackageBuilder } from "../context/context-package-build
 import { ApplicationDecisionEngine } from "../decisions/application-decision-engine";
 import type {
   ExecutionJournalAppendResult,
+  ExecutionJournalOperation,
+  ExecutionJournalOperationMode,
   ExecutionJournalSnapshot,
   ExecutionJournalStore,
 } from "../execution-journal/contracts";
@@ -36,18 +38,22 @@ import { DuplicateProcessingGuard } from "../validation/duplicate-processing-gua
 import { PrototypeProposalValidator } from "../validation/proposal-validator";
 import { createAiPrototypeFixture } from "./fixtures";
 
-export interface AiFoundationPrototypeOptions {
+export interface AiFoundationPrototypeOptions<
+  JournalMode extends ExecutionJournalOperationMode = "synchronous",
+> {
   executionManager?: ConversationStateManager;
-  executionJournal?: ExecutionJournalStore;
+  executionJournal?: ExecutionJournalStore<JournalMode>;
 }
 
-export class AiFoundationPrototypeOrchestrator {
+export class AiFoundationPrototypeOrchestrator<
+  JournalMode extends ExecutionJournalOperationMode = "synchronous",
+> {
   private readonly executionManager: ConversationStateManager;
   private readonly stateExecutor: DeterministicStateExecutor;
-  private readonly executionJournal: ExecutionJournalStore;
+  private readonly executionJournal: ExecutionJournalStore<JournalMode>;
 
   constructor(
-    options: AiFoundationPrototypeOptions = {},
+    options: AiFoundationPrototypeOptions<JournalMode> = {},
     private readonly duplicateGuard = new DuplicateProcessingGuard(),
     private readonly tasks = new TaskRegistry(),
     private readonly contracts = new OutputContractRegistry(),
@@ -62,7 +68,8 @@ export class AiFoundationPrototypeOrchestrator {
       options.executionManager ?? createExecutionManager();
     this.stateExecutor = new DeterministicStateExecutor(this.executionManager);
     this.executionJournal =
-      options.executionJournal ?? new InMemoryExecutionJournal();
+      options.executionJournal
+        ?? new InMemoryExecutionJournal() as unknown as ExecutionJournalStore<JournalMode>;
   }
 
   async run(scenario: MockProviderScenario): Promise<OperationResult<AiFoundationSnapshot>> {
@@ -195,7 +202,7 @@ export class AiFoundationPrototypeOrchestrator {
       applicationDecision: snapshot.decision,
       validation: snapshot.validation,
     });
-    const journalAppend = appendExecutionResult(
+    const journalAppend = await appendExecutionResult(
       this.executionJournal,
       execution,
     );
@@ -222,7 +229,10 @@ export class AiFoundationPrototypeOrchestrator {
     return this.duplicateGuard.snapshot();
   }
 
-  executionJournalSnapshot(): ExecutionJournalSnapshot {
+  executionJournalSnapshot(): ExecutionJournalOperation<
+    JournalMode,
+    ExecutionJournalSnapshot
+  > {
     return this.executionJournal.snapshot({
       conversationId: initializedConversationState.conversationId,
       businessProfileId: initializedConversationState.businessProfileId,
@@ -262,12 +272,12 @@ export class AiFoundationPrototypeOrchestrator {
   }
 }
 
-function appendExecutionResult(
-  journal: ExecutionJournalStore,
+async function appendExecutionResult(
+  journal: ExecutionJournalStore<ExecutionJournalOperationMode>,
   execution: Parameters<ExecutionJournalStore["append"]>[0],
-): ExecutionJournalAppendResult {
+): Promise<ExecutionJournalAppendResult> {
   try {
-    return journal.append(execution);
+    return await journal.append(execution);
   } catch {
     return deepFreeze({
       status: "failure",

@@ -7,6 +7,11 @@ export interface PostgresqlMigrationOptions {
   readonly schema?: string;
 }
 
+const POSTGRESQL_MIGRATIONS = [
+  "001_conversation_states.sql",
+  "002_execution_journal.sql",
+] as const;
+
 export async function applyPostgresqlMigrations(
   options: Readonly<PostgresqlMigrationOptions>,
 ): Promise<void> {
@@ -16,18 +21,15 @@ export async function applyPostgresqlMigrations(
 
   try {
     client = await pool.connect();
-    const migration = await readFile(
-      join(
-        process.cwd(),
-        "database",
-        "migrations",
-        "001_conversation_states.sql",
-      ),
-      "utf8",
-    );
     await client.query("BEGIN");
     await client.query(`SET LOCAL search_path TO ${quoteIdentifier(schema)}`);
-    await client.query(migration);
+    for (const migrationName of POSTGRESQL_MIGRATIONS) {
+      const migration = await readFile(
+        join(process.cwd(), "database", "migrations", migrationName),
+        "utf8",
+      );
+      await client.query(migration);
+    }
     await client.query("COMMIT");
   } catch (error) {
     if (client) await client.query("ROLLBACK");

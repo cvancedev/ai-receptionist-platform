@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Sprint 5.4 adds a narrow, process-local audit boundary for controlled execution attempts. The Execution Journal supports traceability, debugging, deterministic verification, and future observability foundations.
+Sprint 5.4 establishes a narrow, process-local audit boundary for controlled execution attempts. Milestone 6.3 adds an opt-in PostgreSQL implementation behind the same application-owned contract. The Execution Journal supports traceability, debugging, deterministic verification, and future observability foundations.
 
-It is not an executor, event bus, replay engine, persistence layer, business-action queue, or source of conversation-state authority.
+Durability does not make the journal an executor, event bus, replay engine, business-action queue, or source of Conversation State authority.
 
 ## Ownership and Flow
 
-`AiFoundationPrototypeOrchestrator` owns one `InMemoryExecutionJournal`. The journal observes the immutable result after the existing State Executor has completed:
+`AiFoundationPrototypeOrchestrator` owns one `InMemoryExecutionJournal` by default and may receive an explicitly injected asynchronous journal adapter. The journal observes the immutable result after the existing State Executor has completed:
 
 ```text
 approved Application Decision
@@ -63,12 +63,12 @@ Structurally trustworthy duplicate, stale, unknown-transition, scope, decision, 
 
 ## Append-Only and Read Semantics
 
-The in-memory journal provides only:
+Every journal implementation provides only:
 
 - `append(immutableExecutionResult)`; and
 - `snapshot(businessProfileConversationScope)`.
 
-There is no update, delete, replacement, replay, retry, or dispatch operation. Sequence numbers begin at one and increase by one. Entry IDs use:
+There is no update, delete, replacement, replay, retry, or dispatch operation. Sequence numbers begin at one and increase by one. The PostgreSQL adapter serializes sequence allocation inside a journal-local transaction and exact business/profile/conversation scope so committed entries retain contiguous deterministic ordering without cross-business sequence leakage or identity collisions. Entry IDs use:
 
 ```text
 execution-journal-{sequence}-{canonical execution ID}
@@ -76,9 +76,11 @@ execution-journal-{sequence}-{canonical execution ID}
 
 The execution timestamp and journal recording timestamp follow the existing `prototype-deterministic` convention. Identical controlled scenarios against fresh equivalent instances therefore produce equivalent journal snapshots.
 
-Every entry, append result, nested metadata object, and returned snapshot is deeply frozen. Reads clone entry metadata into a new immutable collection, so callers never receive the journal's internal array or internal entry references. Later appends cannot change an earlier snapshot.
+Every entry, append result, nested metadata object, and returned snapshot is deeply frozen. Reads clone or reconstruct entry metadata into a new immutable collection, so callers never receive the journal's internal array or database-driver objects. Later appends cannot change an earlier snapshot.
 
 Milestone 6.1 formalizes these operations as the technology-neutral `ExecutionJournalStore` contract and requires explicit Business Profile, profile-version, and conversation scope for snapshot retrieval. The in-memory journal remains the default implementation and preserves the certified append, trust, ordering, detachment, and authority behavior.
+
+Milestone 6.3 extends that contract with explicit synchronous and asynchronous operation modes. The PostgreSQL adapter validates trusted results through the same application-owned mapper before insertion. Scoped snapshots order by sequence, validate the supported journal schema version and exact safe entry structure, and fail closed without partial history when a row is malformed or incompatible. Wrong valid scope returns an empty history without exposing whether another business has entries; malformed scope returns an explicit failure.
 
 ## Failure and Atomicity
 
@@ -86,15 +88,17 @@ Append failure is explicit:
 
 - `UntrustedExecutionMetadata` means canonical safe audit metadata was unavailable;
 - `UnknownExecutionOutcome` means the result code was not allowlisted; and
-- `JournalAppendFailed` means the journal threw unexpectedly at the controlled boundary.
+- `JournalAppendFailed` means the adapter or controlled boundary could not complete the append.
+
+Durable snapshot failures are explicit as `InvalidJournalScope`, `InvalidStoredJournalEntry`, `IncompatibleStoredJournalEntry`, or `JournalReadFailed`.
 
 A journal failure never changes a rejected execution into success. It also does not roll back a successful conversation transition. The in-memory Conversation State Manager and journal are separate process-local components with no transaction spanning them, so execution may succeed while journaling fails. `runWithExecution()` returns both the immutable Execution Result and append result so the limitation is never silently hidden.
 
-Sprint 5.4 deliberately adds no persistence or transaction mechanism.
+The PostgreSQL adapter may use a transaction only to allocate sequence and append one journal entry. It does not receive a Conversation Store or transaction handle and cannot coordinate Conversation State. Atomic state-and-journal commit remains deferred to Milestone 6.4.
 
 ## Reset
 
-Prototype session reset creates a fresh foundation, state manager, AI orchestrator, and journal. The new journal starts empty with its next sequence at one.
+Prototype session reset creates a fresh foundation, state manager, AI orchestrator, and default in-memory journal. The new in-memory journal starts empty with its next sequence at one. An explicitly injected PostgreSQL journal survives store recreation and is not wired into ordinary prototype reset.
 
 Previously returned snapshots remain frozen detached values. They cannot mutate the fresh journal or new session state, and no journal data survives reset.
 
@@ -112,12 +116,13 @@ Run:
 
 ```powershell
 npm.cmd run verify:execution-journal
+npm.cmd run verify:postgresql-execution-journal
 ```
 
-The focused suite covers successful and rejected entries, duplicate/stale/invalid-transition outcomes, deterministic identity/order, deep immutability, reference isolation, append-only history, trusted metadata failure, unknown outcomes, explicit append failure, lack of authority, session reset, read-only `run()`, execution-enabled `runWithExecution()`, and the unchanged single-transition registry.
+The focused suites cover successful and rejected entries, duplicate/stale/invalid-transition outcomes, deterministic identity/order, deep immutability, reference isolation, append-only history, trusted metadata failure, unknown outcomes, explicit persistence failures, migration ordering, scoped durable reload, corruption rejection, asynchronous injection, lack of authority, session reset, read-only `run()`, execution-enabled `runWithExecution()`, and the unchanged single-transition registry.
 
 ## Prohibited Capabilities and Limitations
 
-Sprint 5.4 adds no transition, persistence, database, filesystem storage, browser storage, cookies, networking, external API, email, SMS, telephony, scheduling, CRM integration, customer communication, customer-release authorization, real provider, authentication change, replay, retry, background worker, event bus, or UI redesign.
+Milestone 6.3 adds only the selected PostgreSQL persistence path for safe journal entries. It adds no transition, Conversation State mutation, shared transaction coordinator, browser storage, cookies, external API, email, SMS, telephony, scheduling, CRM integration, customer communication, customer-release authorization, real provider, authentication change, replay, retry, background worker, event bus, or UI redesign.
 
-The journal is process-local and non-durable. It is not a complete production audit system, does not survive reset or restart, and cannot provide atomic persistence with conversation execution.
+The prototype journal remains process-local and non-durable by default. The opt-in PostgreSQL adapter survives store recreation, but it is not a complete production audit system and cannot provide atomic persistence with conversation execution. Production connection management, coordinated commit, retention, operational recovery, and Sprint 6.4 behavior remain deferred.

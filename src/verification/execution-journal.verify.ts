@@ -441,6 +441,8 @@ function snapshot(manager: ConversationStateManager): ConversationState {
 }
 
 class ThrowingExecutionJournal implements ExecutionJournalStore {
+  readonly operationMode = "synchronous";
+
   append(): ExecutionJournalAppendResult {
     throw new Error("controlled journal failure");
   }

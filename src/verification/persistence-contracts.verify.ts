@@ -219,6 +219,10 @@ function verifyConversationStateManagerContract() {
 
 async function verifyExecutionJournalContract() {
   const journal: ExecutionJournalStore = new InMemoryExecutionJournal();
+  assert(
+    journal.operationMode === "synchronous",
+    "in-memory journal contract remains synchronous",
+  );
   const execution = await trustedExecutionResult();
   const appended = journal.append(execution);
   assert(
@@ -242,6 +246,16 @@ async function verifyExecutionJournalContract() {
     "journal retrieval is business scoped",
   );
   assertDeeplyFrozen(firstSnapshot, "journal snapshot");
+
+  const invalidScope = journal.snapshot({
+    ...scope(),
+    conversationId: " ",
+  });
+  assert(
+    invalidScope.entries.length === 0
+      && invalidScope.failure === "InvalidJournalScope",
+    "malformed journal scope fails explicitly",
+  );
 
   const malformed = journal.append(
     null as unknown as StateExecutionResult,

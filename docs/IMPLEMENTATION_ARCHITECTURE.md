@@ -42,7 +42,7 @@ Enforces business scope, profile and knowledge eligibility, prompt security, out
 
 Durable persistence is required for business-scoped application state and audit history after the certified deterministic prototype. PostgreSQL was selected during Sprint 6.0 as the relational persistence technology for Sprint 6 because the demonstrated requirements include structured domain data, profile versions, state revisions, relational ownership, optimistic concurrency, atomic transactions, uniqueness, migrations, tenant isolation, durable audit history, and restart recovery.
 
-Milestone 6.2 implements the first approved durable slice for Conversation State. Milestone 6.3 adds the separately injected PostgreSQL Execution Journal adapter, bounded journal migration, shared trusted-result mapper, and scoped immutable decoder. Milestone 6.4 adds a separate opt-in PostgreSQL transaction coordinator that atomically persists an already-approved state replacement and its required journal entry. Milestone 6.5 adds an explicitly opt-in fictional application integration that recovers validated state and audit history through newly created adapter instances and resumes deterministic progression from the recovered revision. The standalone adapters remain available, and the prototype continues to default to in-memory state and journal stores. No production database connection or Sprint 6.6 implementation exists.
+Milestone 6.2 implements the first approved durable slice for Conversation State. Milestone 6.3 adds the separately injected PostgreSQL Execution Journal adapter, bounded journal migration, shared trusted-result mapper, and scoped immutable decoder. Milestone 6.4 adds a separate opt-in PostgreSQL transaction coordinator that atomically persists an already-approved state replacement and its required journal entry. Milestone 6.5 adds an explicitly opt-in fictional application integration that recovers validated state and audit history through newly created adapter instances and resumes deterministic progression from the recovered revision. Milestone 6.6 verifies explicit fail-closed persistence and recovery behavior against disposable PostgreSQL without changing production source. The standalone adapters remain available, and the prototype continues to default to in-memory state and journal stores. No production database connection or Sprint 6.7 implementation exists.
 
 PostgreSQL provides durability and relational integrity defenses only. It does not own domain rules, transitions, state validation, workflow decisions, AI validation, application decisions, progress, presentation, customer release, or external actions.
 
@@ -70,7 +70,7 @@ Future observability should cover request and trace identity, task type, context
 | Decision | Current timing or status |
 | --- | --- |
 | AI provider and model | A later approved implementation milestone, after provider-neutral context, task, output, failure, and evaluation architecture is complete |
-| Database | PostgreSQL selected architecturally in Sprint 6.0; Milestones 6.2 through 6.5 implement separate opt-in stores, atomic coordination, and a restart-safe fictional integration while recovery certification and later persistence work remain deferred |
+| Database | PostgreSQL selected architecturally in Sprint 6.0; Milestones 6.2 through 6.5 implement separate opt-in stores, atomic coordination, and a restart-safe fictional integration, and Milestone 6.6 verifies explicit failure and recovery semantics while Sprint 6 certification remains deferred |
 | Authentication provider | A later sprint requiring real business users and administration |
 | Hosting architecture | End-to-end MVP planning when runtime, security, and persistence needs are known |
 | Embedding system or vector database | Only if Knowledge Retrieval testing proves simpler structured retrieval insufficient |
@@ -276,5 +276,27 @@ produces `clarify_service`; because the registry still contains only
 `initialized -> intake`, the integration returns progress-only and performs no
 second write.
 
-Milestone 6.5 adds no migration, dependency, UI wiring, retry, replay, customer
-release, external action, or Sprint 6.6 behavior. See [PostgreSQL Development](POSTGRESQL_DEVELOPMENT.md).
+Milestone 6.5 added no migration, dependency, UI wiring, retry, replay,
+customer release, external action, or Milestone 6.6 behavior. See
+[PostgreSQL Development](POSTGRESQL_DEVELOPMENT.md).
+
+## Sprint 6.6 Persistence Recovery and Failure Status
+
+Milestone 6.6 verifies the existing application-owned failure classifications
+against real disposable PostgreSQL. Database unavailability, malformed or
+incompatible records, missing exact scope, wrong business or profile version,
+duplicate conversation or execution, stale revision, standalone journal
+failure, transactional journal failure, deferred commit failure, and
+unsupported schema state all produce explicit safe results.
+
+Fresh application and adapter instances recover successful commits directly
+from decoded Conversation State storage and retrieve journal history
+independently as audit evidence. Fresh instances after rollback see only the
+last committed revision and no failed-operation journal entry. Unsupported
+schema state fails without request-time migration or repair. No path retries,
+replays the journal, creates fallback authority, switches profile versions,
+releases customer content, or dispatches an external action.
+
+The audit demonstrated no production defect, so Milestone 6.6 adds only focused
+verification and documentation. It adds no production source, migration,
+dependency, schema, transition, default PostgreSQL wiring, or Sprint 6.7 work.

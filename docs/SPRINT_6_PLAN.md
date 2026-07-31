@@ -576,7 +576,7 @@ update, and deferred commit failure rollback. Migrations 001 and 002 already
 provide the required state and journal storage shape, so this milestone adds no
 schema migration. Standalone stores remain available, and the ordinary
 prototype remains synchronous, in-memory, and database-independent by default.
-Milestone 6.5 has not started.
+At the completion of Milestone 6.4, Milestone 6.5 had not started.
 
 ### 6.5 - Restart-Safe Prototype Integration
 
@@ -616,13 +616,13 @@ state fails without an in-memory fallback, and wrong business, profile version,
 or conversation scope fails closed.
 
 The ordinary prototype remains synchronous, in-memory, deterministic, and
-database-independent. Milestone 6.5 adds no migration, dependency, UI wiring,
+database-independent. Milestone 6.5 added no migration, dependency, UI wiring,
 real provider, replay, retry, customer release, external action, or Milestone
-6.6 behavior. Milestone 6.6 has not started.
+6.6 behavior. At the completion of Milestone 6.5, Milestone 6.6 had not started.
 
 ### 6.6 - Persistence Recovery and Failure Semantics
 
-**Status: Not started**
+**Status: Complete**
 
 Verify at minimum:
 
@@ -641,6 +641,26 @@ Verify at minimum:
 - incompatible migration or schema state where applicable.
 
 Each case must have an explicit safe application result, no partial authority, no data-scope disclosure, and no unauthorized retry or fallback.
+
+Milestone 6.6 adds one focused real-PostgreSQL recovery and failure verifier.
+It proves sanitized database-unavailable outcomes; duplicate initialization;
+durable duplicate and stale-revision rejection; malformed and incompatible
+stored-state quarantine; safe missing, wrong-business, and wrong-profile
+scope behavior; standalone journal failure; atomic rollback for journal and
+deferred commit failures; and recovery after both successful commit and
+rollback through newly constructed application and persistence objects.
+
+An isolated incompatible schema with unsupported migration history proves
+that state, journal, and transactional operations fail explicitly and do not
+run migrations, create tables, repair records, or treat the schema as current
+at request time. Recovery continues to load authoritative Conversation State
+directly; journal history remains audit evidence and is never replayed.
+
+Existing application contracts and persistence adapters already provided the
+required explicit behavior, so this milestone changes no production source,
+dependency, migration, schema, state transition, or default prototype wiring.
+It adds no retry, replay, release, provider, customer communication, or
+external-action authority. Milestone 6.7 remains not started.
 
 ### 6.7 - Sprint 6 Certification
 

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 6.6 - Persistence Recovery and Failure Semantics
+
+- Added focused real-PostgreSQL verification for database unavailability, duplicate conversation and execution, stale revision, malformed and incompatible stored state, missing and negative scope, and unsupported schema state.
+- Proved standalone journal failure is explicit and transactional journal or deferred commit failure rolls back state and required audit together.
+- Recreated application and persistence objects after successful commit and rollback to prove committed state, revision, audit, deterministic progress, and durable duplicate evidence survive while failed candidates do not.
+- Confirmed recovery reads Conversation State directly, treats the journal only as audit evidence, and performs no fallback, repair, profile switching, replay, retry, customer release, or external action.
+- Added no production source change, dependency, migration, schema, transition, default PostgreSQL wiring, or Sprint 6.7 implementation.
+
 ### Sprint 6.5 - Restart-Safe Prototype Integration
 
 - Added an explicitly opt-in, technology-neutral persistence-backed fictional prototype integration.

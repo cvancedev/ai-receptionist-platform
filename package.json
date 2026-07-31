@@ -18,7 +18,8 @@
     "verify:postgresql-conversation-store": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-conversation-store.verify.js",
     "verify:postgresql-execution-journal": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-execution-journal.verify.js",
     "verify:postgresql-transactional-execution": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-transactional-execution.verify.js",
-    "verify:postgresql-restart-safe-prototype": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-restart-safe-prototype.verify.js"
+    "verify:postgresql-restart-safe-prototype": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-restart-safe-prototype.verify.js",
+    "verify:persistence-recovery": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/persistence-recovery.verify.js"
   },
   "dependencies": {
     "next": "16.2.12",

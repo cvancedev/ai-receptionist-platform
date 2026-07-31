@@ -8,9 +8,11 @@ adds a separate PostgreSQL adapter for the bounded Execution Journal. Milestone
 already-approved state replacement and its required journal entry. The
 Milestone 6.5 integration composes these contracts only when explicitly
 injected and demonstrates restart through newly constructed application and
-persistence objects. The ordinary prototype, `ConversationStateManager`, and
-AI orchestrator continue to use in-memory storage by default. No production
-database connection or Sprint 6.6 implementation exists.
+persistence objects. Milestone 6.6 verifies explicit recovery and failure
+semantics without changing production source. The ordinary prototype,
+`ConversationStateManager`, and AI orchestrator continue to use in-memory
+storage by default. No production database connection or Sprint 6.7
+implementation exists.
 
 ## Integration Verification
 
@@ -24,6 +26,7 @@ npm.cmd run verify:postgresql-conversation-store
 npm.cmd run verify:postgresql-execution-journal
 npm.cmd run verify:postgresql-transactional-execution
 npm.cmd run verify:postgresql-restart-safe-prototype
+npm.cmd run verify:persistence-recovery
 ```
 
 Do not commit the connection URL or place it in application source. The
@@ -74,3 +77,18 @@ State storage and journal history independently, then evaluates deterministic
 progress from the recovered revision. It does not use the journal to rebuild
 state or fall back to a new in-memory conversation when durable state is
 missing.
+
+The persistence-recovery verifier covers database unavailability, duplicate
+conversation and execution, stale revision, malformed and incompatible stored
+state, missing and negative business/profile scope, standalone and
+transactional journal failure, deferred commit failure, restart after success,
+restart after rollback, and incompatible schema state. It uses only fictional
+data and uniquely named disposable schemas. Failure results remain sanitized;
+the verifier confirms that request-time operations do not run migrations or
+repair an unsupported schema.
+
+These checks do not make the verification connection a production connection.
+They add no retry or replay: committed Conversation State is recovered
+directly, while journal history is loaded separately as audit evidence only.
+Migrations 001 and 002 remain unchanged and ordered; Milestone 6.6 adds no
+migration.

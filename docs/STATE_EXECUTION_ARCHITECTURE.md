@@ -160,3 +160,17 @@ Progress Engine returns `clarify_service`, while the registry still contains
 only `initialized -> intake`. The integration therefore performs no second
 execution or durable write. It does not reinterpret the journal, synthesize a
 transition, or retry the first execution.
+
+## Sprint 6.6 Failure and Recovery Verification
+
+Milestone 6.6 proves that failed durable execution never creates transition
+authority. Duplicate execution and stale revision are rejected without a
+second mutation or required audit entry. Journal-write and deferred-commit
+failures roll back the candidate state and journal together, and newly created
+application and persistence objects still observe only the previous committed
+revision.
+
+Recovery reads decoded Conversation State as authority. It never replays the
+journal, retries an execution, repairs a malformed record, switches Business
+Profile version, or seeds a fresh authoritative state when durable state is
+missing. The registered transition set remains unchanged.

@@ -120,12 +120,13 @@ Run:
 npm.cmd run verify:execution-journal
 npm.cmd run verify:postgresql-execution-journal
 npm.cmd run verify:postgresql-transactional-execution
+npm.cmd run verify:persistence-recovery
 ```
 
-The focused suites cover successful and rejected entries, duplicate/stale/invalid-transition outcomes, deterministic identity/order, deep immutability, reference isolation, append-only history, trusted metadata failure, unknown outcomes, explicit persistence failures, migration ordering, scoped durable reload, corruption rejection, asynchronous injection, lack of authority, session reset, read-only `run()`, execution-enabled `runWithExecution()`, and the unchanged single-transition registry.
+The focused suites cover successful and rejected entries, duplicate/stale/invalid-transition outcomes, deterministic identity/order, deep immutability, reference isolation, append-only history, trusted metadata failure, unknown outcomes, explicit persistence failures, migration ordering, scoped durable reload, corruption rejection, standalone and transactional journal failure, restart after commit and rollback, asynchronous injection, lack of authority, session reset, read-only `run()`, execution-enabled `runWithExecution()`, and the unchanged single-transition registry.
 
 ## Prohibited Capabilities and Limitations
 
 Milestone 6.4 adds only opt-in atomic persistence coordination for an already-approved applied Execution Result. It adds no transition, execution authority, browser storage, cookies, external API, email, SMS, telephony, scheduling, CRM integration, customer communication, customer-release authorization, real provider, authentication change, replay, retry, background worker, event bus, or UI redesign.
 
-The prototype journal remains process-local and non-durable by default. Milestone 6.5 uses the opt-in PostgreSQL journal only through an explicitly injected fictional integration. Verification recreates the journal adapter after commit and reloads the required entry independently from authoritative Conversation State. The entry is audit evidence only and is never replayed to reconstruct state or authorize continued progression. Production connection management, retention, broader operational recovery, and Sprint 6.6 behavior remain deferred.
+The prototype journal remains process-local and non-durable by default. Milestone 6.5 uses the opt-in PostgreSQL journal only through an explicitly injected fictional integration. Milestone 6.6 verification recreates the journal adapter after commit and rollback, reloads committed entries independently from authoritative Conversation State, and proves failed transactions leave no required audit entry. The journal is audit evidence only and is never replayed to reconstruct state or authorize continued progression. Production connection management, retention, and broader operational recovery remain deferred.

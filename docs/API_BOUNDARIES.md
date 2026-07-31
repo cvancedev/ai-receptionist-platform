@@ -75,10 +75,13 @@ Boundaries should return explicit identity, eligibility, validation, conflict, u
 
 ## Current Milestone Boundary
 
-Milestone 6.5 adds one explicitly injected internal prototype integration, not
-an endpoint, route, or public API. It coordinates existing application-owned
-state, journal, transaction, controlled-execution, and Progress Engine
-boundaries through technology-neutral contracts. Recovery always requires
-exact business/profile/conversation scope and validated Conversation State;
-journal history is never replayed as state. The integration cannot invent a
-transition, retry, replay, release a response, or dispatch an external action.
+Milestone 6.6 adds focused verification, not an endpoint, route, public API, or
+new production boundary. Existing application-owned contracts classify
+unavailable, missing, malformed, incompatible, duplicate, stale, rejected, and
+transaction-failure outcomes without exposing PostgreSQL errors or data.
+
+Recovery requires exact business/profile/conversation scope and a decoded,
+validated Conversation State. Wrong-business and wrong-version operations
+return the same bounded safe outcomes as other unavailable scope, journal
+history is never replayed as state, and no failed operation gains retry,
+fallback, release, or external-action authority.

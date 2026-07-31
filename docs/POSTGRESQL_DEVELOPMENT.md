@@ -11,8 +11,9 @@ injected and demonstrates restart through newly constructed application and
 persistence objects. Milestone 6.6 verifies explicit recovery and failure
 semantics without changing production source. The ordinary prototype,
 `ConversationStateManager`, and AI orchestrator continue to use in-memory
-storage by default. No production database connection or Sprint 6.7
-implementation exists.
+storage by default. Milestone 6.7 certifies these boundaries and adds only the
+required migration-history compatibility correction. No production database
+connection or Sprint 7 implementation exists.
 
 ## Integration Verification
 
@@ -50,6 +51,12 @@ They create only:
 The migration runner applies the migration within the configured schema and a
 local database transaction. Application startup does not run migrations, and
 the production migration/deployment process remains deferred.
+
+Before executing migration SQL, the runner checks an existing migration
+history as an exact prefix of the approved `(version, name)` sequence. Unknown,
+newer, out-of-order, missing-predecessor, or renamed history fails with
+`PostgreSQL migration history is incompatible.` The transaction rolls back and
+does not delete, rewrite, or repair the recorded history.
 
 ## Configuration Boundary
 
@@ -92,3 +99,7 @@ They add no retry or replay: committed Conversation State is recovered
 directly, while journal history is loaded separately as audit evidence only.
 Migrations 001 and 002 remain unchanged and ordered; Milestone 6.6 adds no
 migration.
+
+Sprint 6 certification reruns every PostgreSQL suite and proves the
+migration-history compatibility check against fictional unknown version 99.
+See [Sprint 6 Certification](certification/SPRINT6_CERTIFICATION.md).

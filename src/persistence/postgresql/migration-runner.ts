@@ -8,8 +8,16 @@ export interface PostgresqlMigrationOptions {
 }
 
 const POSTGRESQL_MIGRATIONS = [
-  "001_conversation_states.sql",
-  "002_execution_journal.sql",
+  {
+    version: 1,
+    name: "conversation_states",
+    fileName: "001_conversation_states.sql",
+  },
+  {
+    version: 2,
+    name: "execution_journal",
+    fileName: "002_execution_journal.sql",
+  },
 ] as const;
 
 export async function applyPostgresqlMigrations(
@@ -23,12 +31,13 @@ export async function applyPostgresqlMigrations(
     client = await pool.connect();
     await client.query("BEGIN");
     await client.query(`SET LOCAL search_path TO ${quoteIdentifier(schema)}`);
-    for (const migrationName of POSTGRESQL_MIGRATIONS) {
-      const migration = await readFile(
-        join(process.cwd(), "database", "migrations", migrationName),
+    await validateMigrationHistory(client);
+    for (const migration of POSTGRESQL_MIGRATIONS) {
+      const source = await readFile(
+        join(process.cwd(), "database", "migrations", migration.fileName),
         "utf8",
       );
-      await client.query(migration);
+      await client.query(source);
     }
     await client.query("COMMIT");
   } catch (error) {
@@ -37,6 +46,30 @@ export async function applyPostgresqlMigrations(
   } finally {
     client?.release();
     await pool.end();
+  }
+}
+
+async function validateMigrationHistory(client: PoolClient): Promise<void> {
+  const table = await client.query<{ readonly exists: boolean }>(
+    "SELECT to_regclass('app_schema_migrations') IS NOT NULL AS exists",
+  );
+  if (!table.rows[0]?.exists) return;
+
+  const history = await client.query<{
+    readonly version: number;
+    readonly name: string;
+  }>(
+    "SELECT version, name FROM app_schema_migrations ORDER BY version",
+  );
+  const compatible = history.rows.length <= POSTGRESQL_MIGRATIONS.length
+    && history.rows.every((record, index) => {
+      const expected = POSTGRESQL_MIGRATIONS[index];
+      return expected !== undefined
+        && record.version === expected.version
+        && record.name === expected.name;
+    });
+  if (!compatible) {
+    throw new Error("PostgreSQL migration history is incompatible.");
   }
 }
 

@@ -107,9 +107,17 @@ The complete sequence, boundaries, planned verification, and definitions of done
 - Milestone 6.4: Transactional Execution and Concurrency — Complete
 - Milestone 6.5: Restart-Safe Prototype Integration — Complete
 - Milestone 6.6: Persistence Recovery and Failure Semantics — Complete
-- Milestone 6.7: Sprint 6 Certification — Not started
+- Milestone 6.7: Sprint 6 Certification — Complete
 
 Sprint 6 implements Phase 4 of the [Implementation Sequence](docs/IMPLEMENTATION_SEQUENCE.md). It adds durable, business-scoped persistence only through explicitly authorized implementation milestones while preserving the application as the authority. The complete sequence and boundaries are defined in the [Sprint 6 Plan](docs/SPRINT_6_PLAN.md).
+
+Milestone 6.7 certifies the complete Sprint 6 persistence architecture,
+revision and transaction integrity, durable journal, restart and failure
+semantics, tenant isolation, migrations, regressions, and prohibited-capability
+boundaries. Certification corrected incompatible migration-history handling
+without adding a migration or product capability. Sprint 6 is certified
+complete; Sprint 7 has not started. See
+[Sprint 6 Certification](docs/certification/SPRINT6_CERTIFICATION.md).
 
 ## Sprint 7: Business Configuration
 

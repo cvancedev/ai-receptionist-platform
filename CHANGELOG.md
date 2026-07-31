@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 6 - Certification
+
+- Certified Milestones 6.0 through 6.6 architecture, persistence contracts, durable state and journal integrity, atomic execution, restart recovery, tenant isolation, failure semantics, migrations, regressions, and strict capability boundaries.
+- Corrected migration-history validation so unknown, newer, out-of-order, missing-predecessor, or renamed recorded migrations fail before migration SQL executes.
+- Added real-PostgreSQL evidence that incompatible migration history is rejected without destructive repair or schema mutation.
+- Confirmed the ordinary prototype remains synchronous and in memory, PostgreSQL remains opt-in infrastructure, Conversation State remains authoritative, and the journal remains non-replayable audit evidence.
+- Preserved the documented temporary Next-owned PostCSS and Sharp risk disposition and added no migration, dependency, product capability, release tag, or Sprint 7 implementation.
+
 ### Sprint 6.6 - Persistence Recovery and Failure Semantics
 
 - Added focused real-PostgreSQL verification for database unavailability, duplicate conversation and execution, stale revision, malformed and incompatible stored state, missing and negative scope, and unsupported schema state.

@@ -26,6 +26,7 @@ import { CONVERSATION_STAGES } from "../shared/constants";
 const connectionString = requiredTestDatabaseUrl();
 const schema = `sprint_6_6_${Date.now()}_${process.pid}`;
 const incompatibleSchema = `${schema}_incompatible`;
+const newerMigrationSchema = `${schema}_newer_migration`;
 const admin = new Pool({ connectionString });
 
 run()
@@ -42,6 +43,7 @@ async function run(): Promise<void> {
   await verifyDatabaseUnavailable(trusted);
   await admin.query(`CREATE SCHEMA "${schema}"`);
   await admin.query(`CREATE SCHEMA "${incompatibleSchema}"`);
+  await admin.query(`CREATE SCHEMA "${newerMigrationSchema}"`);
   try {
     await applyPostgresqlMigrations({ connectionString, schema });
     await verifyDuplicateConversation();
@@ -51,11 +53,13 @@ async function run(): Promise<void> {
     await verifyMalformedAndIncompatibleStoredState();
     await verifyMissingAndWrongScope(trusted);
     await verifyIncompatibleSchema(trusted);
+    await verifyIncompatibleMigrationHistory();
     await verifyRecoveryAndAuthorityBoundaries();
     await verifyMigrationOrder();
   } finally {
     await admin.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`);
     await admin.query(`DROP SCHEMA IF EXISTS "${incompatibleSchema}" CASCADE`);
+    await admin.query(`DROP SCHEMA IF EXISTS "${newerMigrationSchema}" CASCADE`);
     await admin.end();
   }
 }
@@ -529,6 +533,52 @@ async function verifyIncompatibleSchema(
     tables.rows.map(({ table_name }) => table_name),
     ["app_schema_migrations"],
     "request-time persistence does not create or repair schema objects",
+  );
+}
+
+async function verifyIncompatibleMigrationHistory(): Promise<void> {
+  await applyPostgresqlMigrations({
+    connectionString,
+    schema: newerMigrationSchema,
+  });
+  await admin.query(
+    `INSERT INTO "${newerMigrationSchema}".app_schema_migrations (
+      version,
+      name
+    ) VALUES (99, 'fictional_newer_migration')`,
+  );
+
+  let failure: unknown = null;
+  try {
+    await applyPostgresqlMigrations({
+      connectionString,
+      schema: newerMigrationSchema,
+    });
+  } catch (error) {
+    failure = error;
+  }
+  assert(
+    failure instanceof Error
+      && failure.message === "PostgreSQL migration history is incompatible.",
+    "unknown newer migration history fails before migration SQL runs",
+  );
+
+  const history = await admin.query<{
+    readonly version: number;
+    readonly name: string;
+  }>(
+    `SELECT version, name
+    FROM "${newerMigrationSchema}".app_schema_migrations
+    ORDER BY version`,
+  );
+  assertEquivalent(
+    history.rows,
+    [
+      { version: 1, name: "conversation_states" },
+      { version: 2, name: "execution_journal" },
+      { version: 99, name: "fictional_newer_migration" },
+    ],
+    "migration-history rejection performs no destructive repair",
   );
 }
 

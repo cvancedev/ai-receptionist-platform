@@ -75,13 +75,19 @@ Boundaries should return explicit identity, eligibility, validation, conflict, u
 
 ## Current Milestone Boundary
 
-Milestone 6.6 adds focused verification, not an endpoint, route, public API, or
-new production boundary. Existing application-owned contracts classify
-unavailable, missing, malformed, incompatible, duplicate, stale, rejected, and
-transaction-failure outcomes without exposing PostgreSQL errors or data.
+Milestone 6.7 certifies existing internal persistence boundaries; it adds no
+endpoint, route, public API, or production database connection.
+Application-owned contracts classify unavailable, missing, malformed,
+incompatible, duplicate, stale, rejected, and transaction-failure outcomes
+without exposing PostgreSQL errors or data.
 
 Recovery requires exact business/profile/conversation scope and a decoded,
 validated Conversation State. Wrong-business and wrong-version operations
 return the same bounded safe outcomes as other unavailable scope, journal
 history is never replayed as state, and no failed operation gains retry,
 fallback, release, or external-action authority.
+
+Certification also requires migration history to match the exact approved
+version/name prefix before migration SQL runs. This infrastructure readiness
+check creates no request-time migration or application authority. Sprint 7 has
+not started.

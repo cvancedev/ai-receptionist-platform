@@ -660,11 +660,12 @@ Existing application contracts and persistence adapters already provided the
 required explicit behavior, so this milestone changes no production source,
 dependency, migration, schema, state transition, or default prototype wiring.
 It adds no retry, replay, release, provider, customer communication, or
-external-action authority. Milestone 6.7 remains not started.
+external-action authority. At the completion of Milestone 6.6, Milestone 6.7
+had not started.
 
 ### 6.7 - Sprint 6 Certification
 
-**Status: Not started**
+**Status: Complete**
 
 Certify Sprint 6 through evidence-based audits covering:
 
@@ -691,6 +692,18 @@ The allowed conclusion is exactly one of:
 - `NOT CERTIFIED`
 
 Certification adds no product authority and creates no release tag unless separately authorized.
+
+Certification reviewed the complete Sprint 6 architecture, contracts,
+persistence adapters, migrations, transaction coordination, restart and
+recovery behavior, tenant isolation, regression suite, strict capability
+boundary, dependency baseline, and documentation. All requirements pass after
+one focused correction: the migration runner now rejects incompatible,
+unknown, out-of-order, renamed, or newer recorded migration history before
+executing migration SQL. No migration or schema change was required.
+
+The result is `CERTIFIED`. See [Sprint 6 Certification](certification/SPRINT6_CERTIFICATION.md).
+Certification adds no product authority, release tag, production connection,
+or Sprint 7 implementation. Sprint 7 has not started.
 
 ## Verification Strategy
 
@@ -748,6 +761,6 @@ Milestone 6.0 is complete only when:
 
 ## Sprint 6 Completion Boundary
 
-Successful Sprint 6 certification will prove durable, revision-safe, business-scoped persistence for the fictional prototype within the certified application-authority architecture.
+Sprint 6 certification proves durable, revision-safe, business-scoped persistence for the fictional prototype within the certified application-authority architecture.
 
-It will not prove production authentication, customer communication, customer-release safety, real-provider reliability, scheduling, CRM behavior, payment handling, background processing, external business actions, or complete production operations. Each later authority expansion requires its own explicit architecture, implementation, verification, and authorization.
+It does not prove production authentication, customer communication, customer-release safety, real-provider reliability, scheduling, CRM behavior, payment handling, background processing, external business actions, or complete production operations. Each later authority expansion requires its own explicit architecture, implementation, verification, and authorization.

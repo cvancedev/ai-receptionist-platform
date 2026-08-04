@@ -361,3 +361,13 @@ database operation, production authorization, active-profile resolver,
 activation transaction, prototype wiring, customer release, or external
 action. Milestone 7.2 has not started. See
 [Business Configuration Architecture](BUSINESS_CONFIGURATION_ARCHITECTURE.md).
+
+## Sprint 7.2 Durable Business Profile Version Status
+
+Milestone 7.2 adds ordered migration 003, an exact-shape application decoder,
+and an opt-in PostgreSQL repository behind the 7.1 contract. It creates one
+immutable draft revision and reads one exact business/profile version with
+explicit outcomes and detached immutable results. PostgreSQL owns durability
+and integrity only. Lifecycle transitions, activation, active-profile
+selection, knowledge persistence, update/delete, default prototype wiring, and
+Milestone 7.3 behavior remain absent.

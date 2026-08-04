@@ -5,10 +5,19 @@ export function validateBusinessProfile(
   profile: BusinessProfile,
   expected?: { id: string; version: number },
 ): ValidationResult {
+  const result = validateBusinessProfileStructure(profile, expected);
+  const errors = [...result.errors];
+  if (profile.status !== "active") errors.push("Only an active Business Profile may drive intake.");
+  return { valid: errors.length === 0, errors, warnings: result.warnings };
+}
+
+export function validateBusinessProfileStructure(
+  profile: BusinessProfile,
+  expected?: { id: string; version: number },
+): ValidationResult {
   const errors: string[] = [];
   if (!profile.id.trim() || !profile.businessName.trim()) errors.push("Business identity is required.");
   if (!Number.isInteger(profile.version) || profile.version < 1) errors.push("Profile version must be positive.");
-  if (profile.status !== "active") errors.push("Only an active Business Profile may drive intake.");
   if (!profile.services.some((service) => service.status === "active")) errors.push("At least one active service is required.");
   if (expected && (profile.id !== expected.id || profile.version !== expected.version)) errors.push("Business Profile scope does not match.");
   const serviceIds = profile.services.map((service) => service.id);

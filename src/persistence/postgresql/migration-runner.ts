@@ -18,6 +18,11 @@ const POSTGRESQL_MIGRATIONS = [
     name: "execution_journal",
     fileName: "002_execution_journal.sql",
   },
+  {
+    version: 3,
+    name: "business_profile_versions",
+    fileName: "003_business_profile_versions.sql",
+  },
 ] as const;
 
 export async function applyPostgresqlMigrations(

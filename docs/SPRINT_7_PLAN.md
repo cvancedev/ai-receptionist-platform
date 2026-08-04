@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 7.0 and 7.1 are complete. Sprint 6 remains certified complete.
-Milestone 7.2 has not started.
+Milestones 7.0 through 7.2 are complete. Sprint 6 remains certified complete.
+Milestone 7.3 has not started.
 
 This plan preserves the certified Sprint 6 boundaries and refines Phase 5 of
 the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md) into independently
@@ -56,6 +56,8 @@ administration, or the end-to-end MVP.
 - Do not create persistence implementations or migrations.
 
 ### 7.2: Durable Business Profile Versions
+
+**Status: Complete**
 
 - Add the smallest explicitly authorized PostgreSQL migration and adapter for
   immutable, business-scoped Business Profile versions.

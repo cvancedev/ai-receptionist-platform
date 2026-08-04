@@ -97,3 +97,7 @@ stages, authorization and audit inputs, narrow repository operations, immutable
 snapshots, and typed failures preserve application authority. No route,
 controller, handler, serialization protocol, repository implementation,
 database change, administration capability, or Milestone 7.2 work exists.
+
+Milestone 7.2 adds internal persistence implementation only: immutable draft
+creation and exact Business Profile revision reads. It creates no route, public
+API, active-profile lookup, lifecycle transition, or knowledge operation.

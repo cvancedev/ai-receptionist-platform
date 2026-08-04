@@ -576,6 +576,7 @@ async function verifyIncompatibleMigrationHistory(): Promise<void> {
     [
       { version: 1, name: "conversation_states" },
       { version: 2, name: "execution_journal" },
+      { version: 3, name: "business_profile_versions" },
       { version: 99, name: "fictional_newer_migration" },
     ],
     "migration-history rejection performs no destructive repair",
@@ -616,8 +617,9 @@ async function verifyMigrationOrder(): Promise<void> {
     [
       { version: 1, name: "conversation_states" },
       { version: 2, name: "execution_journal" },
+      { version: 3, name: "business_profile_versions" },
     ],
-    "only the ordered Sprint 6 migrations are present",
+    "the complete ordered migration history is present",
   );
 }
 

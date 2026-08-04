@@ -63,8 +63,9 @@ audit. Neither journal may become domain state or replay authority.
 
 ## Current Implementation Status
 
-No Business Profile or knowledge repository implementation exists. The current
-fictional fixtures and default in-memory conversation prototype remain
-unchanged. Existing Sprint 6 PostgreSQL migrations remain exactly the certified
-Conversation State and Execution Journal migrations. Milestone 7.2 has not
-started.
+Milestone 7.2 adds migration 003 and an opt-in PostgreSQL Business Profile
+version repository. It creates one immutable draft revision, reads one exact
+business/profile version, stores repository revision and creation audit
+evidence, validates untrusted JSONB, and returns detached immutable results.
+No knowledge repository, lifecycle transition, activation, update/delete,
+default prototype wiring, or Milestone 7.3 behavior exists.

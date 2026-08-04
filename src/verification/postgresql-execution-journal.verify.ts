@@ -64,6 +64,7 @@ async function verifyMigration() {
     [
       { version: 1, name: "conversation_states" },
       { version: 2, name: "execution_journal" },
+      { version: 3, name: "business_profile_versions" },
     ],
     "ordered migrations are recorded exactly once",
   );

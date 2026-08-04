@@ -13,8 +13,8 @@ semantics without changing production source. The ordinary prototype,
 `ConversationStateManager`, and AI orchestrator continue to use in-memory
 storage by default. Milestone 6.7 certifies these boundaries and adds only the
 required migration-history compatibility correction. No production database
-connection exists. Sprint 7.0 adds planning documentation only; no Sprint 7.1
-PostgreSQL implementation, migration, or schema change exists.
+connection exists. Sprint 7.2 adds migration 003 and an opt-in Business Profile
+version repository without knowledge persistence, activation, or default wiring.
 
 ## Integration Verification
 
@@ -42,12 +42,14 @@ The ordered migrations are:
 
 - [`database/migrations/001_conversation_states.sql`](../database/migrations/001_conversation_states.sql); and
 - [`database/migrations/002_execution_journal.sql`](../database/migrations/002_execution_journal.sql).
+- [`database/migrations/003_business_profile_versions.sql`](../database/migrations/003_business_profile_versions.sql).
 
 They create only:
 
 - the complete Conversation State snapshot table; and
 - the bounded append-only Execution Journal table and scoped ordering index;
 - the schema-migration history table.
+- immutable Business Profile draft revisions and creation audit evidence.
 
 The migration runner applies the migration within the configured schema and a
 local database transaction. Application startup does not run migrations, and

@@ -40,6 +40,11 @@ migration checks, dependency checks, and staged-file checks are required.
 
 - **7.2:** Business Profile repository contract parity, exact scope, immutable
   revisions, concurrency, corruption, isolation, and real PostgreSQL recovery.
+
+Milestone 7.2 adds `npm.cmd run verify:postgresql-business-profile-versions`
+for migration 003, immutable draft creation, exact reads, duplicate and tenant
+isolation, audit evidence, decoding, corruption, restart, and prohibited
+lifecycle authority.
 - **7.3:** Knowledge lifecycle persistence, audience and scope isolation,
   traceability, version history, and ineligible-state rejection.
 - **7.4:** Atomic activation, exactly one active eligible revision, audit

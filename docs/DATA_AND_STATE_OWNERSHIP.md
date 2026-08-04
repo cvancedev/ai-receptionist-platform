@@ -62,3 +62,8 @@ The three validation stages—draft structure, activation eligibility, and
 conversation use—remain distinct. Conversation data and model proposals gain no
 configuration authority. No persistent configuration state or ownership rule is
 changed in this milestone.
+
+Milestone 7.2 persists already-accepted Business Profile draft revisions and
+creation audit evidence. PostgreSQL owns durability and integrity only; the
+application retains structural, authorization, lifecycle, activation, and
+conversation-use authority.

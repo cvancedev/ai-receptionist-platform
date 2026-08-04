@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 7.2 - Durable Business Profile Versions
+
+- Added ordered migration 003 for immutable business-scoped Business Profile revisions and creation audit evidence.
+- Added an opt-in PostgreSQL repository for draft creation and exact reads with explicit duplicate, missing, malformed, incompatible, and infrastructure outcomes.
+- Added exact-shape decoding, structural validation, immutable results, tenant isolation, restart verification, and focused real-PostgreSQL coverage.
+- Added no knowledge persistence, lifecycle transition, activation, update/delete, dependency change, production connection, or Milestone 7.3 work.
+
 ### Sprint 7.1 - Configuration Contracts and Lifecycle Architecture
 
 - Added technology-neutral Business Profile and knowledge revision repository contracts with exact scope, expected revision, authorization and audit context, immutable snapshot requirements, and explicit outcomes.

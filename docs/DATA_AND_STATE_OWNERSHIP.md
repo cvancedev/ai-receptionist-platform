@@ -48,3 +48,17 @@ Derived data remains traceable and cannot silently replace its authoritative inp
 ## Human Authority
 
 Authorized business users own operational truth and exceptions. The platform enforces boundaries; humans approve configuration, knowledge, unsupported commitments, and disputed outcomes.
+
+## Sprint 7.1 Contract Status
+
+Business-owned configuration remains subject to platform rules and
+application-owned validation, authorization decisions, and lifecycle decisions.
+Milestone 7.1 requires exact Business Profile and knowledge revision scope and
+defines detached immutable repository results. Repositories may record only
+already-authorized facts; they cannot decide validity, activation eligibility,
+conversation use, or active-version selection.
+
+The three validation stages—draft structure, activation eligibility, and
+conversation use—remain distinct. Conversation data and model proposals gain no
+configuration authority. No persistent configuration state or ownership rule is
+changed in this milestone.

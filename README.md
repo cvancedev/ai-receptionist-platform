@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 5 are certified complete with the deterministic fictional prototype, provider-neutral mock AI foundation, one controlled in-memory transition, immutable read and audit boundaries, and application-owned progress decisions. Sprint 6 is certified complete with opt-in PostgreSQL state and journal storage, atomic coordination, restart-safe recovery, explicit failure semantics, tenant isolation, and migration integrity while the ordinary prototype remains in-memory by default. Sprint 7 has begun with the documentation-only Milestone 7.0 Business Configuration plan; Sprint 7.1 implementation has not started. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, model, production database connection, authentication, external integration, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 5 are certified complete with the deterministic fictional prototype, provider-neutral mock AI foundation, one controlled in-memory transition, immutable read and audit boundaries, and application-owned progress decisions. Sprint 6 is certified complete with opt-in PostgreSQL state and journal storage, atomic coordination, restart-safe recovery, explicit failure semantics, tenant isolation, and migration integrity while the ordinary prototype remains in-memory by default. Sprint 7.1 is complete with technology-neutral Business Configuration contracts and no durable configuration implementation; Milestone 7.2 has not started. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, model, production database connection, authentication, external integration, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -162,6 +162,11 @@ npm run verify:persistence-recovery
 - [Sprint 5 plan](docs/SPRINT_5_PLAN.md)
 - [Sprint 6 plan](docs/SPRINT_6_PLAN.md)
 - [Sprint 7 plan](docs/SPRINT_7_PLAN.md)
+- [Business Configuration architecture](docs/BUSINESS_CONFIGURATION_ARCHITECTURE.md)
+- [Configuration lifecycle](docs/CONFIGURATION_LIFECYCLE.md)
+- [Configuration authorization](docs/CONFIGURATION_AUTHORIZATION.md)
+- [Configuration persistence](docs/CONFIGURATION_PERSISTENCE.md)
+- [Sprint 7 test plan](docs/SPRINT_7_TEST_PLAN.md)
 - [PostgreSQL development](docs/POSTGRESQL_DEVELOPMENT.md)
 - [Sprint 4 certification](docs/certification/SPRINT4_CERTIFICATION.md)
 - [Sprint 4 architecture audit](docs/certification/SPRINT4_ARCHITECTURE_AUDIT.md)
@@ -209,4 +214,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3, Sprint 4, Sprint 5, and Sprint 6 are certified complete. Sprint 7 has begun with Milestone 7.0 planning for the minimum safe Business Profile and approved-knowledge lifecycle. The [Sprint 7 Plan](docs/SPRINT_7_PLAN.md) preserves application and domain authority, keeps PostgreSQL subordinate infrastructure, and separates contracts, durable versions, activation, fictional workflow integration, failure verification, and certification into independently authorized milestones. Milestone 7.0 changes documentation only; no Sprint 7.1 implementation, migration, schema change, dependency, production authentication, public administration, provider integration, external action, or end-to-end MVP work has started. The ordinary prototype remains synchronous, deterministic, fictional, in-memory, and database-independent by default. See [Sprint 6 Certification](docs/certification/SPRINT6_CERTIFICATION.md).
+Sprint 3, Sprint 4, Sprint 5, and Sprint 6 are certified complete. Sprint 7.1 establishes technology-neutral Business Configuration contracts for exact Business Profile and knowledge revisions, separate validation stages, explicit lifecycle, authorization and audit inputs, narrow repositories, immutable detached snapshots, and typed outcomes. It adds no repository implementation, migration, schema change, dependency, database operation, production authentication, public administration, provider integration, external action, or end-to-end MVP work. Existing fixtures and validators remain authoritative, and the ordinary prototype remains synchronous, deterministic, fictional, in-memory, and database-independent by default. The full regression matrix, including all five disposable-PostgreSQL suites, passes. Milestone 7.2 has not started. See the [Sprint 7 Plan](docs/SPRINT_7_PLAN.md).

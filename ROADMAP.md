@@ -122,7 +122,7 @@ complete; at certification, Sprint 7 had not started. See
 ## Sprint 7: Business Configuration
 
 - Milestone 7.0: Business Configuration Planning — Complete
-- Milestone 7.1: Configuration Contracts and Lifecycle Architecture — Not started
+- Milestone 7.1: Configuration Contracts and Lifecycle Architecture — Complete
 - Milestone 7.2: Durable Business Profile Versions — Not started
 - Milestone 7.3: Durable Knowledge Versions and Lifecycle — Not started
 - Milestone 7.4: Atomic Activation and Active-Configuration Resolution — Not started
@@ -132,7 +132,7 @@ complete; at certification, Sprint 7 had not started. See
 
 Sprint 7 remains Phase 5 of the [Implementation Sequence](docs/IMPLEMENTATION_SEQUENCE.md). It applies the certified Sprint 6 persistence foundation to the minimum safe Business Profile and approved-knowledge lifecycle for one fictional business. Application-owned validation, authorization decisions, versioning, activation, audit, isolation, and recovery remain explicit; PostgreSQL remains subordinate infrastructure.
 
-Milestone 7.0 defines the sequence and boundaries in the [Sprint 7 Plan](docs/SPRINT_7_PLAN.md). It changes documentation only. No Sprint 7.1 implementation, migration, schema change, dependency, production authentication, public administration, provider integration, external action, or end-to-end MVP work has started.
+Milestone 7.0 defines the sequence and boundaries in the [Sprint 7 Plan](docs/SPRINT_7_PLAN.md). Milestone 7.1 adds only technology-neutral Business Profile and knowledge revision contracts, exact scope validation, immutable snapshot support, explicit lifecycle, validation, authorization, audit, repository outcomes, and focused verification. No repository implementation, migration, schema change, dependency, production authentication, public administration, provider integration, external action, end-to-end MVP work, or Milestone 7.2 implementation has started.
 
 ## Sprint 8: End-to-End MVP
 

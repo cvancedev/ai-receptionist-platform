@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 7.1 - Configuration Contracts and Lifecycle Architecture
+
+- Added technology-neutral Business Profile and knowledge revision repository contracts with exact scope, expected revision, authorization and audit context, immutable snapshot requirements, and explicit outcomes.
+- Separated draft-structure, activation-eligibility, and conversation-use validation boundaries while preserving existing Business Profile and knowledge validators.
+- Documented configuration architecture, lifecycle, authorization, persistence, and Sprint 7 verification gates.
+- Added focused contract verification for allowlisted vocabulary, fail-closed scope, immutable detached results, narrow capabilities, validation authority, tenant isolation, and industry-agnostic behavior.
+- Confirmed the complete certified regression matrix, including all five PostgreSQL persistence suites, passes against a disposable localhost-only PostgreSQL 18 cluster.
+- Added no repository implementation, migration, schema change, dependency, database operation, UI, API, authentication, provider, customer release, external action, or Milestone 7.2 work.
+
 ### Sprint 7.0 - Business Configuration Planning
 
 - Defined the Sprint 7 objective, milestone sequence, repository and authority boundaries, verification strategy, risks, non-goals, success criteria, and documentation prerequisites.

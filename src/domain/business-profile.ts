@@ -1,10 +1,14 @@
+export const BUSINESS_PROFILE_STATUSES = [
+  "draft",
+  "incomplete",
+  "ready-for-review",
+  "active",
+  "suspended",
+  "archived",
+] as const;
+
 export type BusinessProfileStatus =
-  | "draft"
-  | "incomplete"
-  | "ready-for-review"
-  | "active"
-  | "suspended"
-  | "archived";
+  (typeof BUSINESS_PROFILE_STATUSES)[number];
 
 export interface ServiceDefinition {
   id: string;

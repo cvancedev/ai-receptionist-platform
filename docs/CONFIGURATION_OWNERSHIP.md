@@ -118,3 +118,15 @@ Platform-owned rules may evolve to improve safety, privacy, reliability, or cust
 ## Operating Principle
 
 Businesses retain control over how they operate. The platform retains control over the minimum standards required for the AI to represent them safely, honestly, and reliably.
+
+## Milestone 7.1 Implementation Boundary
+
+Technology-neutral contracts now require exact Business Profile and knowledge
+revision scope, explicit authorization and audit inputs, and separate draft,
+activation, and conversation-use validation. This makes ownership enforceable at
+future application boundaries without transferring authority to a repository.
+
+No authorization system, reviewer role, lifecycle workflow, repository,
+database operation, or activation behavior is implemented. Existing fictional
+fixtures remain the only Business Profile and knowledge source used by the
+prototype. Milestone 7.2 has not started.

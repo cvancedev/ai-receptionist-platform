@@ -89,6 +89,11 @@ fallback, release, or external-action authority.
 
 Certification also requires migration history to match the exact approved
 version/name prefix before migration SQL runs. This infrastructure readiness
-check creates no request-time migration or application authority. Sprint 7.0
-adds planning documentation only; no Sprint 7.1 API or implementation has
-started.
+check creates no request-time migration or application authority.
+
+Milestone 7.1 adds internal technology-neutral Business Configuration
+contracts, not an HTTP or public API. Exact revision scope, explicit validation
+stages, authorization and audit inputs, narrow repository operations, immutable
+snapshots, and typed failures preserve application authority. No route,
+controller, handler, serialization protocol, repository implementation,
+database change, administration capability, or Milestone 7.2 work exists.

@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestone 7.0 is the planning and documentation milestone. Sprint 6 is
-certified complete. No Sprint 7.1 implementation has started.
+Milestones 7.0 and 7.1 are complete. Sprint 6 remains certified complete.
+Milestone 7.2 has not started.
 
 This plan preserves the certified Sprint 6 boundaries and refines Phase 5 of
 the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md) into independently
@@ -45,6 +45,8 @@ administration, or the end-to-end MVP.
 - Add documentation only.
 
 ### 7.1: Configuration Contracts and Lifecycle Architecture
+
+**Status: Complete**
 
 - Define technology-neutral repository and application contracts for Business
   Profile versions, knowledge versions, lifecycle transitions, and reads.
@@ -319,7 +321,7 @@ roadmap expansion.
   verification, risks, non-goals, success criteria, and documentation work.
 - The roadmap keeps Business Configuration as Sprint 7 and records the refined
   milestone sequence.
-- Current-status documentation states that Sprint 7.0 planning is complete and
-  Sprint 7.1 has not started.
+- At completion, current-status documentation stated that Sprint 7.0 planning
+  was complete and Sprint 7.1 had not started.
 - Documentation links and the established application validation commands pass.
 - The diff contains documentation only and remains unstaged and uncommitted.

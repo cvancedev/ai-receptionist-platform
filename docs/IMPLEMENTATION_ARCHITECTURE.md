@@ -42,7 +42,7 @@ Enforces business scope, profile and knowledge eligibility, prompt security, out
 
 Durable persistence is required for business-scoped application state and audit history after the certified deterministic prototype. PostgreSQL was selected during Sprint 6.0 as the relational persistence technology for Sprint 6 because the demonstrated requirements include structured domain data, profile versions, state revisions, relational ownership, optimistic concurrency, atomic transactions, uniqueness, migrations, tenant isolation, durable audit history, and restart recovery.
 
-Milestone 6.2 implements the first approved durable slice for Conversation State. Milestone 6.3 adds the separately injected PostgreSQL Execution Journal adapter, bounded journal migration, shared trusted-result mapper, and scoped immutable decoder. Milestone 6.4 adds a separate opt-in PostgreSQL transaction coordinator that atomically persists an already-approved state replacement and its required journal entry. Milestone 6.5 adds an explicitly opt-in fictional application integration that recovers validated state and audit history through newly created adapter instances and resumes deterministic progression from the recovered revision. Milestone 6.6 verifies explicit fail-closed persistence and recovery behavior against disposable PostgreSQL. Milestone 6.7 certifies the complete Sprint 6 boundary and strengthens migration-history compatibility checking. The standalone adapters remain available, and the prototype continues to default to in-memory state and journal stores. No production database connection exists. Sprint 7.0 adds planning documentation only; no Sprint 7.1 implementation exists.
+Milestone 6.2 implements the first approved durable slice for Conversation State. Milestone 6.3 adds the separately injected PostgreSQL Execution Journal adapter, bounded journal migration, shared trusted-result mapper, and scoped immutable decoder. Milestone 6.4 adds a separate opt-in PostgreSQL transaction coordinator that atomically persists an already-approved state replacement and its required journal entry. Milestone 6.5 adds an explicitly opt-in fictional application integration that recovers validated state and audit history through newly created application and persistence objects and resumes deterministic progression from the recovered revision. Milestone 6.6 verifies explicit fail-closed persistence and recovery behavior against disposable PostgreSQL. Milestone 6.7 certifies the complete Sprint 6 boundary and strengthens migration-history compatibility checking. The standalone adapters remain available, and the prototype continues to default to in-memory state and journal stores. No production database connection exists. Milestone 7.1 now adds technology-neutral Business Configuration contracts only; no durable configuration implementation exists.
 
 PostgreSQL provides durability and relational integrity defenses only. It does not own domain rules, transitions, state validation, workflow decisions, AI validation, application decisions, progress, presentation, customer release, or external actions.
 
@@ -336,3 +336,28 @@ remains in memory by default. This milestone changes documentation only. No
 Sprint 7.1 implementation, migration, schema, dependency, database operation,
 production authentication, provider, customer release, or external action has
 started. See the [Sprint 7 Plan](SPRINT_7_PLAN.md).
+
+## Sprint 7.1 Configuration Contract Status
+
+Milestone 7.1 adds an isolated Business Configuration application boundary for
+exact Business Profile and knowledge revisions. Explicit allowlists cover
+subjects, lifecycle values, operations, validation stages, and authorization
+decisions. Scope validators fail closed on malformed business, profile-version,
+knowledge-record, or knowledge-version identity. Successful snapshots are
+complete, detached, and deeply immutable.
+
+The repository contracts expose only draft creation, exact revision reads, and
+recording an already-authorized lifecycle transition. They contain no SQL,
+PostgreSQL, connection, transaction-handle, ORM, HTTP, UI, provider, model,
+generic CRUD, or arbitrary-mutation capability. Separate application validation
+methods preserve the distinction between draft structure, activation
+eligibility, and conversation use. Existing Business Profile and knowledge
+validators remain unchanged and authoritative for their current active-profile
+and knowledge structure/scope responsibilities respectively; knowledge
+lifecycle eligibility remains a separate application decision.
+
+Milestone 7.1 is complete and adds no repository implementation, migration, schema, dependency,
+database operation, production authorization, active-profile resolver,
+activation transaction, prototype wiring, customer release, or external
+action. Milestone 7.2 has not started. See
+[Business Configuration Architecture](BUSINESS_CONFIGURATION_ARCHITECTURE.md).

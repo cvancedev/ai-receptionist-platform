@@ -89,5 +89,6 @@ fallback, release, or external-action authority.
 
 Certification also requires migration history to match the exact approved
 version/name prefix before migration SQL runs. This infrastructure readiness
-check creates no request-time migration or application authority. Sprint 7 has
-not started.
+check creates no request-time migration or application authority. Sprint 7.0
+adds planning documentation only; no Sprint 7.1 API or implementation has
+started.

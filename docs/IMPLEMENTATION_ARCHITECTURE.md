@@ -42,7 +42,7 @@ Enforces business scope, profile and knowledge eligibility, prompt security, out
 
 Durable persistence is required for business-scoped application state and audit history after the certified deterministic prototype. PostgreSQL was selected during Sprint 6.0 as the relational persistence technology for Sprint 6 because the demonstrated requirements include structured domain data, profile versions, state revisions, relational ownership, optimistic concurrency, atomic transactions, uniqueness, migrations, tenant isolation, durable audit history, and restart recovery.
 
-Milestone 6.2 implements the first approved durable slice for Conversation State. Milestone 6.3 adds the separately injected PostgreSQL Execution Journal adapter, bounded journal migration, shared trusted-result mapper, and scoped immutable decoder. Milestone 6.4 adds a separate opt-in PostgreSQL transaction coordinator that atomically persists an already-approved state replacement and its required journal entry. Milestone 6.5 adds an explicitly opt-in fictional application integration that recovers validated state and audit history through newly created adapter instances and resumes deterministic progression from the recovered revision. Milestone 6.6 verifies explicit fail-closed persistence and recovery behavior against disposable PostgreSQL. Milestone 6.7 certifies the complete Sprint 6 boundary and strengthens migration-history compatibility checking. The standalone adapters remain available, and the prototype continues to default to in-memory state and journal stores. No production database connection or Sprint 7 implementation exists.
+Milestone 6.2 implements the first approved durable slice for Conversation State. Milestone 6.3 adds the separately injected PostgreSQL Execution Journal adapter, bounded journal migration, shared trusted-result mapper, and scoped immutable decoder. Milestone 6.4 adds a separate opt-in PostgreSQL transaction coordinator that atomically persists an already-approved state replacement and its required journal entry. Milestone 6.5 adds an explicitly opt-in fictional application integration that recovers validated state and audit history through newly created adapter instances and resumes deterministic progression from the recovered revision. Milestone 6.6 verifies explicit fail-closed persistence and recovery behavior against disposable PostgreSQL. Milestone 6.7 certifies the complete Sprint 6 boundary and strengthens migration-history compatibility checking. The standalone adapters remain available, and the prototype continues to default to in-memory state and journal stores. No production database connection exists. Sprint 7.0 adds planning documentation only; no Sprint 7.1 implementation exists.
 
 PostgreSQL provides durability and relational integrity defenses only. It does not own domain rules, transitions, state validation, workflow decisions, AI validation, application decisions, progress, presentation, customer release, or external actions.
 
@@ -318,5 +318,21 @@ repair or schema mutation.
 
 See [Sprint 6 Certification](certification/SPRINT6_CERTIFICATION.md). This
 certification adds no production connection, migration, dependency, provider,
-customer release, external action, or Sprint 7 implementation. Sprint 7 has
-not started.
+customer release, or external action.
+
+## Sprint 7.0 Business Configuration Planning Status
+
+Milestone 7.0 refines Phase 5 into independently authorized Business
+Configuration milestones. It plans technology-neutral configuration contracts,
+separate structural and activation validation, durable Business Profile and
+knowledge versions, application-owned atomic activation, exact active-version
+resolution, explicit authorization inputs, configuration audit, fictional
+workflow integration, recovery verification, and certification.
+
+The plan preserves all certified Sprint 6 boundaries. Domain and application
+layers retain authority; PostgreSQL remains infrastructure; Conversation State
+and the Execution Journal retain their existing roles; the ordinary prototype
+remains in memory by default. This milestone changes documentation only. No
+Sprint 7.1 implementation, migration, schema, dependency, database operation,
+production authentication, provider, customer release, or external action has
+started. See the [Sprint 7 Plan](SPRINT_7_PLAN.md).

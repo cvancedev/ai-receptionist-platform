@@ -13,7 +13,8 @@ semantics without changing production source. The ordinary prototype,
 `ConversationStateManager`, and AI orchestrator continue to use in-memory
 storage by default. Milestone 6.7 certifies these boundaries and adds only the
 required migration-history compatibility correction. No production database
-connection or Sprint 7 implementation exists.
+connection exists. Sprint 7.0 adds planning documentation only; no Sprint 7.1
+PostgreSQL implementation, migration, or schema change exists.
 
 ## Integration Verification
 

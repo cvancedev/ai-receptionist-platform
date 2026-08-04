@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 7.0 - Business Configuration Planning
+
+- Defined the Sprint 7 objective, milestone sequence, repository and authority boundaries, verification strategy, risks, non-goals, success criteria, and documentation prerequisites.
+- Kept Business Configuration as Phase 5 after certified durable persistence and before the End-to-End MVP, while refining it into independently authorized Milestones 7.0 through 7.7.
+- Preserved every certified Sprint 6 authority, persistence, prototype, isolation, transaction, recovery, audit, and capability boundary.
+- Added documentation only; no Sprint 7.1 implementation, dependency, migration, schema change, database work, production authentication, provider, public administration, external action, commit, tag, or push was added.
+
 ### Sprint 6 - Certification
 
 - Certified Milestones 6.0 through 6.6 architecture, persistence contracts, durable state and journal integrity, atomic execution, restart recovery, tenant isolation, failure semantics, migrations, regressions, and strict capability boundaries.

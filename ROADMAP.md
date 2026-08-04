@@ -116,12 +116,23 @@ revision and transaction integrity, durable journal, restart and failure
 semantics, tenant isolation, migrations, regressions, and prohibited-capability
 boundaries. Certification corrected incompatible migration-history handling
 without adding a migration or product capability. Sprint 6 is certified
-complete; Sprint 7 has not started. See
+complete; at certification, Sprint 7 had not started. See
 [Sprint 6 Certification](docs/certification/SPRINT6_CERTIFICATION.md).
 
 ## Sprint 7: Business Configuration
 
-Replace fictional configuration only after persistence and validation boundaries are proven. Scope remains limited to the minimum safe Business Profile and knowledge lifecycle required by Phase 5 of the implementation sequence.
+- Milestone 7.0: Business Configuration Planning — Complete
+- Milestone 7.1: Configuration Contracts and Lifecycle Architecture — Not started
+- Milestone 7.2: Durable Business Profile Versions — Not started
+- Milestone 7.3: Durable Knowledge Versions and Lifecycle — Not started
+- Milestone 7.4: Atomic Activation and Active-Configuration Resolution — Not started
+- Milestone 7.5: Minimal Fictional Configuration Workflow — Not started
+- Milestone 7.6: Configuration Failure, Recovery, and Isolation Verification — Not started
+- Milestone 7.7: Sprint 7 Certification — Not started
+
+Sprint 7 remains Phase 5 of the [Implementation Sequence](docs/IMPLEMENTATION_SEQUENCE.md). It applies the certified Sprint 6 persistence foundation to the minimum safe Business Profile and approved-knowledge lifecycle for one fictional business. Application-owned validation, authorization decisions, versioning, activation, audit, isolation, and recovery remain explicit; PostgreSQL remains subordinate infrastructure.
+
+Milestone 7.0 defines the sequence and boundaries in the [Sprint 7 Plan](docs/SPRINT_7_PLAN.md). It changes documentation only. No Sprint 7.1 implementation, migration, schema change, dependency, production authentication, public administration, provider integration, external action, or end-to-end MVP work has started.
 
 ## Sprint 8: End-to-End MVP
 

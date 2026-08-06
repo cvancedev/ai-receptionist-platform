@@ -73,3 +73,10 @@ lifecycle, audience, source, effective-date, authorization, and audit evidence.
 PostgreSQL owns durability and relational integrity only; the application
 retains approval, lifecycle, eligibility, retrieval, conflict, activation, and
 conversation-use authority.
+
+Milestone 7.4 makes the application authoritative for activation eligibility,
+authorization acceptance, selected versions, expected revisions, and conflict
+rejection. PostgreSQL atomically owns activation history, selected-version
+associations, and the one active pointer. Business Profile, knowledge, and
+Conversation State documents remain unchanged; existing conversations retain
+their recorded profile version.

@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 7.0 through 7.3 are complete. Sprint 6 remains certified complete.
-Milestone 7.4 has not started.
+Milestones 7.0 through 7.4 are complete. Sprint 6 remains certified complete.
+Milestone 7.5 has not started.
 
 This plan preserves the certified Sprint 6 boundaries and refines Phase 5 of
 the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md) into independently
@@ -76,6 +76,8 @@ administration, or the end-to-end MVP.
 
 ### 7.4: Atomic Activation and Active-Configuration Resolution
 
+**Status: Complete**
+
 - Implement application-owned activation eligibility and atomic lifecycle
   transitions for one validated configuration version.
 - Resolve the active Business Profile and eligible knowledge explicitly by
@@ -108,8 +110,8 @@ administration, or the end-to-end MVP.
 - Correct certification-blocking defects within scope, then determine whether
   Sprint 7 satisfies its exit criteria.
 
-Only Milestone 7.0 is authorized by this plan. Milestones 7.1 through 7.7
-require separate instructions and validation before work begins.
+Each implementation milestone requires separate instructions and validation.
+Milestones 7.5 through 7.7 remain unauthorized and have not started.
 
 ## 4. Repository Boundaries
 

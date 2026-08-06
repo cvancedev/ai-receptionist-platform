@@ -119,6 +119,14 @@ Platform-owned rules may evolve to improve safety, privacy, reliability, or cust
 
 Businesses retain control over how they operate. The platform retains control over the minimum standards required for the AI to represent them safely, honestly, and reliably.
 
+## Milestone 7.4 Activation Ownership
+
+The application now owns the decision to activate one exact validated profile
+and explicit approved knowledge set. PostgreSQL owns only atomic durability,
+conditional concurrency checks, history, associations, and the active pointer.
+Neither storage nor a caller gains validation, approval, authentication,
+conversation, model, release, or external-action authority.
+
 ## Milestone 7.1 Implementation Boundary
 
 Technology-neutral contracts now require exact Business Profile and knowledge

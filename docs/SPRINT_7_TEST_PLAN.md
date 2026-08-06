@@ -3,7 +3,8 @@
 ## Purpose
 
 This document defines the verification gates for Sprint 7 Business
-Configuration. Milestone 7.1 implements only the contract-focused portion.
+Configuration. Milestones 7.1 through 7.4 provide contract, durable-version,
+and atomic-activation evidence. Milestone 7.5 has not started.
 
 ## Milestone 7.1 Contract Verification
 
@@ -54,6 +55,13 @@ tenant isolation, source and audit traceability, corruption, restart,
 migration-history rejection, and prohibited lifecycle authority.
 - **7.4:** Atomic activation, exactly one active eligible revision, audit
   coupling, rollback, and pinned-conversation behavior.
+
+Milestone 7.4 adds `npm.cmd run verify:postgresql-configuration-activation`
+for application-owned eligibility and authorization, migration 005, atomic
+success and rollback, replacement, exact active resolution, immutable selected
+versions, duplicate and conflicting requests, stale revisions, concurrency,
+restart, corruption, tenant isolation, conversation pin preservation, and
+prohibited authority.
 - **7.5:** Opt-in fictional workflow integration without direct SQL, public
   administration, or production authentication claims.
 - **7.6:** Complete failure, recovery, isolation, malformed-data, and prohibited

@@ -166,3 +166,11 @@ Low-risk editorial corrections may follow a lighter review only when they cannot
 ## Failure Behavior
 
 If an active profile becomes unavailable, invalid, or internally inconsistent, the platform must not silently fall back to industry assumptions or an unapproved draft. It should restrict the AI's authority, preserve the inquiry when safe, communicate only confirmed information, and route the issue through an approved human path.
+
+## Milestone 7.4 Activation Check
+
+The application activation coordinator now requires `ready-for-review` profile
+evidence and runs the existing structural validator against the exact stored
+revision before persistence coordination. Passing remains an application input,
+not database authority. The active association is recorded separately so the
+validated version document remains immutable.

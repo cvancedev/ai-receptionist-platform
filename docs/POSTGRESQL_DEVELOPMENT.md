@@ -13,9 +13,9 @@ semantics without changing production source. The ordinary prototype,
 `ConversationStateManager`, and AI orchestrator continue to use in-memory
 storage by default. Milestone 6.7 certifies these boundaries and adds only the
 required migration-history compatibility correction. No production database
-connection exists. Sprint 7.3 adds migration 004 and an opt-in Knowledge Record
-version repository without lifecycle transitions, retrieval, activation, or
-default wiring.
+connection exists. Sprint 7.4 adds migration 005 and an opt-in atomic
+configuration activation store without workflow, conversation integration,
+retrieval, or default wiring.
 
 ## Integration Verification
 
@@ -44,7 +44,8 @@ The ordered migrations are:
 - [`database/migrations/001_conversation_states.sql`](../database/migrations/001_conversation_states.sql);
 - [`database/migrations/002_execution_journal.sql`](../database/migrations/002_execution_journal.sql);
 - [`database/migrations/003_business_profile_versions.sql`](../database/migrations/003_business_profile_versions.sql); and
-- [`database/migrations/004_knowledge_record_versions.sql`](../database/migrations/004_knowledge_record_versions.sql).
+- [`database/migrations/004_knowledge_record_versions.sql`](../database/migrations/004_knowledge_record_versions.sql); and
+- [`database/migrations/005_configuration_activations.sql`](../database/migrations/005_configuration_activations.sql).
 
 They create only:
 
@@ -53,7 +54,9 @@ They create only:
 - the schema-migration history table;
 - immutable Business Profile draft revisions and creation audit evidence; and
 - immutable Knowledge Record draft revisions with scope, source, lifecycle,
-  audience, effective-date, authorization, and audit evidence.
+  audience, effective-date, authorization, and audit evidence; and
+- immutable configuration activation history, exact knowledge associations,
+  and one current active pointer per business.
 
 The migration runner applies the migration within the configured schema and a
 local database transaction. Application startup does not run migrations, and

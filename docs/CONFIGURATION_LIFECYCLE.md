@@ -78,7 +78,9 @@ promote a draft, switch versions, or partially activate configuration.
 
 ## Deferred Behavior
 
-Milestones 7.2 and 7.3 persist immutable Business Profile and Knowledge Record
-draft versions without implementing lifecycle transitions. Atomic activation,
-active resolution, and workflow integration remain assigned to later Sprint 7
-milestones. Milestone 7.4 has not started.
+Milestone 7.4 records an application-authorized transition from one exact
+`ready-for-review` Business Profile and explicitly selected `approved`
+knowledge revisions into an immutable active-configuration record. Version
+documents and their pre-activation evidence are not overwritten. Replacement
+changes one active pointer atomically while retaining prior activation history.
+Workflow integration remains assigned to Milestone 7.5, which has not started.

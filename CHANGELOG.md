@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 7.4 - Atomic Activation and Active-Configuration Resolution
+
+- Added application-owned activation contracts and coordination for exact validated Business Profile and approved Knowledge Record revisions.
+- Added ordered migration 005 and an opt-in PostgreSQL activation store that atomically records immutable activation history, selected knowledge, bounded audit evidence, and one business-scoped active pointer.
+- Added explicit authorization, eligibility, stale-revision, duplicate/conflicting-request, rollback, replacement, concurrency, restart, isolation, and corruption behavior.
+- Added no profile or knowledge document mutation, conversation repinning, prototype workflow integration, dependency change, customer release, external action, or Milestone 7.5 behavior.
+
 ### Sprint 7.3 - Durable Knowledge Versions and Lifecycle
 
 - Added ordered migration 004 for immutable, business-scoped Knowledge Record revisions with profile ownership, lifecycle, audience, source, effective-date, authorization, and audit evidence.

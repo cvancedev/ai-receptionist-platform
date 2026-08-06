@@ -187,9 +187,9 @@ A customer correction changes only that conversation's state. It does not edit o
 
 ## Milestone 7.3 Implementation Boundary
 
-Milestone 7.3 durably stores the lifecycle label of an application-accepted
-initial draft. The repository rejects lifecycle-transition requests and does
-not decide review, approval, activation, expiration, supersession, suspension,
-archival, rejection, retrieval eligibility, or conflict resolution. Those
-application-owned behaviors remain unimplemented; Milestone 7.4 has not
-started.
+Milestone 7.4 requires every selected Knowledge Record revision to carry
+`approved` lifecycle evidence, pass existing structural and effective-date
+validation, and belong to the exact activating profile scope. The atomic
+activation record associates those immutable versions with an `active`
+configuration without overwriting their documents. Retrieval eligibility and
+workflow integration remain unimplemented; Milestone 7.5 has not started.

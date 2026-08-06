@@ -106,3 +106,9 @@ Milestone 7.3 adds another internal persistence implementation only: immutable
 Knowledge Record draft creation and exact scoped revision reads. It creates no
 route, public API, lifecycle transition, knowledge retrieval, active
 configuration resolver, conflict decision, or customer-facing operation.
+
+Milestone 7.4 adds internal application activation and active-read boundaries,
+not routes or public APIs. Inputs require exact version scope, expected
+revisions, authorization and audit context, and an explicit knowledge set.
+Outputs are bounded activation or active-snapshot results. No administration,
+conversation, model, channel, or external-action endpoint is introduced.

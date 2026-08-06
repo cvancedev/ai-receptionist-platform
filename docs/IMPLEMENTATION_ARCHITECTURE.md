@@ -42,7 +42,7 @@ Enforces business scope, profile and knowledge eligibility, prompt security, out
 
 Durable persistence is required for business-scoped application state and audit history after the certified deterministic prototype. PostgreSQL was selected during Sprint 6.0 as the relational persistence technology for Sprint 6 because the demonstrated requirements include structured domain data, profile versions, state revisions, relational ownership, optimistic concurrency, atomic transactions, uniqueness, migrations, tenant isolation, durable audit history, and restart recovery.
 
-Milestone 6.2 implements the first approved durable slice for Conversation State. Milestone 6.3 adds the separately injected PostgreSQL Execution Journal adapter, bounded journal migration, shared trusted-result mapper, and scoped immutable decoder. Milestone 6.4 adds a separate opt-in PostgreSQL transaction coordinator that atomically persists an already-approved state replacement and its required journal entry. Milestone 6.5 adds an explicitly opt-in fictional application integration that recovers validated state and audit history through newly created application and persistence objects and resumes deterministic progression from the recovered revision. Milestone 6.6 verifies explicit fail-closed persistence and recovery behavior against disposable PostgreSQL. Milestone 6.7 certifies the complete Sprint 6 boundary and strengthens migration-history compatibility checking. The standalone adapters remain available, and the prototype continues to default to in-memory state and journal stores. No production database connection exists. Milestone 7.1 now adds technology-neutral Business Configuration contracts only; no durable configuration implementation exists.
+Milestone 6.2 implements the first approved durable slice for Conversation State. Milestone 6.3 adds the separately injected PostgreSQL Execution Journal adapter, bounded journal migration, shared trusted-result mapper, and scoped immutable decoder. Milestone 6.4 adds a separate opt-in PostgreSQL transaction coordinator that atomically persists an already-approved state replacement and its required journal entry. Milestone 6.5 adds an explicitly opt-in fictional application integration that recovers validated state and audit history through newly created application and persistence objects and resumes deterministic progression from the recovered revision. Milestone 6.6 verifies explicit fail-closed persistence and recovery behavior against disposable PostgreSQL. Milestone 6.7 certifies the complete Sprint 6 boundary and strengthens migration-history compatibility checking. The standalone adapters remain available, and the prototype continues to default to in-memory state and journal stores. No production database connection exists. Milestones 7.2 through 7.4 add opt-in durable Business Profile and Knowledge Record versions plus atomic activation history and exact active-configuration resolution; no administration workflow or production database connection exists.
 
 PostgreSQL provides durability and relational integrity defenses only. It does not own domain rules, transitions, state validation, workflow decisions, AI validation, application decisions, progress, presentation, customer release, or external actions.
 
@@ -382,3 +382,17 @@ results. PostgreSQL owns durability and relational integrity only. Lifecycle
 transitions, approval, activation, active-configuration resolution, knowledge
 retrieval, conflict resolution, update/delete, default prototype wiring, and
 Milestone 7.4 behavior remain absent.
+
+## Sprint 7.4 Atomic Configuration Activation Status
+
+Milestone 7.4 adds technology-neutral activation request, result, active-read,
+and atomic-store contracts plus an application coordinator. The coordinator
+owns input, authorization, lifecycle, structure, effective-date, conflict, and
+expected-revision decisions before persistence. The opt-in PostgreSQL store
+uses one business-serialized transaction to conditionally verify approved facts
+and atomically record activation history, exact knowledge associations, audit
+evidence, and one active pointer. Replacement preserves prior history; rollback
+preserves the previous pointer; active reads fail closed and return immutable
+scope-only snapshots. No profile or knowledge document changes, prototype
+wiring, conversation repinning, provider behavior, customer release, external
+action, or Milestone 7.5 workflow exists.

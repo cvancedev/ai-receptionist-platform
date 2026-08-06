@@ -92,7 +92,9 @@ support, and verification for this flow.
 
 ## Current Limit
 
-Milestones 7.2 and 7.3 implement only immutable PostgreSQL Business Profile and
-Knowledge Record draft creation and exact revision reads. Knowledge lifecycle
-transitions, eligibility, retrieval, and activation remain unsupported, and the
-ordinary prototype remains unchanged. Milestone 7.4 has not started.
+Milestone 7.4 adds an application coordinator that loads exact immutable
+revisions, owns authorization and activation eligibility, and sends only an
+approved activation to a technology-neutral atomic store. The store records
+immutable activation history, selected knowledge, and one active pointer per
+business without changing version documents. Conversation integration and the
+fictional configuration workflow remain absent. Milestone 7.5 has not started.

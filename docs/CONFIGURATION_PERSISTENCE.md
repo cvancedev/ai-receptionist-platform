@@ -63,10 +63,11 @@ audit. Neither journal may become domain state or replay authority.
 
 ## Current Implementation Status
 
-Milestones 7.2 and 7.3 add migrations 003 and 004 plus opt-in PostgreSQL
-repositories for immutable Business Profile and Knowledge Record drafts. The
-knowledge repository creates one exact business/profile/record/version revision,
-preserves lifecycle, audience, source, effective-date, authorization, and audit
-evidence, validates untrusted JSONB, and returns detached immutable results.
-No lifecycle transition, approval, activation, knowledge retrieval,
-update/delete, default prototype wiring, or Milestone 7.4 behavior exists.
+Milestone 7.4 adds migration 005 and an opt-in atomic activation store. One
+transaction rechecks application-approved scope, lifecycle evidence, expected
+profile and knowledge revisions, request identity, and expected active revision;
+then records immutable activation history, exact knowledge associations,
+bounded authorization/audit evidence, and one active pointer. Failure rolls
+back every effect, and commit ambiguity is never reported as success. No
+version document is mutated. No workflow, default prototype wiring, knowledge
+retrieval, conversation repinning, or Milestone 7.5 behavior exists.

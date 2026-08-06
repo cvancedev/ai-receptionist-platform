@@ -60,3 +60,11 @@ release, or external-action authority.
 Production authentication, account ownership, roles, delegated administration,
 session security, and authorization policy implementation remain outside
 Milestone 7.1 and Sprint 7 unless separately authorized.
+
+## Milestone 7.4 Activation Boundary
+
+The activation coordinator now rejects denied authorization before persistence
+and requires canonical request, actor, decision, audit, scope, and revision
+evidence. The PostgreSQL store receives only an application-approved activation
+and persists evidence without authenticating an actor or deciding permission.
+Fictional verification identities remain non-production inputs.

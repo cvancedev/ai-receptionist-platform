@@ -184,3 +184,12 @@ A customer correction changes only that conversation's state. It does not edit o
 - Lifecycle changes do not override audience restrictions or platform safeguards.
 - Missing current knowledge remains missing.
 - Historical traceability must not become current authority.
+
+## Milestone 7.3 Implementation Boundary
+
+Milestone 7.3 durably stores the lifecycle label of an application-accepted
+initial draft. The repository rejects lifecycle-transition requests and does
+not decide review, approval, activation, expiration, supersession, suspension,
+archival, rejection, retrieval eligibility, or conflict resolution. Those
+application-owned behaviors remain unimplemented; Milestone 7.4 has not
+started.

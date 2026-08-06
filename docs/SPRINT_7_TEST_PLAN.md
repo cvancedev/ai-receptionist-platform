@@ -47,6 +47,11 @@ isolation, audit evidence, decoding, corruption, restart, and prohibited
 lifecycle authority.
 - **7.3:** Knowledge lifecycle persistence, audience and scope isolation,
   traceability, version history, and ineligible-state rejection.
+
+Milestone 7.3 adds `npm.cmd run verify:postgresql-knowledge-versions` for
+migration 004, immutable draft creation, exact scoped reads, duplicate and
+tenant isolation, source and audit traceability, corruption, restart,
+migration-history rejection, and prohibited lifecycle authority.
 - **7.4:** Atomic activation, exactly one active eligible revision, audit
   coupling, rollback, and pinned-conversation behavior.
 - **7.5:** Opt-in fictional workflow integration without direct SQL, public

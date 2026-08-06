@@ -21,7 +21,8 @@
     "verify:postgresql-restart-safe-prototype": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-restart-safe-prototype.verify.js",
     "verify:persistence-recovery": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/persistence-recovery.verify.js",
     "verify:business-configuration-contracts": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/business-configuration-contracts.verify.js",
-    "verify:postgresql-business-profile-versions": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-business-profile-versions.verify.js"
+    "verify:postgresql-business-profile-versions": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-business-profile-versions.verify.js",
+    "verify:postgresql-knowledge-versions": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-knowledge-versions.verify.js"
   },
   "dependencies": {
     "next": "16.2.12",

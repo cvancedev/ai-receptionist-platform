@@ -67,3 +67,9 @@ Milestone 7.2 persists already-accepted Business Profile draft revisions and
 creation audit evidence. PostgreSQL owns durability and integrity only; the
 application retains structural, authorization, lifecycle, activation, and
 conversation-use authority.
+
+Milestone 7.3 persists already-accepted Knowledge Record drafts and their
+lifecycle, audience, source, effective-date, authorization, and audit evidence.
+PostgreSQL owns durability and relational integrity only; the application
+retains approval, lifecycle, eligibility, retrieval, conflict, activation, and
+conversation-use authority.

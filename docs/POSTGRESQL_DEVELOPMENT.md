@@ -13,8 +13,9 @@ semantics without changing production source. The ordinary prototype,
 `ConversationStateManager`, and AI orchestrator continue to use in-memory
 storage by default. Milestone 6.7 certifies these boundaries and adds only the
 required migration-history compatibility correction. No production database
-connection exists. Sprint 7.2 adds migration 003 and an opt-in Business Profile
-version repository without knowledge persistence, activation, or default wiring.
+connection exists. Sprint 7.3 adds migration 004 and an opt-in Knowledge Record
+version repository without lifecycle transitions, retrieval, activation, or
+default wiring.
 
 ## Integration Verification
 
@@ -40,16 +41,19 @@ migrations, run their PostgreSQL contract checks, and drop those schemas in
 
 The ordered migrations are:
 
-- [`database/migrations/001_conversation_states.sql`](../database/migrations/001_conversation_states.sql); and
-- [`database/migrations/002_execution_journal.sql`](../database/migrations/002_execution_journal.sql).
-- [`database/migrations/003_business_profile_versions.sql`](../database/migrations/003_business_profile_versions.sql).
+- [`database/migrations/001_conversation_states.sql`](../database/migrations/001_conversation_states.sql);
+- [`database/migrations/002_execution_journal.sql`](../database/migrations/002_execution_journal.sql);
+- [`database/migrations/003_business_profile_versions.sql`](../database/migrations/003_business_profile_versions.sql); and
+- [`database/migrations/004_knowledge_record_versions.sql`](../database/migrations/004_knowledge_record_versions.sql).
 
 They create only:
 
-- the complete Conversation State snapshot table; and
+- the complete Conversation State snapshot table;
 - the bounded append-only Execution Journal table and scoped ordering index;
-- the schema-migration history table.
-- immutable Business Profile draft revisions and creation audit evidence.
+- the schema-migration history table;
+- immutable Business Profile draft revisions and creation audit evidence; and
+- immutable Knowledge Record draft revisions with scope, source, lifecycle,
+  audience, effective-date, authorization, and audit evidence.
 
 The migration runner applies the migration within the configured schema and a
 local database transaction. Application startup does not run migrations, and

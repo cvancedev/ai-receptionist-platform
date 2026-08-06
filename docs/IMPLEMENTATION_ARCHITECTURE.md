@@ -371,3 +371,14 @@ explicit outcomes and detached immutable results. PostgreSQL owns durability
 and integrity only. Lifecycle transitions, activation, active-profile
 selection, knowledge persistence, update/delete, default prototype wiring, and
 Milestone 7.3 behavior remain absent.
+
+## Sprint 7.3 Durable Knowledge Version Status
+
+Milestone 7.3 adds ordered migration 004, an application-owned exact-shape
+Knowledge Record decoder, and an opt-in PostgreSQL repository behind the 7.1
+contract. It creates one immutable draft and reads one exact
+business/profile/record/version with explicit outcomes and detached immutable
+results. PostgreSQL owns durability and relational integrity only. Lifecycle
+transitions, approval, activation, active-configuration resolution, knowledge
+retrieval, conflict resolution, update/delete, default prototype wiring, and
+Milestone 7.4 behavior remain absent.

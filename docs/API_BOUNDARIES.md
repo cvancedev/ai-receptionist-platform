@@ -101,3 +101,8 @@ database change, administration capability, or Milestone 7.2 work exists.
 Milestone 7.2 adds internal persistence implementation only: immutable draft
 creation and exact Business Profile revision reads. It creates no route, public
 API, active-profile lookup, lifecycle transition, or knowledge operation.
+
+Milestone 7.3 adds another internal persistence implementation only: immutable
+Knowledge Record draft creation and exact scoped revision reads. It creates no
+route, public API, lifecycle transition, knowledge retrieval, active
+configuration resolver, conflict decision, or customer-facing operation.

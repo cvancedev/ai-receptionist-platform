@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 7.3 - Durable Knowledge Versions and Lifecycle
+
+- Added ordered migration 004 for immutable, business-scoped Knowledge Record revisions with profile ownership, lifecycle, audience, source, effective-date, authorization, and audit evidence.
+- Added an opt-in PostgreSQL repository for initial draft creation and exact revision reads with explicit duplicate, missing, malformed, incompatible, and infrastructure outcomes.
+- Added application-owned exact-shape decoding, tenant isolation, immutable restart-safe reads, migration-history coverage, and focused real-PostgreSQL verification.
+- Added no lifecycle transition, approval, activation, knowledge retrieval, conflict resolution, dependency change, default prototype wiring, or Milestone 7.4 behavior.
+
 ### Sprint 7.2 - Durable Business Profile Versions
 
 - Added ordered migration 003 for immutable business-scoped Business Profile revisions and creation audit evidence.

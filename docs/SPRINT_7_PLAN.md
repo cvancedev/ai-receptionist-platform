@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 7.0 through 7.2 are complete. Sprint 6 remains certified complete.
-Milestone 7.3 has not started.
+Milestones 7.0 through 7.3 are complete. Sprint 6 remains certified complete.
+Milestone 7.4 has not started.
 
 This plan preserves the certified Sprint 6 boundaries and refines Phase 5 of
 the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md) into independently
@@ -66,6 +66,8 @@ administration, or the end-to-end MVP.
 - Do not persist knowledge or activate configuration in this milestone.
 
 ### 7.3: Durable Knowledge Versions and Lifecycle
+
+**Status: Complete**
 
 - Add separately bounded durable storage for business-scoped knowledge records,
   lifecycle state, audience, source traceability, and effective dates.

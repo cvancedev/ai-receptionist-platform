@@ -63,9 +63,10 @@ audit. Neither journal may become domain state or replay authority.
 
 ## Current Implementation Status
 
-Milestone 7.2 adds migration 003 and an opt-in PostgreSQL Business Profile
-version repository. It creates one immutable draft revision, reads one exact
-business/profile version, stores repository revision and creation audit
+Milestones 7.2 and 7.3 add migrations 003 and 004 plus opt-in PostgreSQL
+repositories for immutable Business Profile and Knowledge Record drafts. The
+knowledge repository creates one exact business/profile/record/version revision,
+preserves lifecycle, audience, source, effective-date, authorization, and audit
 evidence, validates untrusted JSONB, and returns detached immutable results.
-No knowledge repository, lifecycle transition, activation, update/delete,
-default prototype wiring, or Milestone 7.3 behavior exists.
+No lifecycle transition, approval, activation, knowledge retrieval,
+update/delete, default prototype wiring, or Milestone 7.4 behavior exists.

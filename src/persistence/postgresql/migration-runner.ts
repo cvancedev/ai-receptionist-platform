@@ -23,6 +23,11 @@ const POSTGRESQL_MIGRATIONS = [
     name: "business_profile_versions",
     fileName: "003_business_profile_versions.sql",
   },
+  {
+    version: 4,
+    name: "knowledge_record_versions",
+    fileName: "004_knowledge_record_versions.sql",
+  },
 ] as const;
 
 export async function applyPostgresqlMigrations(

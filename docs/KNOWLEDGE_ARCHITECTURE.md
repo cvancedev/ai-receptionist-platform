@@ -191,3 +191,12 @@ Knowledge ownership responsibilities remain governed by [Configuration Ownership
 - [Knowledge Conflicts and Uncertainty](KNOWLEDGE_CONFLICTS_AND_UNCERTAINTY.md) defines unsafe or unresolved information handling.
 - [Business Profile](BUSINESS_PROFILE.md) defines structured business configuration.
 - [Conversation Engine](CONVERSATION_ENGINE.md) defines how approved knowledge participates in an interaction.
+
+## Milestone 7.3 Implementation Boundary
+
+Milestone 7.3 adds immutable PostgreSQL storage for the existing Knowledge
+Record contract: exact business/profile/record/version scope, lifecycle,
+audience, source traceability, effective date, authorization evidence, and
+configuration audit evidence. It does not approve, activate, select, retrieve,
+rank, resolve conflicts, or expose knowledge to a conversation. Milestone 7.4
+has not started.

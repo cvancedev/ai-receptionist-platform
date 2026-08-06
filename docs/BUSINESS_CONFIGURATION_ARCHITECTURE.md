@@ -92,7 +92,7 @@ support, and verification for this flow.
 
 ## Current Limit
 
-Milestone 7.2 implements only immutable PostgreSQL Business Profile draft
-creation and exact revision reads. Knowledge remains fixture-backed, lifecycle
-transitions remain unsupported, and the ordinary prototype remains unchanged.
-Milestone 7.3 has not started.
+Milestones 7.2 and 7.3 implement only immutable PostgreSQL Business Profile and
+Knowledge Record draft creation and exact revision reads. Knowledge lifecycle
+transitions, eligibility, retrieval, and activation remain unsupported, and the
+ordinary prototype remains unchanged. Milestone 7.4 has not started.

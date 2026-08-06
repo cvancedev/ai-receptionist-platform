@@ -78,6 +78,7 @@ promote a draft, switch versions, or partially activate configuration.
 
 ## Deferred Behavior
 
-Durable Business Profile versions begin only when Milestone 7.2 is separately
-authorized. Knowledge persistence, atomic activation, active resolution, and
-workflow integration remain assigned to later Sprint 7 milestones.
+Milestones 7.2 and 7.3 persist immutable Business Profile and Knowledge Record
+draft versions without implementing lifecycle transitions. Atomic activation,
+active resolution, and workflow integration remain assigned to later Sprint 7
+milestones. Milestone 7.4 has not started.

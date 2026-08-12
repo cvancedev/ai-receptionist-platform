@@ -25,7 +25,8 @@
     "verify:postgresql-knowledge-versions": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-knowledge-versions.verify.js",
     "verify:postgresql-configuration-activation": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-configuration-activation.verify.js",
     "verify:activated-configuration-prototype": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/activated-configuration-prototype.verify.js",
-    "verify:business-configuration-recovery": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-business-profile-versions.verify.js && node .prototype-build/verification/postgresql-knowledge-versions.verify.js && node .prototype-build/verification/postgresql-configuration-activation.verify.js && node .prototype-build/verification/activated-configuration-prototype.verify.js && node .prototype-build/verification/business-configuration-recovery.verify.js"
+    "verify:business-configuration-recovery": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-business-profile-versions.verify.js && node .prototype-build/verification/postgresql-knowledge-versions.verify.js && node .prototype-build/verification/postgresql-configuration-activation.verify.js && node .prototype-build/verification/activated-configuration-prototype.verify.js && node .prototype-build/verification/business-configuration-recovery.verify.js",
+    "verify:configuration-lifecycle-remediation": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/configuration-lifecycle-remediation.verify.js"
   },
   "dependencies": {
     "next": "16.3.0",

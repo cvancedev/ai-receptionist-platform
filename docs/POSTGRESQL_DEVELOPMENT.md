@@ -14,8 +14,10 @@ semantics without changing production source. The ordinary prototype,
 storage by default. Milestone 6.7 certifies these boundaries and adds only the
 required migration-history compatibility correction. No production database
 connection exists. Sprint 7.4 adds migration 005 and an opt-in atomic
-configuration activation store without workflow, conversation integration,
-retrieval, or default wiring.
+configuration activation store. The Sprint 7 lifecycle remediation adds
+migration 006 for application-authorized, expected-revision lifecycle envelope
+updates and append-only transition audit evidence. Neither milestone creates a
+production connection or default database wiring.
 
 ## Integration Verification
 
@@ -45,7 +47,8 @@ The ordered migrations are:
 - [`database/migrations/002_execution_journal.sql`](../database/migrations/002_execution_journal.sql);
 - [`database/migrations/003_business_profile_versions.sql`](../database/migrations/003_business_profile_versions.sql); and
 - [`database/migrations/004_knowledge_record_versions.sql`](../database/migrations/004_knowledge_record_versions.sql); and
-- [`database/migrations/005_configuration_activations.sql`](../database/migrations/005_configuration_activations.sql).
+- [`database/migrations/005_configuration_activations.sql`](../database/migrations/005_configuration_activations.sql); and
+- [`database/migrations/006_configuration_lifecycle_transitions.sql`](../database/migrations/006_configuration_lifecycle_transitions.sql).
 
 They create only:
 
@@ -56,7 +59,9 @@ They create only:
 - immutable Knowledge Record draft revisions with scope, source, lifecycle,
   audience, effective-date, authorization, and audit evidence; and
 - immutable configuration activation history, exact knowledge associations,
-  and one current active pointer per business.
+  and one current active pointer per business; and
+- append-only Business Profile and Knowledge Record lifecycle transition audit
+  evidence coupled to exact expected-revision envelope updates.
 
 The migration runner applies the migration within the configured schema and a
 local database transaction. Application startup does not run migrations, and

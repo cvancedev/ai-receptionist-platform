@@ -28,7 +28,7 @@ async function verifyMigration() {
   await applyPostgresqlMigrations({ connectionString, schema });
   await applyPostgresqlMigrations({ connectionString, schema });
   const history = await admin.query(`SELECT version,name FROM "${schema}".app_schema_migrations ORDER BY version`);
-  assert(JSON.stringify(history.rows) === JSON.stringify([{ version: 1, name: "conversation_states" }, { version: 2, name: "execution_journal" }, { version: 3, name: "business_profile_versions" }, { version: 4, name: "knowledge_record_versions" }, { version: 5, name: "configuration_activations" }]), "ordered migrations 001-005 are compatible and idempotent");
+  assert(JSON.stringify(history.rows) === JSON.stringify([{ version: 1, name: "conversation_states" }, { version: 2, name: "execution_journal" }, { version: 3, name: "business_profile_versions" }, { version: 4, name: "knowledge_record_versions" }, { version: 5, name: "configuration_activations" }, { version: 6, name: "configuration_lifecycle_transitions" }]), "ordered migrations 001-006 are compatible and idempotent");
 }
 
 async function verifyCreateReadRestart() {
@@ -84,8 +84,19 @@ async function assertConstraintRejects(query: string, values: unknown[], label: 
 
 async function verifyAuthorityBoundary() {
   const store = new PostgresqlBusinessProfileVersionRepository({ connectionString, schema });
-  const transition = await store.recordLifecycleTransition({ scope: draftInput().scope, targetStatus: "active", context: draftInput().context });
-  assert(transition.status === "failure" && transition.reason === "RejectedInput", "store cannot activate a profile");
+  const input = draftInput();
+  const transition = await store.recordLifecycleTransition({
+    scope: input.scope,
+    targetStatus: "active",
+    context: {
+      ...input.context,
+      authorization: {
+        ...input.context.authorization,
+        decision: "denied",
+      },
+    },
+  });
+  assert(transition.status === "failure" && transition.reason === "RejectedInput", "store rejects a lifecycle fact without authorization");
   const capabilities = store as unknown as Record<string, unknown>;
   for (const name of ["approve", "authorize", "selectActive", "update", "delete", "mutateConversation", "release", "dispatch", "writeKnowledge"]) assert(capabilities[name] === undefined, `store exposes no ${name} capability`);
   await store.close();

@@ -1,4 +1,4 @@
-import { Pool } from "pg";
+import { Pool, type PoolClient } from "pg";
 import type {
   ConfigurationRepositoryFailureReason,
   ConfigurationRepositoryResult,
@@ -41,6 +41,7 @@ implements KnowledgeVersionRepository<"asynchronous"> {
   readonly operationMode = "asynchronous";
   private readonly pool: Pool;
   private readonly table: string;
+  private readonly transitions: string;
 
   constructor(
     options: Readonly<PostgresqlKnowledgeVersionRepositoryOptions>,
@@ -49,7 +50,9 @@ implements KnowledgeVersionRepository<"asynchronous"> {
       throw new Error("A PostgreSQL connection string is required.");
     }
     this.pool = new Pool({ connectionString: options.connectionString });
-    this.table = `${quoteIdentifier(validatedSchema(options.schema))}.knowledge_record_versions`;
+    const schema = quoteIdentifier(validatedSchema(options.schema));
+    this.table = `${schema}.knowledge_record_versions`;
+    this.transitions = `${schema}.knowledge_record_lifecycle_transitions`;
   }
 
   async createDraft(
@@ -157,12 +160,109 @@ implements KnowledgeVersionRepository<"asynchronous"> {
   }
 
   async recordLifecycleTransition(
-    _input: Readonly<TransitionKnowledgeLifecycleInput>,
+    input: Readonly<TransitionKnowledgeLifecycleInput>,
   ): Promise<ConfigurationRepositoryResult<KnowledgeRevisionSnapshot>> {
-    void _input;
-    return failure("RejectedInput", [
-      "Knowledge lifecycle transitions are not implemented in Milestone 7.3.",
-    ]);
+    const scope = validateKnowledgeRevisionScope(input.scope);
+    if (scope.status === "invalid" || !validTransitionContext(input)) {
+      return failure("RejectedInput", ["Knowledge lifecycle input is invalid."]);
+    }
+    let client: PoolClient | null = null;
+    try {
+      client = await this.pool.connect();
+      await client.query("BEGIN");
+      const currentResult = await client.query<KnowledgeRecordRow>(
+        `SELECT business_profile_id, business_profile_version,
+          knowledge_record_id, knowledge_record_version, revision,
+          lifecycle_state, audience, source_identity, effective_date,
+          record_format_version, record_document
+        FROM ${this.table}
+        WHERE business_profile_id=$1 AND business_profile_version=$2
+          AND knowledge_record_id=$3 AND knowledge_record_version=$4
+        FOR UPDATE`,
+        [
+          scope.scope.businessProfileId,
+          scope.scope.businessProfileVersion,
+          scope.scope.knowledgeRecordId,
+          scope.scope.knowledgeRecordVersion,
+        ],
+      );
+      const current = currentResult.rows[0];
+      if (!current) {
+        return rollbackFailure(client, "RevisionNotFound", [
+          "Knowledge revision was not found in the requested scope.",
+        ]);
+      }
+      if (current.revision !== input.context.expectedRevision) {
+        return rollbackFailure(client, "RevisionConflict", [
+          "Knowledge lifecycle revision is stale.",
+        ]);
+      }
+      const resultingRevision = current.revision + 1;
+      const updated = await client.query<KnowledgeRecordRow>(
+        `UPDATE ${this.table}
+        SET lifecycle_state=$5, revision=$6
+        WHERE business_profile_id=$1 AND business_profile_version=$2
+          AND knowledge_record_id=$3 AND knowledge_record_version=$4
+          AND revision=$7
+        RETURNING business_profile_id, business_profile_version,
+          knowledge_record_id, knowledge_record_version, revision,
+          lifecycle_state, audience, source_identity, effective_date,
+          record_format_version, record_document`,
+        [
+          scope.scope.businessProfileId,
+          scope.scope.businessProfileVersion,
+          scope.scope.knowledgeRecordId,
+          scope.scope.knowledgeRecordVersion,
+          input.targetStatus,
+          resultingRevision,
+          input.context.expectedRevision,
+        ],
+      );
+      if (updated.rows.length !== 1) {
+        return rollbackFailure(client, "RevisionConflict", [
+          "Knowledge lifecycle revision is stale.",
+        ]);
+      }
+      await client.query(
+        `INSERT INTO ${this.transitions} (
+          business_profile_id, business_profile_version,
+          knowledge_record_id, knowledge_record_version,
+          expected_revision, resulting_revision, prior_lifecycle_state,
+          resulting_lifecycle_state, request_id, actor_id,
+          authorization_decision_id, authorization_decision, audit_event_id,
+          audit_operation, audit_subject, audit_reason
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
+        [
+          scope.scope.businessProfileId,
+          scope.scope.businessProfileVersion,
+          scope.scope.knowledgeRecordId,
+          scope.scope.knowledgeRecordVersion,
+          input.context.expectedRevision,
+          resultingRevision,
+          current.lifecycle_state,
+          input.targetStatus,
+          input.context.requestId,
+          input.context.authorization.actorId,
+          input.context.authorization.decisionId,
+          input.context.authorization.decision,
+          input.context.audit.auditEventId,
+          input.context.audit.operation,
+          input.context.audit.subject,
+          input.context.audit.reason,
+        ],
+      );
+      await client.query("COMMIT");
+      return rowResult(updated.rows[0], scope.scope);
+    } catch (error) {
+      if (client) await rollbackSafely(client);
+      return isUniqueViolation(error)
+        ? failure("RevisionAlreadyExists", [
+          "Knowledge lifecycle request was already recorded.",
+        ])
+        : persistenceFailure();
+    } finally {
+      client?.release();
+    }
   }
 
   async close(): Promise<void> {
@@ -196,8 +296,7 @@ function rowResult(
     return failure("InvalidStoredRecord", decoded.errors);
   }
   if (
-    decoded.record.lifecycleState !== row.lifecycle_state
-    || decoded.record.audience !== row.audience
+    decoded.record.audience !== row.audience
     || decoded.record.source !== row.source_identity
     || decoded.record.effectiveDate !== row.effective_date
   ) {
@@ -205,12 +304,17 @@ function rowResult(
       "Persisted Knowledge Record metadata is inconsistent.",
     ]);
   }
+  if (!isKnowledgeLifecycle(row.lifecycle_state)) {
+    return failure("InvalidStoredRecord", [
+      "Persisted Knowledge Record lifecycle is invalid.",
+    ]);
+  }
   return {
     status: "success",
     value: detachKnowledgeRevisionSnapshot({
       scope,
       revision: row.revision,
-      lifecycleStatus: decoded.record.lifecycleState,
+      lifecycleStatus: row.lifecycle_state,
       record: decoded.record,
     }),
   };
@@ -234,4 +338,48 @@ function isUniqueViolation(error: unknown): boolean {
     && typeof error === "object"
     && "code" in error
     && error.code === "23505";
+}
+
+function validTransitionContext(
+  input: Readonly<TransitionKnowledgeLifecycleInput>,
+): boolean {
+  return input.context.authorization.decision === "authorized"
+    && input.context.audit.subject === "knowledge-record"
+    && Number.isInteger(input.context.expectedRevision)
+    && input.context.expectedRevision >= 0
+    && canonical(input.context.requestId)
+    && canonical(input.context.authorization.actorId)
+    && canonical(input.context.authorization.decisionId)
+    && canonical(input.context.audit.auditEventId)
+    && input.context.audit.reason.trim().length > 0;
+}
+
+function isKnowledgeLifecycle(
+  value: string,
+): value is KnowledgeRevisionSnapshot["lifecycleStatus"] {
+  return [
+    "draft", "under-review", "approved", "active", "expired",
+    "superseded", "suspended", "archived", "rejected",
+  ].includes(value);
+}
+
+async function rollbackFailure(
+  client: PoolClient,
+  reason: ConfigurationRepositoryFailureReason,
+  errors: readonly string[],
+): Promise<ConfigurationRepositoryResult<KnowledgeRevisionSnapshot>> {
+  await rollbackSafely(client);
+  return failure(reason, errors);
+}
+
+async function rollbackSafely(client: PoolClient): Promise<void> {
+  try {
+    await client.query("ROLLBACK");
+  } catch {
+    // The bounded operation remains a failure without exposing driver detail.
+  }
+}
+
+function canonical(value: string): boolean {
+  return value.length > 0 && value === value.trim();
 }

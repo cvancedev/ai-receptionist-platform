@@ -33,6 +33,11 @@ const POSTGRESQL_MIGRATIONS = [
     name: "configuration_activations",
     fileName: "005_configuration_activations.sql",
   },
+  {
+    version: 6,
+    name: "configuration_lifecycle_transitions",
+    fileName: "006_configuration_lifecycle_transitions.sql",
+  },
 ] as const;
 
 export async function applyPostgresqlMigrations(

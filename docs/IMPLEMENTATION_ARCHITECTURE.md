@@ -423,4 +423,12 @@ configuration failures, rollback and commit-failure recovery, exact scope and
 conversation pins, durable corruption rejection, and restart behavior against
 real PostgreSQL. No production source, migration, schema, dependency, default
 wiring, retry, repair, replay, customer release, or external action is added.
-Milestone 7.7 has not started.
+The Sprint 7 lifecycle remediation adds an application-owned lifecycle
+coordinator and migration 006. The coordinator alone decides validation,
+authorization, legal transitions, activation prerequisites, and exact
+inspection. PostgreSQL adapters persist already-authorized envelope changes
+with optimistic concurrency and append bounded transition audit evidence in
+the same transaction; immutable version documents remain unchanged. The
+focused real-PostgreSQL verifier completes the fictional lifecycle without SQL
+state seeding. Milestone 7.7 certification remains incomplete, and Sprint 8
+has not started.

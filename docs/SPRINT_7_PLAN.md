@@ -3,7 +3,8 @@
 ## Status
 
 Milestones 7.0 through 7.6 are complete. Sprint 6 remains certified complete.
-Milestone 7.7 has not started.
+The certification-blocking lifecycle remediation is complete and validated.
+Milestone 7.7 certification remains incomplete.
 
 This plan preserves the certified Sprint 6 boundaries and refines Phase 5 of
 the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md) into independently
@@ -117,9 +118,23 @@ administration, or the end-to-end MVP.
 - Correct certification-blocking defects within scope, then determine whether
   Sprint 7 satisfies its exit criteria.
 
+### Certification-blocking lifecycle remediation
+
+**Status: Complete; awaiting its separate scoped commit before certification**
+
+- Add one application-owned coordinator for the existing Business Profile and
+  Knowledge Record lifecycle vocabularies.
+- Require exact scope, expected revision, validation, authorization, legal
+  source/target state, activation evidence, and bounded audit context.
+- Persist accepted envelope transitions and append-only audit evidence through
+  migration 006 without rewriting immutable version documents.
+- Prove the complete fictional lifecycle and negative boundaries against real
+  PostgreSQL without direct SQL lifecycle seeding.
+
 Each implementation milestone requires separate instructions and validation.
-Milestone 7.6 is complete. Milestone 7.7 remains unauthorized and has not
-started.
+Milestone 7.6 and the lifecycle remediation are complete. Milestone 7.7
+certification remains incomplete until the remediation is committed from a
+clean checkpoint.
 
 ## 4. Repository Boundaries
 

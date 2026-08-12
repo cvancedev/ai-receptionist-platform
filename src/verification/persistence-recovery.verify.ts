@@ -579,6 +579,7 @@ async function verifyIncompatibleMigrationHistory(): Promise<void> {
       { version: 3, name: "business_profile_versions" },
       { version: 4, name: "knowledge_record_versions" },
       { version: 5, name: "configuration_activations" },
+      { version: 6, name: "configuration_lifecycle_transitions" },
       { version: 99, name: "fictional_newer_migration" },
     ],
     "migration-history rejection performs no destructive repair",
@@ -622,6 +623,7 @@ async function verifyMigrationOrder(): Promise<void> {
       { version: 3, name: "business_profile_versions" },
       { version: 4, name: "knowledge_record_versions" },
       { version: 5, name: "configuration_activations" },
+      { version: 6, name: "configuration_lifecycle_transitions" },
     ],
     "the complete ordered migration history is present",
   );

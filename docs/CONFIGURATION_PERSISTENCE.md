@@ -78,4 +78,10 @@ malformed, incompatible, unavailable, stale, duplicate, concurrent, rollback,
 commit-failure, restart, and cross-scope behavior. Failed reads and writes do
 not repair storage, reconstruct authority from audit history, broaden scope,
 fall back to fixtures, repin conversations, retry, replay, or partially commit.
-Milestone 7.7 has not started.
+The lifecycle remediation adds migration 006 and implements the existing
+transition contracts. PostgreSQL locks one exact scoped revision, enforces the
+expected repository revision, updates only lifecycle/revision envelope state,
+and appends bounded transition evidence in one transaction. The application
+coordinator remains authoritative for validation, authorization, transition
+legality, and activation prerequisites. Immutable profile and knowledge
+documents are not rewritten. Milestone 7.7 certification remains incomplete.

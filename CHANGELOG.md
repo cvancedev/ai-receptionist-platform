@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Changed
+
+- Completed the Sprint 7 lifecycle-remediation workflow for application-owned Business Profile review, Knowledge Record review and approval, activation prerequisites, suspension, and exact inspection.
+- Added ordered migration 006 for atomic expected-revision lifecycle-envelope transitions and bounded append-only transition audit evidence while preserving immutable version documents.
+- Added real-PostgreSQL proof that the fictional configuration lifecycle completes without direct SQL state seeding and fails closed for invalid, unauthorized, stale, duplicate, cross-business, skipped, backwards, suspended, and ineligible transitions.
+- Kept Sprint 7.7 certification incomplete and Sprint 8 not started.
+
 ### Sprint 7.6 - Configuration Failure, Recovery, and Isolation Verification
 
 - Added a focused real-PostgreSQL verification command composing the existing Business Profile, knowledge, activation, activated-prototype, and configuration-recovery evidence.

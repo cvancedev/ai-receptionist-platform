@@ -57,7 +57,8 @@ async function verifyMigrationHistory(): Promise<void> {
     { version: 3, name: "business_profile_versions" },
     { version: 4, name: "knowledge_record_versions" },
     { version: 5, name: "configuration_activations" },
-  ], "integration reuses exact migrations 001-005");
+    { version: 6, name: "configuration_lifecycle_transitions" },
+  ], "integration reuses exact migrations 001-006");
 }
 
 async function verifyInitializationProgressAndRestart(): Promise<void> {

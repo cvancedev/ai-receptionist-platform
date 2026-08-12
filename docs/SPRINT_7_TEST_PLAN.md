@@ -5,7 +5,8 @@
 This document defines the verification gates for Sprint 7 Business
 Configuration. Milestones 7.1 through 7.6 provide contract, durable-version,
 atomic-activation, opt-in activated-context integration, and failure/recovery
-evidence. Milestone 7.7 has not started.
+evidence. The certification-blocking lifecycle remediation is complete and
+validated; Milestone 7.7 certification remains incomplete.
 
 ## Milestone 7.1 Contract Verification
 
@@ -77,5 +78,14 @@ prohibited authority.
   PostgreSQL together with the existing Sprint 6 persistence recovery suites.
 - **7.7:** Full evidence-based Sprint 7 certification.
 
-The 7.6 gate is complete. The 7.7 gate remains future evidence and is not
-authorized or started.
+The focused `npm.cmd run verify:configuration-lifecycle-remediation` gate
+proves application-owned review, approval, activation prerequisites,
+activation, inspection, and suspension for one fictional business. It also
+proves invalid structure, skipped and backwards transitions, stale revision,
+wrong-business scope, denied authorization, duplicate request identity,
+unapproved activation, suspended ineligibility, durable pin preservation, and
+immutable version documents against real PostgreSQL without SQL lifecycle
+seeding.
+
+The 7.6 and lifecycle-remediation gates are complete. The 7.7 certification
+gate remains incomplete pending the separate remediation commit.

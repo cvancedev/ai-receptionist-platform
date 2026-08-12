@@ -51,12 +51,16 @@ recognized lifecycle vocabulary, and business scope; a future conversation-use
 implementation must additionally require active lifecycle and all documented
 knowledge eligibility conditions.
 
-## Operation Vocabulary
+## Implemented Transition Vocabulary
 
-Milestone 7.1 defines create draft, validate, submit for review, approve,
-activate, suspend, and inspect. It does not implement a transition matrix or any
-of these operations. Later milestones must specify and verify every allowed
-source/target transition before behavior is added.
+The lifecycle remediation implements the smallest existing-state matrix needed
+for certification. Business Profiles allow `draft` to `ready-for-review`,
+`ready-for-review` to `active`, and `active` to `suspended`. Knowledge Records
+allow `draft` to `under-review`, `under-review` to `approved`, `approved` to
+`active`, and `active` to `suspended`. All other source/target pairs fail
+closed. Activation remains a separate application-owned atomic decision and
+must exist for the exact profile and selected knowledge before their envelope
+lifecycle may enter `active`.
 
 ## Version Rules
 
@@ -90,4 +94,7 @@ the historical activation for that pin after replacement or restart. It does
 not mutate configuration documents, silently repin conversations, or add a
 public administration workflow. Milestone 7.6 verifies that invalid, stale,
 duplicate, malformed, unavailable, and failed-transaction paths preserve the
-last committed lifecycle authority. Milestone 7.7 has not started.
+last committed lifecycle authority. The lifecycle remediation adds the
+application-controlled transition and inspection workflow plus bounded durable
+audit evidence without changing immutable version documents. Milestone 7.7
+certification remains incomplete.

@@ -103,4 +103,9 @@ and proves exact conversation ownership before pinned context construction.
 The ordinary prototype remains fixture-backed, public administration remains
 absent. Milestone 7.6 verifies failure, recovery, isolation, corruption,
 rollback, restart, and prohibited-capability behavior against real PostgreSQL.
-Milestone 7.7 has not started.
+The lifecycle remediation implements the planned application authority flow.
+One coordinator validates exact scope and structure, authorization, legal
+source/target state, expected revision, activation evidence, and audit context
+before an accepted fact reaches a repository. Repositories persist that fact
+atomically and do not decide lifecycle legality. Exact inspection returns
+detached immutable snapshots. Milestone 7.7 certification remains incomplete.

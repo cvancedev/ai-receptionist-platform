@@ -53,7 +53,8 @@ async function verifyMigration(): Promise<void> {
     { version: 3, name: "business_profile_versions" },
     { version: 4, name: "knowledge_record_versions" },
     { version: 5, name: "configuration_activations" },
-  ], "ordered migrations 001-005 are compatible and idempotent");
+    { version: 6, name: "configuration_lifecycle_transitions" },
+  ], "ordered migrations 001-006 are compatible and idempotent");
 }
 
 async function verifyEligibilityAuthorizationAndIsolation(): Promise<void> {

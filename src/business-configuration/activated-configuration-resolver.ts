@@ -109,7 +109,7 @@ export class ActivatedConfigurationResolver {
     }
     if (
       profile.value.lifecycleStatus !== "ready-for-review"
-      || profile.value.profile.status !== "ready-for-review"
+      && profile.value.lifecycleStatus !== "active"
     ) {
       return failure("ProfileInvalid", [
         "Activated Business Profile evidence is inconsistent.",
@@ -143,7 +143,7 @@ export class ActivatedConfigurationResolver {
       }
       if (
         stored.value.lifecycleStatus !== "approved"
-        || stored.value.record.lifecycleState !== "approved"
+        && stored.value.lifecycleStatus !== "active"
       ) {
         return failure("KnowledgeIneligible", [
           "Activated knowledge is no longer eligible for conversation use.",

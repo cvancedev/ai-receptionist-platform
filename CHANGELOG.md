@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Dependency Security Maintenance
+
+- Upgraded Next.js from `16.2.12` to `16.3.0` through its supported stable release and regenerated the lockfile normally.
+- Resolved the production tree to PostCSS `8.5.23`, Sharp `0.35.3`, and nanoid `3.3.18`, closing the current PostCSS, Sharp/libvips, and nanoid advisories without overrides or new dependencies.
+- Refreshed development-only brace-expansion to `1.1.18` and `5.0.9` and js-yaml to `4.3.1` through their declared parent ranges after a broader audit identified additional build-tool advisories.
+- Updated the dependency-security record with current affected ranges, patched floors, application reachability, and future review conditions; `npm audit --omit=dev` now reports zero vulnerabilities.
+- Added no product behavior, Sprint 7.5 completion claim, migration, schema change, authentication, provider, customer release, or external action.
+
 ### Sprint 7.4 - Atomic Activation and Active-Configuration Resolution
 
 - Added application-owned activation contracts and coordination for exact validated Business Profile and approved Knowledge Record revisions.

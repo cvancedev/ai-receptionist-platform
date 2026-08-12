@@ -95,24 +95,28 @@ Technology selection does not authorize implementation or grant application auth
 | Administration built too early | Optimizes configuration before workflow value | Use fixtures until conversation workflow validates | Before Phase 5 |
 | Recommendations confused with decisions | Allows unauthorized effects | Application-owned validation and audit | Phases 2–7 |
 
-### Temporary Accepted Dependency Risks
+### Dependency Security Risk Status
 
-The Next.js 16.2.12 security maintenance upgrade resolves the advisories
-affecting Next.js 16.2.10 itself. Two transitive dependency risks remain
-temporarily accepted because the current stable Next.js package continues to
-declare the vulnerable versions and overriding those declarations would move
-outside Next.js's supported dependency ranges:
+The supported Next.js `16.3.0` upgrade closes the prior temporary PostCSS and
+Sharp risks and the later nanoid finding without overrides or direct transitive
+dependencies. The resolved production tree uses PostCSS `8.5.23`, Sharp
+`0.35.3`, and nanoid `3.3.18`; `npm audit --omit=dev` reports zero
+vulnerabilities.
 
-| Dependency | Installed vulnerable version | Patched floor | Current exposure and disposition |
-| --- | --- | --- | --- |
-| Next.js-nested PostCSS | `8.4.31` | `8.5.18` | The application processes repository-owned CSS during trusted builds and exposes no attacker-controlled CSS ingestion, transformation, theme upload, or runtime PostCSS path. This is a temporary accepted dependency risk, not permanent remediation. Reevaluate it on every future Next.js upgrade and resolve it before any production capability processes untrusted CSS. |
-| Next.js optional Sharp | `0.34.5` | `0.35.0` | The application does not use `next/image`, remote image patterns, image uploads, or another attacker-controlled image-processing path. This is a temporary accepted dependency risk, not permanent remediation. Reevaluate it on every future Next.js upgrade and resolve it before any production capability processes untrusted images. |
+| Dependency | Prior affected version | Affected range | Patched floor | Resolved version | Disposition |
+| --- | --- | --- | --- | --- | --- |
+| nanoid | `3.3.16` | `<3.3.17` | `3.3.17` | `3.3.18` | Remediated through PostCSS's supported `^3.3.16` range and a normal transitive lockfile update. No application code imports nanoid or exposes its custom-generator API. |
+| PostCSS | `8.4.31` | `<=8.5.22` across the current advisory set | `8.5.23` | `8.5.23` | Remediated through Next.js's declared dependency. The application still has no attacker-controlled CSS ingestion, transformation, theme upload, or runtime PostCSS path. |
+| Sharp | `0.34.5` | `<0.35.0` | `0.35.0` | `0.35.3` | Remediated through Next.js's declared optional dependency. The application still has no `next/image`, remote-image configuration, image upload, or other untrusted image-processing path. |
 
-The absence of a currently reachable untrusted-input path reduces exposure but
-does not make the vulnerable versions acceptable indefinitely. A future
-framework release that supports patched PostCSS and Sharp versions is preferred
-over unsupported overrides. Any relevant product or deployment change must
-reopen these risks before release.
+These findings are no longer accepted risks. Dependency advisories must still
+be reevaluated on every framework upgrade and before introducing untrusted CSS
+or image processing. A newly reported advisory must be remediated or explicitly
+reviewed before release; a previously clean audit is not permanent evidence.
+The same maintenance review also refreshed development-only brace-expansion to
+`1.1.18` and `5.0.9` and js-yaml to `4.3.1` through their existing parent
+ranges. The complete npm audit and the production-only audit both report zero
+vulnerabilities.
 
 ## MVP Boundary
 

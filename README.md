@@ -75,7 +75,7 @@ Canonical URLs, domain-dependent metadata, sitemap discovery in `robots.txt`, an
 - The AI receptionist product is under development and does not provide live call handling.
 - Contact is email-based; there are no forms, accounts, storage, payments, analytics, scheduling, or dashboards.
 - The current brand and contact information are placeholders.
-- Next.js is pinned to the patched `16.2.12` release. `npm audit --omit=dev` reports three affected high-severity package nodes because Next.js still depends on two vulnerable transitive packages: nested PostCSS `8.4.31` and optional Sharp `0.34.5`. Their temporary accepted-risk disposition and production entry criteria are recorded in the [Implementation Architecture Risk Register](docs/IMPLEMENTATION_ARCHITECTURE.md#temporary-accepted-dependency-risks).
+- Next.js is pinned to `16.3.0`. Its supported dependency tree resolves PostCSS `8.5.23`, Sharp `0.35.3`, and nanoid `3.3.18`; `npm audit --omit=dev` reports zero vulnerabilities. The remediation and future review conditions are recorded in the [Implementation Architecture dependency-security record](docs/IMPLEMENTATION_ARCHITECTURE.md#dependency-security-risk-status).
 
 ## Validation
 

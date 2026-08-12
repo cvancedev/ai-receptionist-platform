@@ -400,3 +400,22 @@ preserves the previous pointer; active reads fail closed and return immutable
 scope-only snapshots. No profile or knowledge document changes, prototype
 wiring, conversation repinning, provider behavior, customer release, external
 action, or Milestone 7.5 workflow exists.
+
+## Sprint 7.5 Activated Configuration Prototype Status
+
+Milestone 7.5 adds an opt-in application resolver and prototype integration for
+one exact activated configuration. New fictional conversations resolve the
+current activation, validate and reconstruct its exact Business Profile and
+only its explicitly bound customer-eligible knowledge, then persist the
+selected profile version in Conversation State. Recovery first proves exact
+business/profile/conversation ownership and resolves the historical activation
+for that pin; it never substitutes the current activation, broadens scope, or
+falls back to fixtures.
+
+The activated path supplies the resolved configuration to the existing
+deterministic/mock-only context, Transition Registry, State Executor, Progress
+Engine, transaction, journal, and read-model boundaries. The ordinary
+prototype remains fixture-backed by default. No migration, schema, dependency,
+UI, public administration, production authentication, real provider,
+customer-release authority, external action, silent repinning, or Milestone
+7.6 behavior is added.

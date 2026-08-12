@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 5 are certified complete with the deterministic fictional prototype, provider-neutral mock AI foundation, one controlled in-memory transition, immutable read and audit boundaries, and application-owned progress decisions. Sprint 6 is certified complete. Sprint 7.4 completes opt-in application-owned atomic activation and exact active-configuration resolution over durable Business Profile and Knowledge Record versions. Milestone 7.5 has not started. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, production database connection, authentication, external integration, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 5 are certified complete with the deterministic fictional prototype, provider-neutral mock AI foundation, one controlled in-memory transition, immutable read and audit boundaries, and application-owned progress decisions. Sprint 6 is certified complete. Sprint 7.5 completes the opt-in fictional path from one exact activated Business Profile and its bound knowledge into durable, version-pinned conversation context. Milestone 7.6 has not started. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, production database connection, authentication, external integration, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -98,6 +98,11 @@ npm run verify:postgresql-execution-journal
 npm run verify:postgresql-transactional-execution
 npm run verify:postgresql-restart-safe-prototype
 npm run verify:persistence-recovery
+npm run verify:business-configuration-contracts
+npm run verify:postgresql-business-profile-versions
+npm run verify:postgresql-knowledge-versions
+npm run verify:postgresql-configuration-activation
+npm run verify:activated-configuration-prototype
 ```
 
 ## Documentation
@@ -214,4 +219,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3 through Sprint 6 remain certified complete. Sprint 7.4 is complete with ordered migration 005, application-owned activation eligibility and authorization checks, one atomic PostgreSQL activation transaction, immutable activation history, explicit selected knowledge, and one exact active pointer per business. It adds no administration workflow, prototype or conversation integration, conversation repinning, production authentication, provider integration, customer release, external action, or end-to-end MVP work. Existing fixtures remain the ordinary prototype default. Milestone 7.5 has not started. See the [Sprint 7 Plan](docs/SPRINT_7_PLAN.md).
+Sprint 3 through Sprint 6 remain certified complete. Sprint 7.5 is complete with opt-in application-owned reconstruction and validation of the exact activated Business Profile and bound knowledge for a fictional conversation. New conversations persist the selected profile version; existing conversations recover their original version after reactivation and restart. Exact business/profile/conversation ownership is required before context construction, while existing fixtures remain the ordinary prototype default. No public administration, production authentication, real provider, customer release, external action, or end-to-end MVP work was added. Milestone 7.6 has not started. See the [Sprint 7 Plan](docs/SPRINT_7_PLAN.md).

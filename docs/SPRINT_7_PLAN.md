@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 7.0 through 7.4 are complete. Sprint 6 remains certified complete.
-Milestone 7.5 has not started.
+Milestones 7.0 through 7.5 are complete. Sprint 6 remains certified complete.
+Milestone 7.6 has not started.
 
 This plan preserves the certified Sprint 6 boundaries and refines Phase 5 of
 the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md) into independently
@@ -87,10 +87,15 @@ administration, or the end-to-end MVP.
 
 ### 7.5: Minimal Fictional Configuration Workflow
 
-- Provide an explicitly opt-in internal workflow that allows one fictional
-  business to draft, validate, review, activate, suspend, and inspect its
-  essential configuration without direct SQL.
-- Integrate only after the lifecycle and persistence boundaries are proven.
+**Status: Complete**
+
+- Provide an explicitly opt-in internal workflow that resolves one exact
+  activated configuration for fictional conversation use without direct SQL.
+- Apply application-owned conversation-use validation before the activated
+  Business Profile and its explicitly bound knowledge enter context.
+- Pin each new fictional conversation to the active Business Profile version,
+  preserve that exact pin through reactivation and restart, and fail closed
+  when the requested conversation does not own the pin.
 - Keep the ordinary deterministic prototype behavior and fixtures available;
   do not add a public admin product or production authentication.
 
@@ -111,7 +116,7 @@ administration, or the end-to-end MVP.
   Sprint 7 satisfies its exit criteria.
 
 Each implementation milestone requires separate instructions and validation.
-Milestones 7.5 through 7.7 remain unauthorized and have not started.
+Milestones 7.6 and 7.7 remain unauthorized and have not started.
 
 ## 4. Repository Boundaries
 

@@ -12,6 +12,15 @@ All notable changes to this project will be documented in this file. The format 
 - Updated the dependency-security record with current affected ranges, patched floors, application reachability, and future review conditions; `npm audit --omit=dev` now reports zero vulnerabilities.
 - Added no product behavior, Sprint 7.5 completion claim, migration, schema change, authentication, provider, customer release, or external action.
 
+### Sprint 7.5 - Minimal Fictional Configuration Workflow
+
+- Added an explicitly opt-in application path that reconstructs and validates one exact activated Business Profile and only its bound Knowledge Record versions before fictional conversation use.
+- Initialized new durable conversations with the current active profile version, preserved existing conversations on their original version through later activation and restart, and required exact business/profile/conversation ownership before pinned context construction.
+- Integrated activated configuration with the existing deterministic mock AI foundation, controlled Transition Registry execution, Progress Engine, transaction coordinator, journal, and read-model boundaries while preserving the fixture-backed default prototype.
+- Added focused real-PostgreSQL verification for exact knowledge selection, controlled progression, restart recovery, reactivation pinning, wrong-conversation isolation, no configuration fallback, and prohibited capabilities.
+- Corrected the activated runtime customer-message identifier and the ordering of exact conversation ownership validation before context construction.
+- Added no migration, dependency change, UI, public administration, production authentication, real provider, customer release, external action, silent repinning, or Milestone 7.6 behavior.
+
 ### Sprint 7.4 - Atomic Activation and Active-Configuration Resolution
 
 - Added application-owned activation contracts and coordination for exact validated Business Profile and approved Knowledge Record revisions.

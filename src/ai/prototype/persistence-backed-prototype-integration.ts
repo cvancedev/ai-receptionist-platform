@@ -25,12 +25,14 @@ import { CONVERSATION_READ_MODEL_ACTIONS } from "../../conversation-read-model/c
 import { buildPrototypeProjectionContext } from "../../conversation-read-model/prototype-projection-context";
 import type { BusinessProfile } from "../../domain/business-profile";
 import type { ConversationState } from "../../domain/conversation-state";
+import type { KnowledgeRecord } from "../../domain/knowledge-record";
 import { validateBusinessProfile } from "../../validation/business-profile-validation";
 import { AiFoundationPrototypeOrchestrator } from "./ai-foundation-orchestrator";
 
 export interface PersistenceBackedPrototypeConfiguration {
   readonly scope: Readonly<ConversationStoreScope>;
   readonly businessProfile: Readonly<BusinessProfile>;
+  readonly knowledge?: readonly Readonly<KnowledgeRecord>[];
 }
 
 export interface PersistenceBackedPrototypeDependencies {
@@ -97,6 +99,7 @@ export class PersistenceBackedPrototypeIntegration {
   private readonly readModelProjector = new ConversationReadModelProjector();
   private readonly configuredScope: Readonly<ConversationStoreScope>;
   private readonly profile: Readonly<BusinessProfile>;
+  private readonly knowledge: readonly Readonly<KnowledgeRecord>[] | null;
 
   constructor(
     configuration: Readonly<PersistenceBackedPrototypeConfiguration>,
@@ -104,6 +107,9 @@ export class PersistenceBackedPrototypeIntegration {
   ) {
     this.configuredScope = Object.freeze({ ...configuration.scope });
     this.profile = structuredClone(configuration.businessProfile);
+    this.knowledge = configuration.knowledge
+      ? structuredClone(configuration.knowledge)
+      : null;
     this.stateManager = ConversationStateManager.usingStore(
       dependencies.conversationStore,
     );
@@ -181,6 +187,15 @@ export class PersistenceBackedPrototypeIntegration {
     }
     const controlled = await new AiFoundationPrototypeOrchestrator({
       executionManager,
+      ...(this.knowledge
+        ? {
+            runtimeConfiguration: {
+              businessProfile: this.profile,
+              knowledge: this.knowledge,
+              conversationId: scope.conversationId,
+            },
+          }
+        : {}),
     }).runWithExecution("valid_intent");
     if (controlled.status === "failure") {
       return advanceFailure("ExecutionUnavailable");

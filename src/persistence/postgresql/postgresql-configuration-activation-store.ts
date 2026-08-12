@@ -349,77 +349,139 @@ implements AtomicConfigurationActivationStore {
           "Active configuration was not found in the requested scope.",
         ]);
       }
-      if (
-        row.active_record_format_version !== RECORD_FORMAT_VERSION
-        || row.activation_record_format_version !== RECORD_FORMAT_VERSION
-      ) {
-        return readFailure("IncompatibleStoredRecord", [
-          "Active configuration uses an unsupported format version.",
-        ]);
-      }
-      if (
-        row.business_profile_id !== businessProfileId
-        || !isPositiveInteger(row.activation_revision)
-        || !isPositiveInteger(row.business_profile_version)
-        || !isCanonicalIdentifier(row.request_id)
-        || Number.isNaN(Date.parse(String(row.activated_at)))
-        || (row.prior_activation_revision === null)
-          !== (row.prior_business_profile_version === null)
-        || (row.prior_activation_revision !== null
-          && !isPositiveInteger(row.prior_activation_revision))
-        || (row.prior_business_profile_version !== null
-          && !isPositiveInteger(row.prior_business_profile_version))
-      ) {
-        return readFailure("InvalidStoredRecord", [
-          "Active configuration envelope is invalid.",
-        ]);
-      }
-      const selection = decodeSelection(row.knowledge_selection);
-      if (!selection) {
-        return readFailure("InvalidStoredRecord", [
-          "Active configuration selection is invalid.",
-        ]);
-      }
-      const associations = await this.pool.query<KnowledgeAssociationRow>(
-        `SELECT business_profile_version, knowledge_record_id, knowledge_record_version,
-          expected_knowledge_revision, resulting_lifecycle_state
-        FROM ${this.associations}
-        WHERE business_profile_id = $1 AND activation_revision = $2
-        ORDER BY knowledge_record_id, knowledge_record_version`,
-        [row.business_profile_id, row.activation_revision],
-      );
-      if (!associationMatches(
-        selection,
-        associations.rows,
-        row.business_profile_version,
-      )) {
-        return readFailure("InvalidStoredRecord", [
-          "Active configuration knowledge evidence is inconsistent.",
-        ]);
-      }
-      return {
-        status: "success",
-        value: detachSnapshot({
-          businessProfileId: row.business_profile_id,
-          businessProfileVersion: row.business_profile_version,
-          activationRevision: row.activation_revision,
-          requestId: row.request_id,
-          activatedAt: new Date(row.activated_at).toISOString(),
-          priorActivationRevision: row.prior_activation_revision,
-          priorBusinessProfileVersion: row.prior_business_profile_version,
-          knowledge: selection.map((item) => ({
-            businessProfileId: row.business_profile_id,
-            businessProfileVersion: row.business_profile_version,
-            knowledgeRecordId: item.knowledgeRecordId,
-            knowledgeRecordVersion: item.knowledgeRecordVersion,
-          })),
-        }),
-      };
+      return this.decodeReadRow(row, businessProfileId);
     } catch {
       return readFailure("InfrastructureFailure", [
         "Active configuration persistence is unavailable.",
       ]);
     }
+  }
+
+  async readForProfileVersion(
+    businessProfileId: string,
+    businessProfileVersion: number,
+  ): Promise<ActiveConfigurationReadResult> {
+    if (
+      !isCanonicalIdentifier(businessProfileId)
+      || !isPositiveInteger(businessProfileVersion)
+    ) {
+      return readFailure("InvalidScope", [
+        "Activated configuration scope is invalid.",
+      ]);
+    }
+    try {
+      const result = await this.pool.query<ActiveConfigurationRow>(
+        `SELECT
+          activation.business_profile_id, activation.activation_revision,
+          activation.business_profile_version, activation.request_id,
+          activation.record_format_version AS active_record_format_version,
+          activation.record_format_version AS activation_record_format_version,
+          activation.activated_at,
+          activation.prior_activation_revision,
+          activation.prior_business_profile_version,
+          activation.knowledge_selection
+        FROM ${this.activations} AS activation
+        WHERE activation.business_profile_id = $1
+          AND activation.business_profile_version = $2
+        ORDER BY activation.activation_revision
+        LIMIT 2`,
+        [businessProfileId, businessProfileVersion],
+      );
+      if (result.rows.length === 0) {
+        return readFailure("NotFound", [
+          "Activated configuration was not found in the requested scope.",
+        ]);
+      }
+      if (result.rows.length !== 1) {
+        return readFailure("InvalidStoredRecord", [
+          "Activated configuration history is ambiguous for the requested scope.",
+        ]);
+      }
+      return this.decodeReadRow(
+        result.rows[0],
+        businessProfileId,
+        businessProfileVersion,
+      );
+    } catch {
+      return readFailure("InfrastructureFailure", [
+        "Activated configuration persistence is unavailable.",
+      ]);
+    }
+  }
+
+  private async decodeReadRow(
+    row: ActiveConfigurationRow,
+    businessProfileId: string,
+    expectedBusinessProfileVersion?: number,
+  ): Promise<ActiveConfigurationReadResult> {
+    if (
+      row.active_record_format_version !== RECORD_FORMAT_VERSION
+      || row.activation_record_format_version !== RECORD_FORMAT_VERSION
+    ) {
+      return readFailure("IncompatibleStoredRecord", [
+        "Activated configuration uses an unsupported format version.",
+      ]);
+    }
+    if (
+      row.business_profile_id !== businessProfileId
+      || (expectedBusinessProfileVersion !== undefined
+        && row.business_profile_version !== expectedBusinessProfileVersion)
+      || !isPositiveInteger(row.activation_revision)
+      || !isPositiveInteger(row.business_profile_version)
+      || !isCanonicalIdentifier(row.request_id)
+      || Number.isNaN(Date.parse(String(row.activated_at)))
+      || (row.prior_activation_revision === null)
+        !== (row.prior_business_profile_version === null)
+      || (row.prior_activation_revision !== null
+        && !isPositiveInteger(row.prior_activation_revision))
+      || (row.prior_business_profile_version !== null
+        && !isPositiveInteger(row.prior_business_profile_version))
+    ) {
+      return readFailure("InvalidStoredRecord", [
+        "Activated configuration envelope is invalid.",
+      ]);
+    }
+    const selection = decodeSelection(row.knowledge_selection);
+    if (!selection) {
+      return readFailure("InvalidStoredRecord", [
+        "Activated configuration selection is invalid.",
+      ]);
+    }
+    const associations = await this.pool.query<KnowledgeAssociationRow>(
+      `SELECT business_profile_version, knowledge_record_id, knowledge_record_version,
+        expected_knowledge_revision, resulting_lifecycle_state
+      FROM ${this.associations}
+      WHERE business_profile_id = $1 AND activation_revision = $2
+      ORDER BY knowledge_record_id, knowledge_record_version`,
+      [row.business_profile_id, row.activation_revision],
+    );
+    if (!associationMatches(
+      selection,
+      associations.rows,
+      row.business_profile_version,
+    )) {
+      return readFailure("InvalidStoredRecord", [
+        "Activated configuration knowledge evidence is inconsistent.",
+      ]);
+    }
+    return {
+      status: "success",
+      value: detachSnapshot({
+        businessProfileId: row.business_profile_id,
+        businessProfileVersion: row.business_profile_version,
+        activationRevision: row.activation_revision,
+        requestId: row.request_id,
+        activatedAt: new Date(row.activated_at).toISOString(),
+        priorActivationRevision: row.prior_activation_revision,
+        priorBusinessProfileVersion: row.prior_business_profile_version,
+        knowledge: selection.map((item) => ({
+          businessProfileId: row.business_profile_id,
+          businessProfileVersion: row.business_profile_version,
+          knowledgeRecordId: item.knowledgeRecordId,
+          knowledgeRecordVersion: item.knowledgeRecordVersion,
+        })),
+      }),
+    };
   }
 
   async close(): Promise<void> {

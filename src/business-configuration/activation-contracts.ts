@@ -108,4 +108,8 @@ export interface AtomicConfigurationActivationStore {
   readActive(
     businessProfileId: string,
   ): Promise<ActiveConfigurationReadResult>;
+  readForProfileVersion(
+    businessProfileId: string,
+    businessProfileVersion: number,
+  ): Promise<ActiveConfigurationReadResult>;
 }

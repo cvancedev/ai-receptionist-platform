@@ -192,4 +192,8 @@ Milestone 7.4 requires every selected Knowledge Record revision to carry
 validation, and belong to the exact activating profile scope. The atomic
 activation record associates those immutable versions with an `active`
 configuration without overwriting their documents. Retrieval eligibility and
-workflow integration remain unimplemented; Milestone 7.5 has not started.
+workflow integration are implemented only in the opt-in Milestone 7.5
+fictional conversation path: the application loads the exact activation-bound
+versions, enforces business/profile scope, customer audience, effective date,
+structure, and conflicts, and fails without fixture fallback. Broader failure
+and recovery coverage remains assigned to Milestone 7.6, which has not started.

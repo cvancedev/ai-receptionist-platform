@@ -83,4 +83,9 @@ Milestone 7.4 records an application-authorized transition from one exact
 knowledge revisions into an immutable active-configuration record. Version
 documents and their pre-activation evidence are not overwritten. Replacement
 changes one active pointer atomically while retaining prior activation history.
-Workflow integration remains assigned to Milestone 7.5, which has not started.
+Milestone 7.5 consumes that immutable evidence through an opt-in fictional
+conversation path. It validates exact activated profile and bound knowledge
+revisions, persists the selected profile version at initialization, and reloads
+the historical activation for that pin after replacement or restart. It does
+not mutate configuration documents, silently repin conversations, or add a
+public administration workflow. Milestone 7.6 has not started.

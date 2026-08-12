@@ -96,5 +96,9 @@ Milestone 7.4 adds an application coordinator that loads exact immutable
 revisions, owns authorization and activation eligibility, and sends only an
 approved activation to a technology-neutral atomic store. The store records
 immutable activation history, selected knowledge, and one active pointer per
-business without changing version documents. Conversation integration and the
-fictional configuration workflow remain absent. Milestone 7.5 has not started.
+business without changing version documents. Milestone 7.5 adds an opt-in
+fictional conversation integration that reconstructs and validates the exact
+activated profile and bound knowledge, persists the selected profile version,
+and proves exact conversation ownership before pinned context construction.
+The ordinary prototype remains fixture-backed, public administration remains
+absent, and Milestone 7.6 has not started.

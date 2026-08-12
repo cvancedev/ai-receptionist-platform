@@ -9,6 +9,9 @@ import type {
 } from "../contracts/results";
 import { ConversationStateManager } from "../../conversation/conversation-state-manager";
 import { initializedConversationState } from "../../fixtures/conversation";
+import type { BusinessProfile } from "../../domain/business-profile";
+import type { ConversationState } from "../../domain/conversation-state";
+import type { KnowledgeRecord } from "../../domain/knowledge-record";
 import { CONVERSATION_STAGES } from "../../shared/constants";
 import { PrototypeContextPackageBuilder } from "../context/context-package-builder";
 import { ApplicationDecisionEngine } from "../decisions/application-decision-engine";
@@ -43,6 +46,11 @@ export interface AiFoundationPrototypeOptions<
 > {
   executionManager?: ConversationStateManager;
   executionJournal?: ExecutionJournalStore<JournalMode>;
+  runtimeConfiguration?: Readonly<{
+    readonly businessProfile: Readonly<BusinessProfile>;
+    readonly knowledge: readonly Readonly<KnowledgeRecord>[];
+    readonly conversationId: string;
+  }>;
 }
 
 export class AiFoundationPrototypeOrchestrator<
@@ -51,6 +59,9 @@ export class AiFoundationPrototypeOrchestrator<
   private readonly executionManager: ConversationStateManager;
   private readonly stateExecutor: DeterministicStateExecutor;
   private readonly executionJournal: ExecutionJournalStore<JournalMode>;
+  private readonly runtimeConfiguration:
+    | Readonly<NonNullable<AiFoundationPrototypeOptions["runtimeConfiguration"]>>
+    | null;
 
   constructor(
     options: AiFoundationPrototypeOptions<JournalMode> = {},
@@ -70,6 +81,13 @@ export class AiFoundationPrototypeOrchestrator<
     this.executionJournal =
       options.executionJournal
         ?? new InMemoryExecutionJournal() as unknown as ExecutionJournalStore<JournalMode>;
+    this.runtimeConfiguration = options.runtimeConfiguration
+      ? deepFreeze({
+          businessProfile: structuredClone(options.runtimeConfiguration.businessProfile),
+          knowledge: structuredClone(options.runtimeConfiguration.knowledge),
+          conversationId: options.runtimeConfiguration.conversationId,
+        })
+      : null;
   }
 
   async run(scenario: MockProviderScenario): Promise<OperationResult<AiFoundationSnapshot>> {
@@ -81,11 +99,14 @@ export class AiFoundationPrototypeOrchestrator<
     conversationState = initializedConversationState,
   ): Promise<OperationResult<AiFoundationSnapshot>> {
     const taskIdentifier = taskForScenario(scenario);
-    const fixture = createAiPrototypeFixture(
-      taskIdentifier,
-      scenario,
-      conversationState,
-    );
+    const fixture = this.runtimeConfiguration
+      ? createRuntimeFixture(
+          taskIdentifier,
+          scenario,
+          conversationState,
+          this.runtimeConfiguration,
+        )
+      : createAiPrototypeFixture(taskIdentifier, scenario, conversationState);
     const taskResult = this.tasks.resolve(taskIdentifier, 1);
     if (taskResult.status === "failure") return taskResult;
     const task = taskResult.value;
@@ -175,12 +196,7 @@ export class AiFoundationPrototypeOrchestrator<
   async runWithExecution(
     scenario: MockProviderScenario,
   ): Promise<AiControlledExecutionResult> {
-    const current = this.executionManager.snapshot({
-      conversationId: initializedConversationState.conversationId,
-      businessProfileId: initializedConversationState.businessProfileId,
-      businessProfileVersion:
-        initializedConversationState.businessProfileVersion,
-    });
+    const current = this.executionManager.snapshot(this.executionScope());
     if (current.status === "failure") {
       return { status: "failure", reason: "ExecutionStateUnavailable" };
     }
@@ -233,12 +249,21 @@ export class AiFoundationPrototypeOrchestrator<
     JournalMode,
     ExecutionJournalSnapshot
   > {
-    return this.executionJournal.snapshot({
-      conversationId: initializedConversationState.conversationId,
-      businessProfileId: initializedConversationState.businessProfileId,
-      businessProfileVersion:
-        initializedConversationState.businessProfileVersion,
-    });
+    return this.executionJournal.snapshot(this.executionScope());
+  }
+
+  private executionScope() {
+    return this.runtimeConfiguration
+      ? {
+          conversationId: this.runtimeConfiguration.conversationId,
+          businessProfileId: this.runtimeConfiguration.businessProfile.id,
+          businessProfileVersion: this.runtimeConfiguration.businessProfile.version,
+        }
+      : {
+          conversationId: initializedConversationState.conversationId,
+          businessProfileId: initializedConversationState.businessProfileId,
+          businessProfileVersion: initializedConversationState.businessProfileVersion,
+        };
   }
 
   private validateProviderResult(
@@ -270,6 +295,50 @@ export class AiFoundationPrototypeOrchestrator<
       businessProfile,
     });
   }
+}
+
+function createRuntimeFixture(
+  taskIdentifier: ModelTaskIdentifier,
+  suffix: string,
+  conversationState: ConversationState,
+  runtime: Readonly<NonNullable<AiFoundationPrototypeOptions["runtimeConfiguration"]>>,
+) {
+  const identity = {
+    requestId: `ai-request-${suffix}`,
+    traceId: `ai-trace-${suffix}`,
+    businessId: runtime.businessProfile.id,
+    conversationId: runtime.conversationId,
+    profileVersion: runtime.businessProfile.version,
+    stateRevision: conversationState.revision,
+    taskIdentifier,
+    taskVersion: 1,
+  } as const;
+  return {
+    identity,
+    contextPackageId: `context-${suffix}`,
+    promptPackageId: `prompt-${suffix}`,
+    businessIdentity: {
+      id: runtime.businessProfile.id,
+      displayName: runtime.businessProfile.businessName,
+    },
+    businessProfile: structuredClone(runtime.businessProfile),
+    conversationState: structuredClone(conversationState),
+    knowledge: structuredClone(runtime.knowledge),
+    conversationEntries: [{
+      messageId: "message-history-activated-001",
+      conversationId: runtime.conversationId,
+      source: "application" as const,
+      sequence: 1,
+      content: "How can the fictional team help?",
+    }],
+    currentCustomerInput: {
+      messageId: "message-current-001",
+      conversationId: runtime.conversationId,
+      source: "customer" as const,
+      sequence: 2,
+      content: "I need project help.",
+    },
+  };
 }
 
 async function appendExecutionResult(

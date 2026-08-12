@@ -3,8 +3,9 @@
 ## Purpose
 
 This document defines the verification gates for Sprint 7 Business
-Configuration. Milestones 7.1 through 7.4 provide contract, durable-version,
-and atomic-activation evidence. Milestone 7.5 has not started.
+Configuration. Milestones 7.1 through 7.5 provide contract, durable-version,
+atomic-activation, and opt-in activated-context integration evidence.
+Milestone 7.6 has not started.
 
 ## Milestone 7.1 Contract Verification
 
@@ -62,11 +63,15 @@ success and rollback, replacement, exact active resolution, immutable selected
 versions, duplicate and conflicting requests, stale revisions, concurrency,
 restart, corruption, tenant isolation, conversation pin preservation, and
 prohibited authority.
-- **7.5:** Opt-in fictional workflow integration without direct SQL, public
-  administration, or production authentication claims.
+- **7.5:** Complete. `npm.cmd run verify:activated-configuration-prototype`
+  proves exact active and historical configuration resolution, explicitly
+  bound knowledge, application-owned conversation eligibility, durable profile
+  pinning, deterministic/mock-only progression, restart recovery, reactivation
+  behavior, exact conversation ownership, and absence of fixture fallback,
+  public administration, or production authentication.
 - **7.6:** Complete failure, recovery, isolation, malformed-data, and prohibited
   capability matrix.
 - **7.7:** Full evidence-based Sprint 7 certification.
 
-These later gates describe required future evidence; they do not authorize or
-implement later milestones.
+The 7.6 and 7.7 gates describe required future evidence; they do not authorize
+or implement those milestones.

@@ -126,7 +126,7 @@ complete; at certification, Sprint 7 had not started. See
 - Milestone 7.2: Durable Business Profile Versions — Complete
 - Milestone 7.3: Durable Knowledge Versions and Lifecycle — Complete
 - Milestone 7.4: Atomic Activation and Active-Configuration Resolution — Complete
-- Milestone 7.5: Minimal Fictional Configuration Workflow — Not started
+- Milestone 7.5: Minimal Fictional Configuration Workflow — Complete
 - Milestone 7.6: Configuration Failure, Recovery, and Isolation Verification — Not started
 - Milestone 7.7: Sprint 7 Certification — Not started
 

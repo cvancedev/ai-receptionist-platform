@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 5 are certified complete with the deterministic fictional prototype, provider-neutral mock AI foundation, one controlled in-memory transition, immutable read and audit boundaries, and application-owned progress decisions. Sprint 6 is certified complete. Sprint 7.6 completes failure, recovery, and isolation verification for the opt-in durable Business Configuration path. The Sprint 7 lifecycle remediation now completes application-owned review, approval, activation-prerequisite, suspension, and inspection workflows for fictional configuration without SQL state seeding. Milestone 7.7 certification remains incomplete. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, production database connection, authentication, external integration, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 5 are certified complete with the deterministic fictional prototype, provider-neutral mock AI foundation, one controlled in-memory transition, immutable read and audit boundaries, and application-owned progress decisions. Sprints 6 and 7 are certified complete. Sprint 7 proves the opt-in durable Business Configuration lifecycle, including versioning, review, knowledge approval, atomic activation, exact conversation pinning, recovery, inspection, suspension, and post-suspension ineligibility for fictional data. AI remains advisory and cannot mutate state directly or release customer content. No real AI provider, production database connection, authentication, external integration, or production customer experience has been implemented. Sprint 8 has not started.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -186,6 +186,7 @@ npm run verify:activated-configuration-prototype
 - [Sprint 5 Execution Journal audit](docs/certification/SPRINT5_EXECUTION_JOURNAL_AUDIT.md)
 - [Sprint 5 boundary and security audit](docs/certification/SPRINT5_BOUNDARIES.md)
 - [Sprint 6 certification](docs/certification/SPRINT6_CERTIFICATION.md)
+- [Sprint 7 certification](docs/certification/SPRINT7_CERTIFICATION.md)
 - [State execution architecture](docs/STATE_EXECUTION_ARCHITECTURE.md)
 - [Immutable Execution Journal](docs/EXECUTION_JOURNAL.md)
 - [Deterministic Conversation Progress Engine](docs/CONVERSATION_PROGRESS_ENGINE.md)
@@ -219,4 +220,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3 through Sprint 6 remain certified complete. Sprint 7.6 is complete with real-PostgreSQL evidence that invalid, stale, duplicate, malformed, unavailable, cross-scope, failed-transaction, and restart scenarios fail safely without fallback, repair, repinning, replay, or partial authority. The lifecycle-remediation proof additionally covers application-controlled draft review, knowledge approval, activation prerequisites, activation, suspension, inspection, optimistic concurrency, and bounded audit history without direct SQL lifecycle seeding. The ordinary prototype remains fixture-backed, and no public administration, production authentication, real provider, customer release, external action, or end-to-end MVP work was added. Milestone 7.7 certification remains incomplete. See the [Sprint 7 Plan](docs/SPRINT_7_PLAN.md).
+Sprint 3 through Sprint 7 are certified complete. Sprint 7 certification confirms that all approved Business Configuration exit criteria pass against real disposable PostgreSQL, including the complete application-controlled lifecycle without direct SQL state seeding. The ordinary prototype remains fixture-backed, and no public administration, production authentication, real provider, customer release, external action, or end-to-end MVP work was added. Sprint 8 remains Not Started. See the [Sprint 7 Certification](docs/certification/SPRINT7_CERTIFICATION.md).

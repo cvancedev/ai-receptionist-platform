@@ -198,4 +198,7 @@ versions, enforces business/profile scope, customer audience, effective date,
 structure, and conflicts, and fails without fixture fallback. Milestone 7.6
 verifies missing, malformed, incompatible, wrong-scope, unbound, ineligible,
 duplicate, stale, restart, and persistence-failure behavior against real
-PostgreSQL. Milestone 7.7 has not started.
+PostgreSQL. The lifecycle remediation completes application-owned knowledge
+review, approval, activation-bound active state, suspension, and exact
+inspection. Sprint 7 certification confirms these boundaries; Sprint 8 has not
+started. See [Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).

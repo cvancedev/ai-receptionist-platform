@@ -80,3 +80,11 @@ rejection. PostgreSQL atomically owns activation history, selected-version
 associations, and the one active pointer. Business Profile, knowledge, and
 Conversation State documents remain unchanged; existing conversations retain
 their recorded profile version.
+
+Sprint 7 certification confirms this ownership model through the complete
+lifecycle. The application decides legal review, approval, active, and
+suspended transitions; PostgreSQL persists accepted lifecycle envelopes and
+bounded audit atomically; immutable configuration documents retain their
+authored content; and Conversation State retains the exact selected profile
+version without gaining configuration authority. See
+[Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).

@@ -138,3 +138,13 @@ No authorization system, reviewer role, lifecycle workflow, repository,
 database operation, or activation behavior is implemented. Existing fictional
 fixtures remain the only Business Profile and knowledge source used by the
 prototype. Milestone 7.2 has not started.
+
+## Sprint 7 Certification Status
+
+The preceding Milestone 7.1 boundary remains historical. Sprint 7 now provides
+an opt-in fictional durable path and an application-owned lifecycle
+coordinator. The application retains validation, authorization, transition,
+activation, conversation-use, and suspension authority; PostgreSQL retains
+only exact scoped durability, optimistic concurrency, integrity, and bounded
+audit. The fixture-backed prototype remains the default. See
+[Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).

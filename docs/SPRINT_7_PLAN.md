@@ -3,8 +3,8 @@
 ## Status
 
 Milestones 7.0 through 7.6 are complete. Sprint 6 remains certified complete.
-The certification-blocking lifecycle remediation is complete and validated.
-Milestone 7.7 certification remains incomplete.
+The certification-blocking lifecycle remediation is committed and validated.
+Milestone 7.7 and Sprint 7 are certified complete. Sprint 8 has not started.
 
 This plan preserves the certified Sprint 6 boundaries and refines Phase 5 of
 the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md) into independently
@@ -112,6 +112,8 @@ administration, or the end-to-end MVP.
 
 ### 7.7: Sprint 7 Certification
 
+**Status: Complete**
+
 - Audit architecture, lifecycle integrity, authorization boundaries,
   persistence, atomicity, isolation, recovery, regression safety, documentation,
   and prohibited capabilities.
@@ -120,7 +122,7 @@ administration, or the end-to-end MVP.
 
 ### Certification-blocking lifecycle remediation
 
-**Status: Complete; awaiting its separate scoped commit before certification**
+**Status: Complete and committed in `9ca7a56`**
 
 - Add one application-owned coordinator for the existing Business Profile and
   Knowledge Record lifecycle vocabularies.
@@ -132,9 +134,8 @@ administration, or the end-to-end MVP.
   PostgreSQL without direct SQL lifecycle seeding.
 
 Each implementation milestone requires separate instructions and validation.
-Milestone 7.6 and the lifecycle remediation are complete. Milestone 7.7
-certification remains incomplete until the remediation is committed from a
-clean checkpoint.
+Milestone 7.6, the lifecycle remediation, and Milestone 7.7 certification are
+complete. See [Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).
 
 ## 4. Repository Boundaries
 
@@ -262,9 +263,9 @@ proportionate subset plus all affected regressions.
 | Migration or stored-data incompatibility causes silent fallback | Fail closed before writes; prohibit repair and fixture fallback on durable paths |
 | Configuration audit is coupled to conversation replay | Define a separate bounded configuration audit contract with no execution authority |
 
-The temporary accepted risks for Next-owned PostCSS and Sharp remain governed
-by the existing dependency-risk record and must be reevaluated separately; they
-do not authorize dependency work in Sprint 7.0.
+The former Next-owned PostCSS and Sharp risks were remediated separately before
+certification. Sprint 7.7 verifies the supported dependency tree and zero-audit
+baseline without authorizing unrelated dependency work.
 
 ## 11. Out-of-Scope Items
 

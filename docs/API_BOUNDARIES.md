@@ -112,3 +112,12 @@ not routes or public APIs. Inputs require exact version scope, expected
 revisions, authorization and audit context, and an explicit knowledge set.
 Outputs are bounded activation or active-snapshot results. No administration,
 conversation, model, channel, or external-action endpoint is introduced.
+
+Sprint 7.5 adds only an opt-in internal fictional integration for exact
+activated configuration and durable conversation pins. The lifecycle
+remediation adds an internal application coordinator for review, approval,
+activation prerequisites, suspension, and inspection through the existing
+technology-neutral contracts. Sprint 7 certification confirms that no route,
+public API, generic CRUD, production authentication, customer release, or
+external-action boundary was introduced. See
+[Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).

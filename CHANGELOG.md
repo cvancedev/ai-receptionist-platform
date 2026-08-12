@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
-### Changed
+### Sprint 7.7 - Sprint 7 Certification
+
+- Certified Sprint 7 complete against implementation baseline `9ca7a56` after re-auditing every approved exit criterion and the committed lifecycle remediation.
+- Confirmed the complete Business Configuration and Sprint 6 persistence matrices pass against disposable localhost-only PostgreSQL 18, including no-direct-SQL lifecycle completion, suspension ineligibility, exact isolation, restart, rollback, and audit boundaries.
+- Confirmed the fixture-backed default prototype remains intact, the durable activated path has no fixture fallback, migrations remain exactly 001–006, and no Sprint 8 capability was added.
+- Added the evidence-based Sprint 7 certification record; certification creates no release tag or production approval.
+
+### Lifecycle Remediation
 
 - Completed the Sprint 7 lifecycle-remediation workflow for application-owned Business Profile review, Knowledge Record review and approval, activation prerequisites, suspension, and exact inspection.
 - Added ordered migration 006 for atomic expected-revision lifecycle-envelope transitions and bounded append-only transition audit evidence while preserving immutable version documents.

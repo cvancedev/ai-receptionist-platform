@@ -108,4 +108,6 @@ One coordinator validates exact scope and structure, authorization, legal
 source/target state, expected revision, activation evidence, and audit context
 before an accepted fact reaches a repository. Repositories persist that fact
 atomically and do not decide lifecycle legality. Exact inspection returns
-detached immutable snapshots. Milestone 7.7 certification remains incomplete.
+detached immutable snapshots. Sprint 7 certification confirms this authority
+flow and every approved exit criterion. See
+[Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).

@@ -174,3 +174,10 @@ evidence and runs the existing structural validator against the exact stored
 revision before persistence coordination. Passing remains an application input,
 not database authority. The active association is recorded separately so the
 validated version document remains immutable.
+
+The lifecycle remediation reuses this structural validation before review and
+requires exact activation evidence before the profile envelope enters
+`active`. Suspension makes the profile ineligible for current and pinned
+conversation context without rewriting its immutable version document. Sprint
+7 certification confirms these boundaries against real PostgreSQL. See
+[Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).

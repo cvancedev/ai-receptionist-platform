@@ -128,18 +128,25 @@ complete; at certification, Sprint 7 had not started. See
 - Milestone 7.4: Atomic Activation and Active-Configuration Resolution — Complete
 - Milestone 7.5: Minimal Fictional Configuration Workflow — Complete
 - Milestone 7.6: Configuration Failure, Recovery, and Isolation Verification — Complete
-- Milestone 7.7: Sprint 7 Certification — Incomplete; paused pending the separate lifecycle-remediation commit
+- Milestone 7.7: Sprint 7 Certification — Complete
 
 Before Milestone 7.7 certification, a narrowly scoped lifecycle remediation
 completes the already-approved Sprint 7 exit criterion for application-owned
 draft review, knowledge approval, activation prerequisites, suspension, and
 inspection without direct SQL lifecycle seeding. It adds no Sprint 8 scope.
 
+Sprint 7 is certified complete. The certification confirms application-owned
+lifecycle authority, durable exact versions, atomic activation, pinned
+conversation recovery, isolation, bounded audit, suspension ineligibility, and
+the complete regression matrix. See [Sprint 7 Certification](docs/certification/SPRINT7_CERTIFICATION.md).
+
 Sprint 7 remains Phase 5 of the [Implementation Sequence](docs/IMPLEMENTATION_SEQUENCE.md). It applies the certified Sprint 6 persistence foundation to the minimum safe Business Profile and approved-knowledge lifecycle for one fictional business. Application-owned validation, authorization decisions, versioning, activation, audit, isolation, and recovery remain explicit; PostgreSQL remains subordinate infrastructure.
 
 Milestone 7.0 defines the sequence and boundaries in the [Sprint 7 Plan](docs/SPRINT_7_PLAN.md). Milestone 7.1 adds only technology-neutral Business Profile and knowledge revision contracts, exact scope validation, immutable snapshot support, explicit lifecycle, validation, authorization, audit, repository outcomes, and focused verification. No repository implementation, migration, schema change, dependency, production authentication, public administration, provider integration, external action, end-to-end MVP work, or Milestone 7.2 implementation has started.
 
 ## Sprint 8: End-to-End MVP
+
+**Status: Not Started**
 
 Connect the validated customer-to-human workflow only after the persistence and Business Configuration phases pass their entry and exit criteria. Communication and AI providers remain subject to separate technical and business evaluation.
 

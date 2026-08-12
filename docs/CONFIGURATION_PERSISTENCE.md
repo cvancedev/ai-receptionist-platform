@@ -84,4 +84,6 @@ expected repository revision, updates only lifecycle/revision envelope state,
 and appends bounded transition evidence in one transaction. The application
 coordinator remains authoritative for validation, authorization, transition
 legality, and activation prerequisites. Immutable profile and knowledge
-documents are not rewritten. Milestone 7.7 certification remains incomplete.
+documents are not rewritten. Sprint 7 certification confirms the exact
+version, isolation, transaction, audit, recovery, and migration boundaries.
+See [Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).

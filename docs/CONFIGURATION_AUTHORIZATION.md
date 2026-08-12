@@ -68,3 +68,12 @@ and requires canonical request, actor, decision, audit, scope, and revision
 evidence. The PostgreSQL store receives only an application-approved activation
 and persists evidence without authenticating an actor or deciding permission.
 Fictional verification identities remain non-production inputs.
+
+## Sprint 7 Certification Status
+
+The lifecycle coordinator requires an explicit authorized decision plus exact
+request, actor, audit, operation, subject, scope, and expected-revision context
+before an accepted transition reaches persistence. Denied decisions fail
+before mutation. Certification does not represent fictional actors as
+production identity or authorize production authentication. See
+[Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).

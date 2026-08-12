@@ -430,5 +430,6 @@ inspection. PostgreSQL adapters persist already-authorized envelope changes
 with optimistic concurrency and append bounded transition audit evidence in
 the same transaction; immutable version documents remain unchanged. The
 focused real-PostgreSQL verifier completes the fictional lifecycle without SQL
-state seeding. Milestone 7.7 certification remains incomplete, and Sprint 8
-has not started.
+state seeding. Milestone 7.7 certifies the complete Sprint 7 boundary and all
+approved exit criteria. Sprint 8 has not started. See
+[Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).

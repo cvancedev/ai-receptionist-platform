@@ -32,6 +32,12 @@ npm.cmd run verify:postgresql-execution-journal
 npm.cmd run verify:postgresql-transactional-execution
 npm.cmd run verify:postgresql-restart-safe-prototype
 npm.cmd run verify:persistence-recovery
+npm.cmd run verify:postgresql-business-profile-versions
+npm.cmd run verify:postgresql-knowledge-versions
+npm.cmd run verify:postgresql-configuration-activation
+npm.cmd run verify:activated-configuration-prototype
+npm.cmd run verify:business-configuration-recovery
+npm.cmd run verify:configuration-lifecycle-remediation
 ```
 
 Do not commit the connection URL or place it in application source. The
@@ -118,3 +124,10 @@ migration.
 Sprint 6 certification reruns every PostgreSQL suite and proves the
 migration-history compatibility check against fictional unknown version 99.
 See [Sprint 6 Certification](certification/SPRINT6_CERTIFICATION.md).
+
+Sprint 7 certification reruns every Business Configuration and Sprint 6
+persistence suite against a fresh disposable PostgreSQL 18 cluster. It proves
+the complete fictional lifecycle without direct SQL state seeding, exact
+version and conversation isolation, activation atomicity, pinning, suspension
+ineligibility, restart, recovery, and ordered migration history through 006.
+See [Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).

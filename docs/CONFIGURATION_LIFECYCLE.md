@@ -96,5 +96,7 @@ public administration workflow. Milestone 7.6 verifies that invalid, stale,
 duplicate, malformed, unavailable, and failed-transaction paths preserve the
 last committed lifecycle authority. The lifecycle remediation adds the
 application-controlled transition and inspection workflow plus bounded durable
-audit evidence without changing immutable version documents. Milestone 7.7
-certification remains incomplete.
+audit evidence without changing immutable version documents. Sprint 7
+certification confirms the complete lifecycle and negative boundaries against
+real PostgreSQL. See
+[Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).

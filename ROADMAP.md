@@ -127,7 +127,7 @@ complete; at certification, Sprint 7 had not started. See
 - Milestone 7.3: Durable Knowledge Versions and Lifecycle — Complete
 - Milestone 7.4: Atomic Activation and Active-Configuration Resolution — Complete
 - Milestone 7.5: Minimal Fictional Configuration Workflow — Complete
-- Milestone 7.6: Configuration Failure, Recovery, and Isolation Verification — Not started
+- Milestone 7.6: Configuration Failure, Recovery, and Isolation Verification — Complete
 - Milestone 7.7: Sprint 7 Certification — Not started
 
 Sprint 7 remains Phase 5 of the [Implementation Sequence](docs/IMPLEMENTATION_SEQUENCE.md). It applies the certified Sprint 6 persistence foundation to the minimum safe Business Profile and approved-knowledge lifecycle for one fictional business. Application-owned validation, authorization decisions, versioning, activation, audit, isolation, and recovery remain explicit; PostgreSQL remains subordinate infrastructure.

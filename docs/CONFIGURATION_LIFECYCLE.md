@@ -88,4 +88,6 @@ conversation path. It validates exact activated profile and bound knowledge
 revisions, persists the selected profile version at initialization, and reloads
 the historical activation for that pin after replacement or restart. It does
 not mutate configuration documents, silently repin conversations, or add a
-public administration workflow. Milestone 7.6 has not started.
+public administration workflow. Milestone 7.6 verifies that invalid, stale,
+duplicate, malformed, unavailable, and failed-transaction paths preserve the
+last committed lifecycle authority. Milestone 7.7 has not started.

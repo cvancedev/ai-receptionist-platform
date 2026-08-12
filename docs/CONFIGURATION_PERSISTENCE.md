@@ -69,5 +69,13 @@ profile and knowledge revisions, request identity, and expected active revision;
 then records immutable activation history, exact knowledge associations,
 bounded authorization/audit evidence, and one active pointer. Failure rolls
 back every effect, and commit ambiguity is never reported as success. No
-version document is mutated. No workflow, default prototype wiring, knowledge
-retrieval, conversation repinning, or Milestone 7.5 behavior exists.
+version document is mutated. Milestone 7.5 adds an opt-in persistence-backed
+fictional conversation path with exact activated configuration resolution and
+durable profile-version pinning; the ordinary prototype remains fixture-backed.
+
+Milestone 7.6 adds verification only. Real-PostgreSQL evidence covers missing,
+malformed, incompatible, unavailable, stale, duplicate, concurrent, rollback,
+commit-failure, restart, and cross-scope behavior. Failed reads and writes do
+not repair storage, reconstruct authority from audit history, broaden scope,
+fall back to fixtures, repin conversations, retry, replay, or partially commit.
+Milestone 7.7 has not started.

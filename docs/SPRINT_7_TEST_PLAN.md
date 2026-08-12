@@ -3,9 +3,9 @@
 ## Purpose
 
 This document defines the verification gates for Sprint 7 Business
-Configuration. Milestones 7.1 through 7.5 provide contract, durable-version,
-atomic-activation, and opt-in activated-context integration evidence.
-Milestone 7.6 has not started.
+Configuration. Milestones 7.1 through 7.6 provide contract, durable-version,
+atomic-activation, opt-in activated-context integration, and failure/recovery
+evidence. Milestone 7.7 has not started.
 
 ## Milestone 7.1 Contract Verification
 
@@ -69,9 +69,13 @@ prohibited authority.
   pinning, deterministic/mock-only progression, restart recovery, reactivation
   behavior, exact conversation ownership, and absence of fixture fallback,
   public administration, or production authentication.
-- **7.6:** Complete failure, recovery, isolation, malformed-data, and prohibited
-  capability matrix.
+- **7.6:** Complete. `npm.cmd run
+  verify:business-configuration-recovery` composes the established Business
+  Profile, knowledge, activation, and activated-prototype PostgreSQL suites
+  with focused configuration recovery, isolation, corruption, commit-failure,
+  and prohibited-capability evidence. The complete command passed against real
+  PostgreSQL together with the existing Sprint 6 persistence recovery suites.
 - **7.7:** Full evidence-based Sprint 7 certification.
 
-The 7.6 and 7.7 gates describe required future evidence; they do not authorize
-or implement those milestones.
+The 7.6 gate is complete. The 7.7 gate remains future evidence and is not
+authorized or started.

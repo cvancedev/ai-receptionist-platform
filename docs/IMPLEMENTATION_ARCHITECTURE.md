@@ -417,5 +417,10 @@ deterministic/mock-only context, Transition Registry, State Executor, Progress
 Engine, transaction, journal, and read-model boundaries. The ordinary
 prototype remains fixture-backed by default. No migration, schema, dependency,
 UI, public administration, production authentication, real provider,
-customer-release authority, external action, silent repinning, or Milestone
-7.6 behavior is added.
+customer-release authority, external action, or silent repinning is added.
+Milestone 7.6 adds focused verification only. It confirms explicit safe
+configuration failures, rollback and commit-failure recovery, exact scope and
+conversation pins, durable corruption rejection, and restart behavior against
+real PostgreSQL. No production source, migration, schema, dependency, default
+wiring, retry, repair, replay, customer release, or external action is added.
+Milestone 7.7 has not started.

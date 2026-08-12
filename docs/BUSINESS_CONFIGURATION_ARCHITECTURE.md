@@ -101,4 +101,6 @@ fictional conversation integration that reconstructs and validates the exact
 activated profile and bound knowledge, persists the selected profile version,
 and proves exact conversation ownership before pinned context construction.
 The ordinary prototype remains fixture-backed, public administration remains
-absent, and Milestone 7.6 has not started.
+absent. Milestone 7.6 verifies failure, recovery, isolation, corruption,
+rollback, restart, and prohibited-capability behavior against real PostgreSQL.
+Milestone 7.7 has not started.

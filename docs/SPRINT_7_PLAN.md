@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 7.0 through 7.5 are complete. Sprint 6 remains certified complete.
-Milestone 7.6 has not started.
+Milestones 7.0 through 7.6 are complete. Sprint 6 remains certified complete.
+Milestone 7.7 has not started.
 
 This plan preserves the certified Sprint 6 boundaries and refines Phase 5 of
 the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md) into independently
@@ -101,6 +101,8 @@ administration, or the end-to-end MVP.
 
 ### 7.6: Configuration Failure, Recovery, and Isolation Verification
 
+**Status: Complete**
+
 - Prove invalid configuration, stale revisions, duplicate versions, wrong
   business scope, unauthorized transitions, activation failure, malformed
   storage, and restart recovery fail explicitly and safely.
@@ -116,7 +118,8 @@ administration, or the end-to-end MVP.
   Sprint 7 satisfies its exit criteria.
 
 Each implementation milestone requires separate instructions and validation.
-Milestones 7.6 and 7.7 remain unauthorized and have not started.
+Milestone 7.6 is complete. Milestone 7.7 remains unauthorized and has not
+started.
 
 ## 4. Repository Boundaries
 

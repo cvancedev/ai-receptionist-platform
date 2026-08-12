@@ -195,5 +195,7 @@ configuration without overwriting their documents. Retrieval eligibility and
 workflow integration are implemented only in the opt-in Milestone 7.5
 fictional conversation path: the application loads the exact activation-bound
 versions, enforces business/profile scope, customer audience, effective date,
-structure, and conflicts, and fails without fixture fallback. Broader failure
-and recovery coverage remains assigned to Milestone 7.6, which has not started.
+structure, and conflicts, and fails without fixture fallback. Milestone 7.6
+verifies missing, malformed, incompatible, wrong-scope, unbound, ineligible,
+duplicate, stale, restart, and persistence-failure behavior against real
+PostgreSQL. Milestone 7.7 has not started.

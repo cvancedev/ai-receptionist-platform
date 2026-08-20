@@ -5,8 +5,8 @@
 Milestones 7.0 through 7.6 are complete. Sprint 6 remains certified complete.
 The certification-blocking lifecycle remediation is committed and validated.
 Milestone 7.7 and Sprint 7 are certified complete. Sprint 8 had not started at
-Sprint 7 certification; Milestone 8.0 planning is now complete and ready for
-review, while Milestone 8.1 remains Not Started.
+Sprint 7 certification; Milestones 8.0 and 8.1 are now complete, while
+Milestone 8.2 remains Not Started.
 
 This plan preserves the certified Sprint 6 boundaries and refines Phase 5 of
 the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md) into independently

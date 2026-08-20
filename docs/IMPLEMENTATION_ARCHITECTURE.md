@@ -431,9 +431,14 @@ with optimistic concurrency and append bounded transition audit evidence in
 the same transaction; immutable version documents remain unchanged. The
 focused real-PostgreSQL verifier completes the fictional lifecycle without SQL
 state seeding. Milestone 7.7 certifies the complete Sprint 7 boundary and all
-approved exit criteria. Milestone 8.0 now defines the proposed internal
-fictional End-to-End MVP composition and verification gates; Milestone 8.1 and
-all implementation remain Not Started. The provider-neutral mock path remains
-the baseline, and a development provider adapter remains conditional on a
-separate evaluation and explicit authorization. See [Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md),
-[Sprint 8 Plan](SPRINT_8_PLAN.md), and [Sprint 8 Test Plan](SPRINT_8_TEST_PLAN.md).
+approved exit criteria. Milestone 8.1 adds an application-owned preflight that
+validates one bounded fictional turn, delegates to certified activated
+initialization or exact pinned recovery, independently verifies configuration,
+state, read-model, and knowledge scope, and returns bounded progress and
+derived handoff readiness. It does not process or persist the message, execute
+a transition, call a provider, produce or release a response, or perform an
+external action. The fixture-backed prototype remains unchanged, the durable
+path remains opt-in without fallback, and Milestone 8.2 has not started. See
+[End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md),
+[Sprint 8 Storage Decision](SPRINT_8_STORAGE_DECISION.md), and
+[Sprint 8 Test Plan](SPRINT_8_TEST_PLAN.md).

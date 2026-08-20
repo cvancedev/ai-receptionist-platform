@@ -121,3 +121,12 @@ technology-neutral contracts. Sprint 7 certification confirms that no route,
 public API, generic CRUD, production authentication, customer release, or
 external-action boundary was introduced. See
 [Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).
+
+Milestone 8.1 adds an internal technology-neutral end-to-end preparation
+contract, not an endpoint. It validates one exact fictional start or resume
+turn and composes certified activated-configuration, conversation recovery,
+progress, and derived-handoff boundaries. It processes no message content,
+executes no transition, persists no message, produces no response, and
+authorizes no release or external action. See the
+[End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md) and
+[Response Release Boundary](RESPONSE_RELEASE_BOUNDARY.md).

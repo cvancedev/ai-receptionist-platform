@@ -88,3 +88,18 @@ bounded audit atomically; immutable configuration documents retain their
 authored content; and Conversation State retains the exact selected profile
 version without gaining configuration authority. See
 [Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).
+
+## Sprint 8.1 Composition Status
+
+The end-to-end preparation coordinator validates bounded fictional message
+input but returns only message identity and sequence. It does not persist or
+claim authority over message content. Conversation State and its exact profile
+pin remain authoritative; progress and handoff remain derived views; activated
+configuration remains business-owned data selected through the existing
+application boundary.
+
+The [Sprint 8 Storage Decision](SPRINT_8_STORAGE_DECISION.md) finds that no
+separate handoff record is required. It records that later restart-safe
+transcript/context provenance will require a separately authorized,
+application-scoped message-evidence contract and likely additive migration.
+No storage change is authorized by Milestone 8.1.

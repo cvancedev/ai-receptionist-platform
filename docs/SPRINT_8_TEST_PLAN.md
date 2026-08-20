@@ -31,12 +31,21 @@ regressions. Every implementation result must prove:
 
 ### 8.1 Contracts and Composition
 
+**Status: Complete**
+
 - Contract-shape verification rejects missing, extra, malformed, broad, and
   cross-scope inputs.
 - Coordinator capability scan shows no repository implementation, SQL,
   provider SDK, UI, callback, release, or external-action authority.
 - Storage gap decision maps each acceptance datum to an existing authority or
   documents why a new durable record is necessary.
+
+`npm.cmd run verify:end-to-end-contracts` proves exact start and resume input,
+activated-boundary delegation, resolved-scope consistency, versioned knowledge
+references, immutable bounded outputs, deterministic progress, derived
+handoff readiness, sanitized failures, no message persistence, and absence of
+mutation, transition, release, external-action, provider, UI, PostgreSQL, or
+route authority.
 
 ### 8.2 Activated Context and Knowledge
 

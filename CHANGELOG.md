@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 8.1 - End-to-End Contracts and Application Composition
+
+- Added technology-neutral contracts and an application-owned preparation
+  coordinator for one exact fictional start or resume turn.
+- Composed certified activated configuration, pinned conversation recovery,
+  deterministic progress, exact knowledge provenance, and derived handoff
+  readiness while withholding message processing, mutation, response
+  production, customer release, and external actions.
+- Added focused verification for exact input, immutable bounded output,
+  sanitized failure mapping, scope isolation, narrow capabilities, and the
+  absence of PostgreSQL, provider, route, or UI authority.
+- Determined that handoff remains derivable without new storage and that later
+  restart-safe transcript provenance will require separately authorized
+  durable message evidence; added no migration, schema, or dependency change.
+- Kept the fixture-backed prototype unchanged, the durable activated path
+  opt-in without fallback, and Milestone 8.2 Not Started.
+
 ### Sprint 8.0 - End-to-End MVP Planning
 
 - Defined the proposed Sprint 8 internal fictional MVP objective, milestone

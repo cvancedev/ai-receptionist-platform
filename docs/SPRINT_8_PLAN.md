@@ -2,9 +2,8 @@
 
 ## Status
 
-Milestone 8.0 planning is complete and ready for review. Sprints 1 through 7
-remain certified complete. Milestone 8.1 and all Sprint 8 implementation are
-not started.
+Milestones 8.0 and 8.1 are complete. Sprints 1 through 7 remain certified
+complete. Milestone 8.2 has not started.
 
 This plan refines Phase 6 of the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md)
 without changing its position or expanding it into production release. Each
@@ -48,7 +47,7 @@ contracts without transferring authority to PostgreSQL, a model, or the UI.
 
 ### 8.1: End-to-End Contracts and Application Composition
 
-**Status: Not Started**
+**Status: Complete**
 
 - Define technology-neutral contracts for one inbound fictional turn, exact
   conversation scope, application decisions, validated response candidates,
@@ -57,6 +56,15 @@ contracts without transferring authority to PostgreSQL, a model, or the UI.
   without implementing provider, persistence, or UI details.
 - Decide, from acceptance evidence, whether a separate durable message or
   handoff record is required. Do not create a migration in this milestone.
+
+Milestone 8.1 implements an application-owned preparation boundary that
+validates one bounded fictional turn, delegates only to certified activated
+initialization or pinned recovery, independently rechecks exact resolved
+scope, exposes bounded progress and handoff readiness, and withholds message
+persistence, turn processing, mutation, response production, release, and
+external action. The [storage decision](SPRINT_8_STORAGE_DECISION.md) finds no
+need for a separate handoff record and records the later need for durable
+message evidence without authorizing a migration.
 
 ### 8.2: Activated Context and Grounded Knowledge
 

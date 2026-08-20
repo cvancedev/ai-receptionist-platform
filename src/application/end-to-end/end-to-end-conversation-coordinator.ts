@@ -9,6 +9,7 @@ import type { ConversationStoreScope } from "../../conversation/conversation-sto
 import type { ConversationState } from "../../domain/conversation-state";
 import { DeterministicHandoffBuilder } from "../../handoff/handoff-builder";
 import { COMPLETION_STATES, CONVERSATION_STAGES } from "../../shared/constants";
+import { ActivatedContextAssembler } from "./activated-context-and-grounding";
 import type {
   EndToEndHandoffBoundary,
   EndToEndKnowledgeReference,
@@ -32,6 +33,7 @@ export interface ActivatedConversationCompositionPort {
  */
 export class EndToEndConversationCoordinator {
   private readonly handoffBuilder = new DeterministicHandoffBuilder();
+  private readonly contextAssembler = new ActivatedContextAssembler();
 
   constructor(
     private readonly activatedConversation: ActivatedConversationCompositionPort,
@@ -67,6 +69,21 @@ export class EndToEndConversationCoordinator {
         return failure("ScopeMismatch", "End-to-end conversation scope is unavailable.");
       }
 
+      const context = this.contextAssembler.build({
+        configuration: resolved.value.configuration,
+        conversationState: resolved.value.recovery.state,
+        currentCustomerInput: request.message,
+        effectiveAt: request.effectiveAt,
+      });
+      if (context.status === "failure") {
+        return failure(
+          context.reason,
+          context.reason === "ScopeMismatch"
+            ? "End-to-end conversation scope is unavailable."
+            : "Activated conversation context is unavailable.",
+        );
+      }
+
       const handoff = this.deriveHandoff(
         resolved.value.configuration,
         resolved.value.recovery.state,
@@ -94,12 +111,13 @@ export class EndToEndConversationCoordinator {
           },
           configuration: {
             activationRevision: resolved.value.configuration.activation.activationRevision,
-            knowledge: knowledgeReferences(resolved.value.configuration),
+            knowledge: knowledgeReferences(context.value.knowledge),
           },
           conversation: {
             stage: readModel.stage,
             recommendedNextAction: readModel.recommendedNextAction,
           },
+          context: context.value,
           applicationDecision: {
             decision: "ready-for-turn-processing",
             turnStateMutationAuthorized: false,
@@ -110,7 +128,7 @@ export class EndToEndConversationCoordinator {
           response: {
             status: "not-produced",
             candidate: null,
-            reason: "TurnProcessingNotAuthorizedInMilestone8_1",
+            reason: "TurnProcessingNotAuthorizedBeforeMilestone8_3",
             customerReleaseAuthorized: false,
           },
           handoff: handoff.value,
@@ -200,13 +218,9 @@ function hasExactResolvedScope(
 }
 
 function knowledgeReferences(
-  configuration: Readonly<ResolvedActivatedConfiguration>,
+  knowledge: readonly Readonly<EndToEndKnowledgeReference>[],
 ): readonly Readonly<EndToEndKnowledgeReference>[] {
-  return configuration.knowledge.map((record) => ({
-    knowledgeRecordId: record.id,
-    knowledgeRecordVersion: record.version,
-    source: record.source,
-  }));
+  return knowledge.map((record) => ({ ...record }));
 }
 
 function isTurnRequest(value: unknown): value is EndToEndTurnRequest {

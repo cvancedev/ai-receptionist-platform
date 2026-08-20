@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 8.2 - Activated Context and Grounded Knowledge
+
+- Added an application-owned bounded context assembler that runs only after
+  exact activated-configuration resolution and durable conversation recovery.
+- Included the pinned Business Profile, exact Conversation State revision,
+  explicitly untrusted current input, and only activation-bound, active,
+  effective, customer-eligible Knowledge Record versions.
+- Added exact grounded-source validation that preserves source, audience,
+  effective-time, version, activation, and policy provenance while continuing
+  to deny customer release.
+- Added focused positive, negative, pinning, immutability, and capability
+  verification; retained the fixture-backed prototype and opt-in durable path.
+- Added no task execution, state mutation, message persistence, provider, UI,
+  migration, schema change, dependency change, external action, or Milestone
+  8.3 behavior.
+
 ### Sprint 8.1 - End-to-End Contracts and Application Composition
 
 - Added technology-neutral contracts and an application-owned preparation

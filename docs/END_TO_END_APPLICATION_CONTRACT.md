@@ -3,10 +3,11 @@
 ## Purpose
 
 Milestone 8.1 defines the technology-neutral application boundary for
-preparing one fictional inbound conversation turn. It composes certified
-activated-configuration, exact conversation recovery, progress projection,
-and handoff derivation without processing the message or granting new
-authority.
+preparing one fictional inbound conversation turn. Milestone 8.2 extends that
+boundary with application-owned activated context and grounded-source
+validation. The coordinator composes certified activated configuration, exact
+conversation recovery, bounded context, progress projection, and handoff
+derivation without executing the turn or granting new authority.
 
 The implemented contracts are in `src/application/end-to-end`. They are
 internal application contracts, not HTTP endpoints, route handlers,
@@ -32,26 +33,36 @@ before any dependency is called.
 3. Independently compare the requested scope with the resolved activation,
    Business Profile, Conversation State, read-model identity, and every bound
    Knowledge Record version.
-4. Expose only exact configuration provenance, bounded message metadata,
+4. Independently validate profile, state, activation, knowledge eligibility,
+   effective time, contradictions, and the context size limit.
+5. Assemble immutable transient context from the complete pinned Business
+   Profile, exact Conversation State revision, explicitly untrusted current
+   customer input, and only exact activation-bound knowledge.
+6. Expose exact configuration provenance, bounded persisted-status metadata,
    current revision/stage, the application-owned Progress Engine result, and
    derived handoff readiness.
-5. Return an explicit application decision that grants no turn-state mutation,
+7. Return an explicit application decision that grants no turn-state mutation,
    transition execution, customer release, or external-action authority.
 
-Milestone 8.1 does not assemble AI context, interpret content, select a model
-task, execute a transition, persist message content, or produce a response.
+Milestone 8.2 does not interpret content, select a model task, execute a
+transition, persist message content, call a provider, or produce a response.
 
 ## Output Boundaries
 
 Successful preparation returns exact turn and scope identity; bounded inbound
-message identity and sequence without content; activation and exact knowledge
-provenance; deterministic progress; a no-authority preparation decision; an
-explicitly unproduced response; and either `not-ready` handoff status or a
-handoff derived by the existing Handoff Builder.
+message persistence metadata; immutable transient activated context;
+activation and exact knowledge provenance; deterministic progress; a
+no-authority preparation decision; an explicitly unproduced response; and
+either `not-ready` handoff status or a handoff derived by the existing Handoff
+Builder. Customer content appears only inside the transient context as
+`untrusted-customer-input`; it is not represented as persisted metadata.
 
-The contract defines the shape a future validated response candidate must
-have, including exact source references. No candidate is constructed in
-Milestone 8.1, and delivery authority remains false.
+The grounding validator accepts a future candidate only when it is bounded and
+has at least one exact source reference included in the activated context.
+Each reference must match record identity, version, source, audience,
+effective date, activation revision, and context-policy version. Validation
+does not construct a candidate during preparation, execute a task, or grant
+delivery authority.
 
 ## Explicit Failures
 
@@ -60,6 +71,7 @@ Milestone 8.1, and delivery authority remains false.
 - `ConversationUnavailable`
 - `ScopeMismatch`
 - `HandoffUnavailable`
+- `ContextUnavailable`
 - `CompositionUnavailable`
 
 Lower-layer details are sanitized. Failures do not retry, broaden lookup,
@@ -69,7 +81,8 @@ release content.
 ## Authority Boundaries
 
 - The application coordinator owns request validation, composition sequencing,
-  independent exact-scope checks, and bounded outcome construction.
+  independent exact-scope checks, context eligibility, grounding validation,
+  and bounded outcome construction.
 - Existing domain validators, Progress Engine, read-model projector, and
   Handoff Builder retain semantic authority.
 - The activated configuration and durable conversation integration retain
@@ -79,7 +92,9 @@ release content.
 
 ## Current Limitation
 
-Preparation accepts fictional message content only long enough to validate the
-turn boundary. It neither returns nor persists that content. Activated-context
-construction is Milestone 8.2, and multi-turn processing is Milestone 8.3.
-The ordinary fixture-backed prototype remains unchanged.
+Preparation carries fictional message content only in immutable transient
+context. It does not persist message evidence, select a model task, process a
+turn, mutate Conversation State, validate a model-produced draft, or release
+content. Multi-turn processing remains Milestone 8.3. The ordinary
+fixture-backed prototype remains unchanged, and the durable activated path has
+no fixture fallback.

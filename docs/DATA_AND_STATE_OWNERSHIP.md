@@ -89,17 +89,20 @@ authored content; and Conversation State retains the exact selected profile
 version without gaining configuration authority. See
 [Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).
 
-## Sprint 8.1 Composition Status
+## Sprint 8.1-8.2 Composition Status
 
 The end-to-end preparation coordinator validates bounded fictional message
-input but returns only message identity and sequence. It does not persist or
-claim authority over message content. Conversation State and its exact profile
-pin remain authoritative; progress and handoff remain derived views; activated
+input and returns message identity and sequence as persistence metadata.
+Milestone 8.2 also carries content only inside immutable transient context,
+where it is explicitly labeled untrusted. It does not persist or claim
+authority over that content. Conversation State and its exact profile pin
+remain authoritative; progress and handoff remain derived views; activated
 configuration remains business-owned data selected through the existing
-application boundary.
+application boundary. Grounding validation can accept only exact source
+references already present in that context and grants no release authority.
 
 The [Sprint 8 Storage Decision](SPRINT_8_STORAGE_DECISION.md) finds that no
 separate handoff record is required. It records that later restart-safe
 transcript/context provenance will require a separately authorized,
 application-scoped message-evidence contract and likely additive migration.
-No storage change is authorized by Milestone 8.1.
+No storage change is authorized by Milestone 8.1 or 8.2.

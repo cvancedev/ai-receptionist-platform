@@ -58,6 +58,15 @@ route authority.
 - Reactivation changes new conversations only; no fixture, nearest-version, or
   current-profile substitution occurs.
 
+`npm.cmd run verify:activated-context-grounding` proves exact activated
+context construction, full source provenance, deep immutability, bounded
+application authority, grounded-candidate validation, historical profile and
+knowledge pinning after reactivation, and fail-closed wrong-scope, unbound,
+suspended, expired, malformed, future-effective, staff-only, contradictory,
+and source-mismatch outcomes. The Sprint 6 and 7 PostgreSQL suites continue to
+prove the durable resolution, ownership, restart, and isolation boundaries
+composed beneath it.
+
 ### 8.3 Multi-Turn Workflow
 
 - Acceptance scenarios cover greeting, request understanding, resolved,

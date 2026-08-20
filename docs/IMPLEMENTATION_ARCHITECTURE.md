@@ -435,10 +435,15 @@ approved exit criteria. Milestone 8.1 adds an application-owned preflight that
 validates one bounded fictional turn, delegates to certified activated
 initialization or exact pinned recovery, independently verifies configuration,
 state, read-model, and knowledge scope, and returns bounded progress and
-derived handoff readiness. It does not process or persist the message, execute
-a transition, call a provider, produce or release a response, or perform an
-external action. The fixture-backed prototype remains unchanged, the durable
-path remains opt-in without fallback, and Milestone 8.2 has not started. See
+derived handoff readiness. Milestone 8.2 adds immutable transient context only
+after those checks, with the pinned Business Profile, exact state revision,
+untrusted current input, and only exact activation-bound eligible knowledge.
+Application-owned grounding validation preserves source, audience,
+effective-time, version, activation, and policy provenance. Neither milestone
+persists the message, executes a transition, calls a provider, produces or
+releases a response, or performs an external action. The fixture-backed
+prototype remains unchanged, the durable path remains opt-in without fallback,
+and Milestone 8.3 has not started. See
 [End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md),
 [Sprint 8 Storage Decision](SPRINT_8_STORAGE_DECISION.md), and
 [Sprint 8 Test Plan](SPRINT_8_TEST_PLAN.md).

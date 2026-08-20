@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 8.0 and 8.1 are complete. Sprints 1 through 7 remain certified
-complete. Milestone 8.2 has not started.
+Milestones 8.0 through 8.2 are complete. Sprints 1 through 7 remain certified
+complete. Milestone 8.3 has not started.
 
 This plan refines Phase 6 of the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md)
 without changing its position or expanding it into production release. Each
@@ -68,7 +68,7 @@ message evidence without authorizing a migration.
 
 ### 8.2: Activated Context and Grounded Knowledge
 
-**Status: Not Started**
+**Status: Complete**
 
 - Build context only after exact conversation ownership and historical
   activation resolution succeed.
@@ -78,6 +78,18 @@ message evidence without authorizing a migration.
   provenance through output validation.
 - Fail closed for missing, suspended, malformed, stale, cross-business,
   unbound, or contradictory context. Never fall back to fixtures on this path.
+
+Milestone 8.2 extends the application-owned preparation boundary with one
+bounded, immutable, transient context assembled only after exact activated
+configuration and durable conversation recovery succeed. The context carries
+the complete pinned Business Profile, exact Conversation State revision,
+explicitly untrusted current customer input, and only activation-bound,
+active, effective, customer-eligible Knowledge Record versions. A separate
+grounding validator accepts future response candidates only when every source
+reference exactly matches that context, preserves source, audience,
+effective-time, version, activation, and policy provenance, and continues to
+deny customer release. No task execution, transition, message persistence,
+provider, migration, dependency, UI, or fixture fallback is added.
 
 ### 8.3: Deterministic Multi-Turn Conversation Workflow
 

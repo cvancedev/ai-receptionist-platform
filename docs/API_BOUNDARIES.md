@@ -125,8 +125,12 @@ external-action boundary was introduced. See
 Milestone 8.1 adds an internal technology-neutral end-to-end preparation
 contract, not an endpoint. It validates one exact fictional start or resume
 turn and composes certified activated-configuration, conversation recovery,
-progress, and derived-handoff boundaries. It processes no message content,
-executes no transition, persists no message, produces no response, and
-authorizes no release or external action. See the
+progress, and derived-handoff boundaries. Milestone 8.2 adds internal
+activated-context assembly and grounded-source validation, also not an
+endpoint. Customer content remains explicitly untrusted transient context;
+the application includes only exact activation-bound eligible knowledge and
+validates full source provenance. It executes no transition, persists no
+message, calls no provider, produces no response, and authorizes no release or
+external action. See the
 [End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md) and
 [Response Release Boundary](RESPONSE_RELEASE_BOUNDARY.md).

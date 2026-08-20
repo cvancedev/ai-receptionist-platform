@@ -68,8 +68,9 @@ async function verifyStartAndResumeComposition(): Promise<void> {
     started.value.inboundMessage.acceptedForProcessing
       && !started.value.inboundMessage.contentPersisted
       && !("content" in started.value.inboundMessage)
-      && !JSON.stringify(started.value).includes(startRequest().message.content),
-    "message content is validated but not returned or persisted by composition",
+      && started.value.context.currentCustomerInput.content === startRequest().message.content
+      && started.value.context.currentCustomerInput.trust === "untrusted-customer-input",
+    "message content remains transient context and is not represented as persisted metadata",
   );
   assert(started.value.handoff.status === "not-ready", "initial state is not handoff-ready");
   assertDeeplyFrozen(started, "start preparation result");
@@ -211,6 +212,7 @@ function verifyNarrowTechnologyNeutralCapabilities(): void {
       "ConversationUnavailable",
       "ScopeMismatch",
       "HandoffUnavailable",
+      "ContextUnavailable",
       "CompositionUnavailable",
     ],
     "failure vocabulary is explicit and bounded",
@@ -233,6 +235,7 @@ function verifyNarrowTechnologyNeutralCapabilities(): void {
 
   const source = [
     "src/application/end-to-end/contracts.ts",
+    "src/application/end-to-end/activated-context-and-grounding.ts",
     "src/application/end-to-end/end-to-end-conversation-coordinator.ts",
   ].map((file) => readFileSync(join(process.cwd(), file), "utf8")).join("\n");
   for (const prohibited of [

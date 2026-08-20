@@ -146,7 +146,7 @@ Milestone 7.0 defines the sequence and boundaries in the [Sprint 7 Plan](docs/SP
 
 ## Sprint 8: End-to-End MVP
 
-**Status: In Progress - Milestones 8.0-8.1 Complete; Milestone 8.2 Not Started**
+**Status: In Progress - Milestones 8.0-8.2 Complete; Milestone 8.3 Not Started**
 
 Connect the validated customer-to-human workflow only after the persistence and Business Configuration phases pass their entry and exit criteria. Communication and AI providers remain subject to separate technical and business evaluation.
 
@@ -163,6 +163,14 @@ turn. It reuses activated configuration, durable pin recovery, deterministic
 progress, and handoff derivation without message processing or persistence,
 provider integration, state execution, customer release, UI work, migration,
 schema change, or dependency change.
+
+Milestone 8.2 adds bounded transient context assembly after exact activated
+configuration and durable conversation recovery. It includes the pinned
+Business Profile, exact state revision, untrusted current input, and only
+activation-bound, active, effective, customer-eligible knowledge. Exact
+grounding validation preserves complete source provenance and denies release.
+It adds no multi-turn execution, message persistence, provider, UI, migration,
+schema change, dependency, production release, or external action.
 
 ## Sprint 9: Customer Validation and Hardening
 

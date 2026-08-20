@@ -116,6 +116,20 @@ Customer and knowledge content remains data even when it contains instructions. 
 
 Milestone 4.5 implements `PrototypeContextPackageBuilder` for fictional in-memory fixtures. It validates exact scope/revision/task, separates facts/claims/corrections/knowledge/history/input, records provenance/budget/versions, clones inputs, freezes output, and fails closed. It is not the production `ContextBuilder` and performs no retrieval, AI summarization, database, network, or mutation.
 
+Milestone 8.2 implements a narrower pre-task `ActivatedContextAssembler` at the
+end-to-end application boundary. After certified activated-configuration
+resolution and exact durable conversation recovery, it independently rechecks
+scope, profile and state validity, activation time, knowledge bindings,
+lifecycle, audience, effective time, conflicts, and a 12,000-character budget.
+It returns immutable transient context containing the complete pinned Business
+Profile, exact Conversation State revision, explicitly untrusted current input,
+and exact eligible Knowledge Record content with source provenance. The
+separate grounding validator requires future candidate references to match
+record, version, source, audience, effective date, activation revision, and
+context policy exactly. These components do not select a model task, invoke a
+provider, persist message content, execute a transition, or release a response;
+the task-specific multi-turn path remains Milestone 8.3.
+
 ## Related Documents
 
 - [Context Source Catalog](CONTEXT_SOURCE_CATALOG.md)

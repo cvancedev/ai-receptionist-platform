@@ -129,8 +129,11 @@ progress, and derived-handoff boundaries. Milestone 8.2 adds internal
 activated-context assembly and grounded-source validation, also not an
 endpoint. Customer content remains explicitly untrusted transient context;
 the application includes only exact activation-bound eligible knowledge and
-validates full source provenance. It executes no transition, persists no
-message, calls no provider, produces no response, and authorizes no release or
+validates full source provenance. Milestone 8.3 adds an internal transient
+workflow contract, not an endpoint, route, or serialization protocol. It
+accepts exact scope, revision, and sequence inputs and returns bounded local
+fictional prompts, read models, grounding outcomes, and handoff readiness. It
+persists no message or state, calls no provider, and authorizes no release or
 external action. See the
 [End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md) and
 [Response Release Boundary](RESPONSE_RELEASE_BOUNDARY.md).

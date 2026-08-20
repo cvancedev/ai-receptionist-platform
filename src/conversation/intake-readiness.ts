@@ -23,7 +23,11 @@ export function evaluateIntakeReadiness(profile: BusinessProfile, state: Convers
     return Boolean(fact && latestClaim && latestClaim.sequence > fact.sequence && latestClaim.value !== fact.value);
   });
   if (conflictingRequired.length) return { status: "not-ready", unresolvedFields: conflictingRequired.map((field) => field.id), reason: "A required answer has an unresolved conflicting claim." };
-  if (state.stage === CONVERSATION_STAGES.HANDOFF || state.completionState === COMPLETION_STATES.READY_FOR_HANDOFF) {
+  if (
+    state.stage === CONVERSATION_STAGES.HANDOFF
+    || state.stage === CONVERSATION_STAGES.COMPLETED
+    || state.completionState === COMPLETION_STATES.READY_FOR_HANDOFF
+  ) {
     return { status: "ready-for-handoff", unresolvedFields: [], reason: "Confirmation and handoff requirements are satisfied." };
   }
   return { status: "ready-for-confirmation", unresolvedFields: [], reason: "All required intake information is confirmed." };

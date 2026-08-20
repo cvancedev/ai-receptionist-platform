@@ -5,9 +5,8 @@
 Milestone 8.1 defines the technology-neutral application boundary for
 preparing one fictional inbound conversation turn. Milestone 8.2 extends that
 boundary with application-owned activated context and grounded-source
-validation. The coordinator composes certified activated configuration, exact
-conversation recovery, bounded context, progress projection, and handoff
-derivation without executing the turn or granting new authority.
+validation. Milestone 8.3 composes that exact context with the existing
+deterministic conversation authorities for a transient multi-turn workflow.
 
 The implemented contracts are in `src/application/end-to-end`. They are
 internal application contracts, not HTTP endpoints, route handlers,
@@ -44,8 +43,14 @@ before any dependency is called.
 7. Return an explicit application decision that grants no turn-state mutation,
    transition execution, customer release, or external-action authority.
 
-Milestone 8.2 does not interpret content, select a model task, execute a
-transition, persist message content, call a provider, or produce a response.
+Milestone 8.3 accepts only exact scoped turns with the expected state revision
+and next message sequence. It delegates request understanding, required-field
+answers, corrections, confirmation, human escalation, and completion to the
+existing deterministic Conversation Engine and Conversation State Manager.
+Progress/read-model projection, grounding validation, and handoff derivation
+remain with their existing application/domain owners. Failed actions are
+evaluated against a candidate transient manager and cannot partially advance
+the accepted session.
 
 ## Output Boundaries
 
@@ -90,11 +95,17 @@ release content.
 - PostgreSQL remains hidden behind existing technology-neutral contracts.
 - The model, fixtures, UI, routes, and stored data gain no decision authority.
 
+The model-controlled Transition Registry and State Executor remain unchanged
+and authoritative for model proposals. Milestone 8.3 introduces no model
+proposal or new transition; deterministic domain operations continue through
+the certified Conversation Engine and State Manager path.
+
 ## Current Limitation
 
-Preparation carries fictional message content only in immutable transient
-context. It does not persist message evidence, select a model task, process a
-turn, mutate Conversation State, validate a model-produced draft, or release
-content. Multi-turn processing remains Milestone 8.3. The ordinary
-fixture-backed prototype remains unchanged, and the durable activated path has
-no fixture fallback.
+The Milestone 8.3 session and every customer message remain transient. The
+workflow does not persist message evidence, approved state replacements, or
+execution evidence and therefore makes no restart-safe turn claim. It does not
+call a provider, validate a model-produced draft, release content, or perform
+an external action. Durable turn atomicity and restart evidence remain
+Milestone 8.4. The ordinary fixture-backed prototype remains unchanged, and
+the activated path has no fixture fallback.

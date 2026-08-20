@@ -28,7 +28,8 @@
     "verify:business-configuration-recovery": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-business-profile-versions.verify.js && node .prototype-build/verification/postgresql-knowledge-versions.verify.js && node .prototype-build/verification/postgresql-configuration-activation.verify.js && node .prototype-build/verification/activated-configuration-prototype.verify.js && node .prototype-build/verification/business-configuration-recovery.verify.js",
     "verify:configuration-lifecycle-remediation": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/configuration-lifecycle-remediation.verify.js",
     "verify:end-to-end-contracts": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/end-to-end-contracts.verify.js",
-    "verify:activated-context-grounding": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/activated-context-grounding.verify.js"
+    "verify:activated-context-grounding": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/activated-context-grounding.verify.js",
+    "verify:deterministic-multi-turn-workflow": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/deterministic-multi-turn-workflow.verify.js"
   },
   "dependencies": {
     "next": "16.3.0",

@@ -89,7 +89,7 @@ authored content; and Conversation State retains the exact selected profile
 version without gaining configuration authority. See
 [Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).
 
-## Sprint 8.1-8.2 Composition Status
+## Sprint 8.1-8.3 Composition Status
 
 The end-to-end preparation coordinator validates bounded fictional message
 input and returns message identity and sequence as persistence metadata.
@@ -106,3 +106,11 @@ separate handoff record is required. It records that later restart-safe
 transcript/context provenance will require a separately authorized,
 application-scoped message-evidence contract and likely additive migration.
 No storage change is authorized by Milestone 8.1 or 8.2.
+
+Milestone 8.3 owns only a transient in-process conversation session seeded
+from the exact Milestone 8.2 activated context. Accepted transient state is
+mutated only through the existing deterministic Conversation Engine and State
+Manager, while progress, grounding, and handoff remain derived. Turn IDs,
+message IDs, message content, state replacements, and execution evidence are
+not durably stored by this workflow. Durable atomic turn ownership remains a
+Milestone 8.4 decision and implementation boundary.

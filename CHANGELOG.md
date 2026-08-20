@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 8.3 - Deterministic Multi-Turn Conversation Workflow
+
+- Added a transient application workflow that composes exact activated context
+  with the certified deterministic conversation, state, progress, grounding,
+  read-model, and handoff authorities.
+- Proved ordered required-field collection, bounded clarification, correction
+  history, confirmation, escalation, completion, and derived handoff across
+  multiple fictional customer turns.
+- Added exact activation/profile/conversation/revision/message-sequence and
+  duplicate guards, detached input handling, and fail-closed grounding and
+  scope behavior.
+- Corrected completed-state handoff readiness and the approved untrusted-input
+  annotation boundary exposed by the focused workflow verification.
+- Added no durable turn or message evidence, migration, dependency, provider,
+  UI, customer release, external action, fixture fallback, or Milestone 8.4
+  behavior.
+
 ### Sprint 8.2 - Activated Context and Grounded Knowledge
 
 - Added an application-owned bounded context assembler that runs only after

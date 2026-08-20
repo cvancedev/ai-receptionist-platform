@@ -69,6 +69,8 @@ composed beneath it.
 
 ### 8.3 Multi-Turn Workflow
 
+**Status: Complete**
+
 - Acceptance scenarios cover greeting, request understanding, resolved,
   ambiguous, missing, and unsupported service paths.
 - Required questions are asked once in deterministic order; optional questions
@@ -76,10 +78,21 @@ composed beneath it.
 - Claims do not become confirmed facts without validation.
 - Corrections preserve history, reopen dependent requirements, and recalculate
   readiness.
-- Confirmation, escalation, completion, and handoff transitions follow only
-  registered definitions and validated expected revisions.
-- Invalid model output, invented fields, authority violations, duplicates, and
-  stale proposals cause no mutation or release.
+- Deterministic confirmation, escalation, completion, and handoff operations
+  follow the existing Conversation Engine and State Manager invariants with
+  validated expected revisions; any model-controlled transition remains
+  registry-, validator-, and executor-controlled.
+- Invalid grounded candidates, invented fields, authority violations,
+  duplicates, and stale requests cause no mutation or release.
+
+`npm.cmd run verify:deterministic-multi-turn-workflow` proves exact activated
+context seeding, detached inputs, deterministic ordered collection,
+clarification, correction history, confirmation, escalation, completion,
+derived handoff, grounded-source validation, and fail-closed malformed,
+wrong-scope, wrong-message-conversation, stale, duplicate, invalid-sequence,
+invalid-transition, and invalid-grounding outcomes. It also proves the
+fixture-free production boundary, unchanged model-controlled Transition
+Registry, no customer release, and no Milestone 8.4 persistence capability.
 
 ### 8.4 Durability and Restart
 

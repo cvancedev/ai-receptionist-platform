@@ -146,7 +146,7 @@ Milestone 7.0 defines the sequence and boundaries in the [Sprint 7 Plan](docs/SP
 
 ## Sprint 8: End-to-End MVP
 
-**Status: In Progress - Milestones 8.0-8.2 Complete; Milestone 8.3 Not Started**
+**Status: In Progress - Milestones 8.0-8.3 Complete; Milestone 8.4 Not Started**
 
 Connect the validated customer-to-human workflow only after the persistence and Business Configuration phases pass their entry and exit criteria. Communication and AI providers remain subject to separate technical and business evaluation.
 
@@ -171,6 +171,14 @@ activation-bound, active, effective, customer-eligible knowledge. Exact
 grounding validation preserves complete source provenance and denies release.
 It adds no multi-turn execution, message persistence, provider, UI, migration,
 schema change, dependency, production release, or external action.
+
+Milestone 8.3 adds the smallest transient deterministic multi-turn workflow
+over the exact activated context. Existing application/domain authorities own
+ordered intake, clarification, correction, confirmation, escalation,
+completion, grounded candidates, progress, and derived handoff. Exact scope,
+revision, message sequence, and duplicate checks fail closed. It adds no
+durable turn/message evidence, migration, dependency, provider, UI, release,
+external action, or Milestone 8.4 behavior.
 
 ## Sprint 9: Customer Validation and Hardening
 

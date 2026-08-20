@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 8.0 through 8.2 are complete. Sprints 1 through 7 remain certified
-complete. Milestone 8.3 has not started.
+Milestones 8.0 through 8.3 are complete. Sprints 1 through 7 remain certified
+complete. Milestone 8.4 has not started.
 
 This plan refines Phase 6 of the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md)
 without changing its position or expanding it into production release. Each
@@ -93,7 +93,7 @@ provider, migration, dependency, UI, or fixture fallback is added.
 
 ### 8.3: Deterministic Multi-Turn Conversation Workflow
 
-**Status: Not Started**
+**Status: Complete**
 
 - Connect greeting, request understanding, service resolution, relevant
   questions, corrections, confirmation, escalation, completion, next steps,
@@ -103,6 +103,18 @@ provider, migration, dependency, UI, or fixture fallback is added.
   application-validated and executor-controlled.
 - Keep the model advisory. Candidate facts and wording cannot directly mutate
   state, decide completion, activate escalation, or authorize release.
+
+Milestone 8.3 adds a transient, application-owned workflow seeded only from
+the exact eligible activated context created in Milestone 8.2. It composes the
+existing deterministic Conversation Engine, Conversation State Manager,
+Progress Engine/read-model projection, Grounding Validator, and Handoff
+Builder for bounded multi-turn progression, clarification, correction,
+confirmation, escalation, completion, and derived handoff. Exact activation,
+profile-version, conversation, revision, message-sequence, and duplicate
+guards fail closed. No message, state replacement, or execution evidence is
+persisted by this workflow; durable turn atomicity and restart evidence remain
+Milestone 8.4. No fixture fallback, provider, release, external action,
+migration, dependency, route, or UI is added.
 
 ### 8.4: Durable Turn, Handoff, and Restart Boundary
 

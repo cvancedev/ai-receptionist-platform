@@ -2,12 +2,11 @@
 
 ## Current Decision
 
-Customer response release remains disabled in Milestone 8.1.
+Customer response release remains disabled through Milestone 8.3.
 
-The contract may describe a validated response candidate so later milestones
-can preserve a stable boundary, but Milestone 8.1 produces no candidate. Both
-the application decision and response result contain literal false release
-authority.
+Milestone 8.3 may construct local fictional prompts and may validate a bounded
+grounded response candidate, but each carries literal false customer-release
+authority. Neither is a channel payload or authorization to communicate.
 
 ## Required Separation
 
@@ -21,8 +20,9 @@ These are distinct events:
 6. the candidate passes customer-content validation; and
 7. an authorized channel releases it.
 
-Success at one event never implies authority for the next. Sprint 8.1 stops
-before the first event.
+Success at one event never implies authority for the next. Milestone 8.3 may
+exercise deterministic local output and grounding validation, but it stops
+before customer-content validation for release and before every channel event.
 
 ## Prohibited Release Paths
 

@@ -439,11 +439,14 @@ derived handoff readiness. Milestone 8.2 adds immutable transient context only
 after those checks, with the pinned Business Profile, exact state revision,
 untrusted current input, and only exact activation-bound eligible knowledge.
 Application-owned grounding validation preserves source, audience,
-effective-time, version, activation, and policy provenance. Neither milestone
-persists the message, executes a transition, calls a provider, produces or
-releases a response, or performs an external action. The fixture-backed
-prototype remains unchanged, the durable path remains opt-in without fallback,
-and Milestone 8.3 has not started. See
+effective-time, version, activation, and policy provenance. Milestone 8.3
+adds a transient deterministic multi-turn workflow over that exact context.
+It reuses the certified Conversation Engine, State Manager, progress/read-model,
+grounding, and handoff authorities with exact scope, revision, sequence, and
+duplicate guards. The workflow persists no message, state replacement, or
+execution evidence; calls no provider; and grants no release or external
+action. The fixture-backed prototype remains unchanged, the activated path has
+no fixture fallback, and Milestone 8.4 has not started. See
 [End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md),
 [Sprint 8 Storage Decision](SPRINT_8_STORAGE_DECISION.md), and
 [Sprint 8 Test Plan](SPRINT_8_TEST_PLAN.md).

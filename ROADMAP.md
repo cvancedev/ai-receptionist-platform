@@ -146,9 +146,16 @@ Milestone 7.0 defines the sequence and boundaries in the [Sprint 7 Plan](docs/SP
 
 ## Sprint 8: End-to-End MVP
 
-**Status: Not Started**
+**Status: Planning â€” Milestone 8.0 Complete; Milestone 8.1 Not Started**
 
 Connect the validated customer-to-human workflow only after the persistence and Business Configuration phases pass their entry and exit criteria. Communication and AI providers remain subject to separate technical and business evaluation.
+
+Milestone 8.0 defines the proposed internal fictional MVP sequence, authority
+boundaries, provider decision gate, persistence gap decision, acceptance
+criteria, and verification strategy in the [Sprint 8 Plan](docs/SPRINT_8_PLAN.md)
+and [Sprint 8 Test Plan](docs/SPRINT_8_TEST_PLAN.md). It adds documentation only.
+Sprint 8 does not authorize production release, real customer data,
+authentication, communication channels, or external business actions.
 
 ## Sprint 9: Customer Validation and Hardening
 

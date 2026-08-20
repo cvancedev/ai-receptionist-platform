@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 8.0 - End-to-End MVP Planning
+
+- Defined the proposed Sprint 8 internal fictional MVP objective, milestone
+  sequence, authority boundaries, end-to-end flow, exit criteria, risks, and
+  prohibited capabilities.
+- Added milestone-specific verification and acceptance scenarios preserving
+  certified configuration, isolation, profile-pinning, persistence, recovery,
+  deterministic mock, and customer-release boundaries.
+- Kept provider integration conditional on separate evaluation and explicit
+  authorization, and deferred any message/handoff migration decision until a
+  contract-first storage gap review.
+- Added documentation only; Milestone 8.1 and all Sprint 8 implementation remain
+  Not Started.
+
 ### Sprint 7.7 - Sprint 7 Certification
 
 - Certified Sprint 7 complete against implementation baseline `9ca7a56` after re-auditing every approved exit criterion and the committed lifecycle remediation.

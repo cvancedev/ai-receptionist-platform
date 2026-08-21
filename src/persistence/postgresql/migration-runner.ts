@@ -38,6 +38,11 @@ const POSTGRESQL_MIGRATIONS = [
     name: "configuration_lifecycle_transitions",
     fileName: "006_configuration_lifecycle_transitions.sql",
   },
+  {
+    version: 7,
+    name: "message_evidence",
+    fileName: "007_message_evidence.sql",
+  },
 ] as const;
 
 export async function applyPostgresqlMigrations(
@@ -51,8 +56,8 @@ export async function applyPostgresqlMigrations(
     client = await pool.connect();
     await client.query("BEGIN");
     await client.query(`SET LOCAL search_path TO ${quoteIdentifier(schema)}`);
-    await validateMigrationHistory(client);
-    for (const migration of POSTGRESQL_MIGRATIONS) {
+    const appliedMigrationCount = await validateMigrationHistory(client);
+    for (const migration of POSTGRESQL_MIGRATIONS.slice(appliedMigrationCount)) {
       const source = await readFile(
         join(process.cwd(), "database", "migrations", migration.fileName),
         "utf8",
@@ -69,11 +74,11 @@ export async function applyPostgresqlMigrations(
   }
 }
 
-async function validateMigrationHistory(client: PoolClient): Promise<void> {
+async function validateMigrationHistory(client: PoolClient): Promise<number> {
   const table = await client.query<{ readonly exists: boolean }>(
     "SELECT to_regclass('app_schema_migrations') IS NOT NULL AS exists",
   );
-  if (!table.rows[0]?.exists) return;
+  if (!table.rows[0]?.exists) return 0;
 
   const history = await client.query<{
     readonly version: number;
@@ -91,6 +96,7 @@ async function validateMigrationHistory(client: PoolClient): Promise<void> {
   if (!compatible) {
     throw new Error("PostgreSQL migration history is incompatible.");
   }
+  return history.rows.length;
 }
 
 function requiredConnectionString(

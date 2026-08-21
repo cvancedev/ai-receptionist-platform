@@ -28,7 +28,7 @@ async function verifyMigration() {
   await applyPostgresqlMigrations({ connectionString, schema });
   await applyPostgresqlMigrations({ connectionString, schema });
   const history = await admin.query(`SELECT version,name FROM "${schema}".app_schema_migrations ORDER BY version`);
-  assert(JSON.stringify(history.rows) === JSON.stringify([{ version: 1, name: "conversation_states" }, { version: 2, name: "execution_journal" }, { version: 3, name: "business_profile_versions" }, { version: 4, name: "knowledge_record_versions" }, { version: 5, name: "configuration_activations" }, { version: 6, name: "configuration_lifecycle_transitions" }]), "ordered migrations 001-006 are compatible and idempotent");
+  assert(JSON.stringify(history.rows) === JSON.stringify([{ version: 1, name: "conversation_states" }, { version: 2, name: "execution_journal" }, { version: 3, name: "business_profile_versions" }, { version: 4, name: "knowledge_record_versions" }, { version: 5, name: "configuration_activations" }, { version: 6, name: "configuration_lifecycle_transitions" }, { version: 7, name: "message_evidence" }]), "ordered migrations 001-007 are compatible and idempotent");
 }
 
 async function verifyCreateReadRestart() {

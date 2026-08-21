@@ -2,10 +2,13 @@ import type { ExecutionJournalEntry } from "../execution-journal/contracts";
 import type { StateExecutionResult } from "../execution/contracts";
 import type { ConversationStoreScope } from "../../conversation/conversation-store";
 import type { ConversationState } from "../../domain/conversation-state";
+import type { DurableMessageEvidence } from "../../application/end-to-end/message-evidence";
 
 export interface TransactionalExecutionPersistenceInput {
   readonly scope: Readonly<ConversationStoreScope>;
   readonly execution: StateExecutionResult;
+  /** Required by the Sprint 8.4 durable-turn path; omitted by certified legacy callers. */
+  readonly messageEvidence?: Readonly<DurableMessageEvidence>;
 }
 
 export type TransactionalExecutionPersistenceFailureReason =
@@ -14,6 +17,7 @@ export type TransactionalExecutionPersistenceFailureReason =
   | "RevisionConflict"
   | "JournalRejected"
   | "DuplicateConflict"
+  | "MessageEvidenceRejected"
   | "InfrastructureFailure"
   | "TransactionCommitFailed";
 

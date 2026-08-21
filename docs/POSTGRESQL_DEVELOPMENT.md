@@ -19,6 +19,10 @@ migration 006 for application-authorized, expected-revision lifecycle envelope
 updates and append-only transition audit evidence. Neither milestone creates a
 production connection or default database wiring.
 
+Milestone 8.4 adds migration 007 and an opt-in bounded message-evidence reader.
+Approved durable turns can include that subordinate evidence in the existing
+atomic state-and-journal transaction.
+
 ## Integration Verification
 
 The dedicated integration verifier requires an isolated PostgreSQL database
@@ -38,6 +42,7 @@ npm.cmd run verify:postgresql-configuration-activation
 npm.cmd run verify:activated-configuration-prototype
 npm.cmd run verify:business-configuration-recovery
 npm.cmd run verify:configuration-lifecycle-remediation
+npm.cmd run verify:durable-turn-restart
 ```
 
 Do not commit the connection URL or place it in application source. The
@@ -55,6 +60,7 @@ The ordered migrations are:
 - [`database/migrations/004_knowledge_record_versions.sql`](../database/migrations/004_knowledge_record_versions.sql); and
 - [`database/migrations/005_configuration_activations.sql`](../database/migrations/005_configuration_activations.sql); and
 - [`database/migrations/006_configuration_lifecycle_transitions.sql`](../database/migrations/006_configuration_lifecycle_transitions.sql).
+- [`database/migrations/007_message_evidence.sql`](../database/migrations/007_message_evidence.sql).
 
 They create only:
 
@@ -68,6 +74,8 @@ They create only:
   and one current active pointer per business; and
 - append-only Business Profile and Knowledge Record lifecycle transition audit
   evidence coupled to exact expected-revision envelope updates.
+- bounded append-only customer message evidence with exact conversation,
+  profile-version, activation, turn, sequence, and resulting-state provenance.
 
 The migration runner applies the migration within the configured schema and a
 local database transaction. Application startup does not run migrations, and

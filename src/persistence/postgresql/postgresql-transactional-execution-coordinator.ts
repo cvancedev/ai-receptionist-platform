@@ -16,6 +16,10 @@ import type {
   TransactionalExecutionPersistenceResult,
 } from "../../ai/execution-persistence/contracts";
 import { deepFreeze } from "../../ai/shared/immutable";
+import {
+  decodeDurableMessageEvidence,
+  type DurableMessageEvidence,
+} from "../../application/end-to-end/message-evidence";
 import type { ConversationState } from "../../domain/conversation-state";
 import { decodeConversationState } from "../../validation/conversation-state-codec";
 import { quoteIdentifier, validatedSchema } from "./migration-runner";
@@ -32,6 +36,7 @@ interface PreparedPersistenceInput {
   readonly expectedRevision: number;
   readonly state: Readonly<ConversationState>;
   readonly journalDraft: Readonly<ExecutionJournalEntryDraft>;
+  readonly messageEvidence: Readonly<DurableMessageEvidence> | null;
 }
 
 /**
@@ -44,6 +49,7 @@ implements TransactionalExecutionPersistenceCoordinator {
   private readonly pool: Pool;
   private readonly stateTable: string;
   private readonly journalTable: string;
+  private readonly messageEvidenceTable: string;
 
   constructor(
     options: Readonly<PostgresqlTransactionalExecutionCoordinatorOptions>,
@@ -55,6 +61,7 @@ implements TransactionalExecutionPersistenceCoordinator {
     this.pool = new Pool({ connectionString: options.connectionString });
     this.stateTable = `${quoteIdentifier(schema)}.conversation_states`;
     this.journalTable = `${quoteIdentifier(schema)}.execution_journal_entries`;
+    this.messageEvidenceTable = `${quoteIdentifier(schema)}.conversation_message_evidence`;
   }
 
   async persist(
@@ -96,6 +103,13 @@ implements TransactionalExecutionPersistenceCoordinator {
         this.journalTable,
         prepared.value.journalDraft,
       );
+      if (prepared.value.messageEvidence) {
+        await appendMessageEvidence(
+          client,
+          this.messageEvidenceTable,
+          prepared.value.messageEvidence,
+        );
+      }
 
       commitAttempted = true;
       await client.query("COMMIT");
@@ -163,6 +177,20 @@ function preparePersistenceInput(
   if (decodedPrevious.status === "failure" || decodedNew.status === "failure") {
     return invalidInput();
   }
+  let messageEvidence: Readonly<DurableMessageEvidence> | null = null;
+  if (input.messageEvidence !== undefined) {
+    const decodedEvidence = decodeDurableMessageEvidence(input.messageEvidence, input.scope);
+    if (
+      decodedEvidence.status === "failure"
+      || decodedEvidence.evidence.resultingStateRevision !== decodedNew.state.revision
+    ) {
+      return {
+        status: "failure",
+        result: failure("MessageEvidenceRejected"),
+      };
+    }
+    messageEvidence = decodedEvidence.evidence;
+  }
 
   return {
     status: "success",
@@ -171,8 +199,37 @@ function preparePersistenceInput(
       expectedRevision: metadata.expectedStateRevision,
       state: decodedNew.state,
       journalDraft: journal.draft,
+      messageEvidence,
     },
   };
+}
+
+async function appendMessageEvidence(
+  client: PoolClient,
+  table: string,
+  evidence: Readonly<DurableMessageEvidence>,
+): Promise<void> {
+  await client.query(
+    `INSERT INTO ${table} (
+      business_profile_id, business_profile_version, conversation_id,
+      message_id, turn_id, activation_revision, sequence, source, content,
+      resulting_state_revision, recorded_at, evidence_schema_version
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+    [
+      evidence.businessProfileId,
+      evidence.businessProfileVersion,
+      evidence.conversationId,
+      evidence.messageId,
+      evidence.turnId,
+      evidence.activationRevision,
+      evidence.sequence,
+      evidence.source,
+      evidence.content,
+      evidence.resultingStateRevision,
+      evidence.recordedAt,
+      evidence.evidenceSchemaVersion,
+    ],
+  );
 }
 
 async function replaceState(

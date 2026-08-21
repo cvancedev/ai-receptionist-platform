@@ -50,7 +50,8 @@ async function verifyMigration(): Promise<void> {
     { version: 4, name: "knowledge_record_versions" },
     { version: 5, name: "configuration_activations" },
     { version: 6, name: "configuration_lifecycle_transitions" },
-  ], "ordered migrations 001-006 are compatible and idempotent");
+    { version: 7, name: "message_evidence" },
+  ], "ordered migrations 001-007 are compatible and idempotent");
 }
 
 async function verifyCreateReadAndRestart(): Promise<void> {

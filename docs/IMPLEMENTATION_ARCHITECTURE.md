@@ -443,10 +443,12 @@ effective-time, version, activation, and policy provenance. Milestone 8.3
 adds a transient deterministic multi-turn workflow over that exact context.
 It reuses the certified Conversation Engine, State Manager, progress/read-model,
 grounding, and handoff authorities with exact scope, revision, sequence, and
-duplicate guards. The workflow persists no message, state replacement, or
-execution evidence; calls no provider; and grants no release or external
-action. The fixture-backed prototype remains unchanged, the activated path has
-no fixture fallback, and Milestone 8.4 has not started. See
+duplicate guards. The 8.3 workflow remains transient. Milestone 8.4 adds an
+opt-in atomic approved-state, execution-evidence, and bounded-message boundary,
+restart decoding, and deterministic handoff reproduction. It calls no provider
+and grants no release or external action. The fixture-backed prototype remains
+unchanged, the activated path has no fixture fallback, and Milestone 8.5 has
+not started. See
 [End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md),
 [Sprint 8 Storage Decision](SPRINT_8_STORAGE_DECISION.md), and
 [Sprint 8 Test Plan](SPRINT_8_TEST_PLAN.md).

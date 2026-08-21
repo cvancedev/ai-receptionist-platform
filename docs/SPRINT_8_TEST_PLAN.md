@@ -96,6 +96,8 @@ Registry, no customer release, and no Milestone 8.4 persistence capability.
 
 ### 8.4 Durability and Restart
 
+**Status: Complete**
+
 - Approved state and required execution evidence commit together or neither
   commits.
 - Duplicate execution and stale revision attempts do not create a second
@@ -107,6 +109,12 @@ Registry, no customer release, and no Milestone 8.4 persistence capability.
 - If a migration is authorized, verify order, checksum/history compatibility,
   clean application, rollback, constraints, cross-business isolation, decoder
   failure, and unchanged migrations 001 through 006.
+
+`npm.cmd run verify:durable-turn-restart` proves ordered migration 007,
+atomic state/execution/message commit, rollback after the last dependent write,
+duplicate and stale no-op behavior, restart through fresh adapters, exact
+message-to-state revision and activation provenance, corruption rejection, and
+cross-business isolation.
 
 ### 8.5 Internal Fictional Experience
 

@@ -2,8 +2,8 @@
 
 ## Status
 
-Accepted architectural analysis for Milestone 8.1. It authorizes no migration
-or implementation.
+Accepted in Milestone 8.1 and implemented under the separate Milestone 8.4
+authorization.
 
 ## Existing Durable Coverage
 
@@ -36,15 +36,19 @@ content needed to reconstruct conversation entries after restart. The current
 AI prototype uses fixture entries, which cannot serve as fallback on the
 durable activated path.
 
-This need does not authorize a migration during Milestone 8.1. Before a later
-authorized migration, the application contract must define exact scope and
+Milestone 8.4 supplies the later authorization through additive migration 007.
+The application contract defines exact scope and
 identity, content bounds, append and duplicate behavior, atomic relationship
 to dependent state, privacy minimization, retention, decoder and corruption
 failures, restart, concurrency, and technology-neutral outcomes without replay
 or workflow authority.
 
-The likely implementation is one narrowly scoped additive migration after
-separate authorization. Migrations 001 through 006 must remain unchanged.
+The implementation is one narrowly scoped additive migration. Migrations 001
+through 006 remain unchanged. Evidence includes exact business, pinned profile
+version, conversation, activation revision, message, turn, sequence, bounded
+customer content, resulting state revision, format version, and recorded time.
+It remains subordinate evidence and is never replayed to construct state or
+authorize workflow progression.
 
 ## Dependency Decision
 

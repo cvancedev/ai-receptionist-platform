@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 8.0 through 8.3 are complete. Sprints 1 through 7 remain certified
-complete. Milestone 8.4 has not started.
+Milestones 8.0 through 8.4 are complete. Sprints 1 through 7 remain certified
+complete. Milestone 8.5 has not started.
 
 This plan refines Phase 6 of the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md)
 without changing its position or expanding it into production release. Each
@@ -118,7 +118,7 @@ migration, dependency, route, or UI is added.
 
 ### 8.4: Durable Turn, Handoff, and Restart Boundary
 
-**Status: Not Started**
+**Status: Complete**
 
 - Persist each approved state replacement and required execution evidence
   atomically through the certified transaction boundary.
@@ -130,6 +130,15 @@ migration, dependency, route, or UI is added.
   that restart-safe transcript or handoff acceptance cannot be met by the
   existing Conversation State and journal. A migration requires its own
   explicit milestone authorization and may not make stored data authoritative.
+
+Milestone 8.4 adds bounded append-only customer message evidence through
+migration 007 because Conversation State cannot reproduce bounded transcript
+content after restart. The existing transaction coordinator couples that
+subordinate evidence to approved state and Execution Journal commits. Restart
+reads authoritative state directly, separately decodes ordered evidence with
+exact activation provenance, and derives handoff again from validated pinned
+state and profile. No handoff record, replay, fallback, release, provider,
+external action, dependency, route, or UI is added.
 
 ### 8.5: Internal Fictional MVP Experience
 
@@ -346,7 +355,8 @@ handoff record. Milestone 8.1 must decide whether the acceptance requirement
 for restart-safe conversation history and handoff can be met by authoritative
 Conversation State plus deterministic derivation. If it cannot, Milestone 8.4
 may propose the smallest additive migration under separate authorization.
-This is a gated potential need, not an approved schema change.
+Milestone 8.4 authorization resolved that gate and adds migration 007 only for
+bounded append-only message evidence. Migrations 001 through 006 are unchanged.
 
 No provider SDK or new persistence category is selected. A provider adapter
 should prefer existing provider-neutral contracts and platform capabilities;

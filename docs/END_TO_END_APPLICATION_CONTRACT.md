@@ -114,3 +114,8 @@ release, releases content, or performs an external action.
 Milestone 8.6 evaluates and defers a real provider. The existing provider-
 neutral mock and validation contracts remain unchanged; no adapter, network,
 credential, provider output, or additional authority enters this boundary.
+
+Milestone 8.7 verifies the composed failure, security, rollback, isolation,
+configuration, grounding, and restart boundaries without changing this
+contract or adding product behavior. Sprint 8.8 certification remains
+separately gated.

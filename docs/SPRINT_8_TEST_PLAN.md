@@ -151,6 +151,8 @@ authorization requirements; and no provider dependency is selected.
 
 ### 8.7 Failure, Security, and Recovery
 
+**Status: Complete**
+
 - Compose the complete negative matrix across configuration, context, model,
   state, persistence, projection, and handoff.
 - Prove no tenant/existence disclosure, silent repair, repinning, replay,
@@ -159,6 +161,12 @@ authorization requirements; and no provider dependency is selected.
   scans, prohibited-capability scans, migration-history checks, Markdown-link
   verification, lint, TypeScript, build, and the full certified regression
   suite.
+
+`npm.cmd run verify:end-to-end-failure-security-recovery` maps every required
+negative and recovery boundary to executable certified evidence and directly
+rechecks untrusted provider outcomes, malformed and oversized message
+evidence, UI isolation, technology-neutral application contracts, subordinate
+non-replay evidence, and disabled release/external-action authority.
 
 ### 8.8 Certification
 

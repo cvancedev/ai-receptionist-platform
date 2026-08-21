@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 8.0 through 8.6 are complete. Sprints 1 through 7 remain certified
-complete. Milestone 8.7 has not started.
+Milestones 8.0 through 8.7 are complete. Sprints 1 through 7 remain certified
+complete. Milestone 8.8 has not started.
 
 This plan refines Phase 6 of the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md)
 without changing its position or expanding it into production release. Each
@@ -188,13 +188,20 @@ explicit authorization.
 
 ### 8.7: End-to-End Failure, Security, and Recovery Verification
 
-**Status: Not Started**
+**Status: Complete**
 
 - Prove isolation, restart, concurrency, duplicate, invalid-output,
   unavailable-provider, suspended-configuration, and partial-failure behavior.
 - Verify privacy minimization, source traceability, fail-closed release, and
   absence of external actions or production credentials.
 - Run the complete certified Sprint 3 through Sprint 7 regression matrix.
+
+Milestone 8.7 adds a focused verification-only composition of the existing
+failure, security, rollback, isolation, configuration, grounding, and restart
+evidence. The [Sprint 8 Failure, Security, and Recovery Evidence](SPRINT_8_FAILURE_SECURITY_RECOVERY.md)
+records the complete matrix. No production defect, migration, dependency,
+provider, release, external action, or Milestone 8.8 certification behavior is
+added.
 
 ### 8.8: Sprint 8 Certification
 

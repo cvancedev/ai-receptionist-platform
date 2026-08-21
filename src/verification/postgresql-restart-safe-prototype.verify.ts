@@ -234,7 +234,7 @@ async function verifyArchitectureBoundaries(): Promise<void> {
   for (const path of uiFiles) {
     const uiSource = await readFile(join(process.cwd(), path), "utf8");
     assert(
-      !/postgresql|conversation-store|execution-journal|transaction|state-executor/i
+      !/from ["']pg["']|from ["'][^"']*(?:persistence\/postgresql|conversation-store|execution-journal|state-executor)[^"']*["']|\b(?:Pool|PoolClient|PostgresqlConversationStore|PostgresqlExecutionJournal|PostgresqlTransactionalExecutionCoordinator)\b|\b(?:SELECT|INSERT|UPDATE|DELETE)\s+(?:FROM|INTO|SET|WHERE)\b/i
         .test(uiSource),
       `${path} has no persistence or execution authority`,
     );

@@ -32,7 +32,8 @@
     "verify:deterministic-multi-turn-workflow": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/deterministic-multi-turn-workflow.verify.js",
     "verify:durable-turn-restart": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/durable-turn-restart.verify.js",
     "verify:internal-fictional-mvp-experience": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/internal-fictional-mvp-experience.verify.js",
-    "verify:provider-evaluation": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/provider-evaluation.verify.js"
+    "verify:provider-evaluation": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/provider-evaluation.verify.js",
+    "verify:end-to-end-failure-security-recovery": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/end-to-end-failure-security-recovery.verify.js"
   },
   "dependencies": {
     "next": "16.3.0",

@@ -128,6 +128,8 @@ cross-business isolation.
 
 ### 8.6 Provider Gate
 
+**Status: Complete; provider deferred**
+
 - Fixed fictional comparison scenarios measure task accuracy, grounding,
   invalid-output rate, latency, and failure behavior against the mock baseline.
 - Prompt injection, knowledge conflict, source mismatch, oversized output,
@@ -139,6 +141,13 @@ cross-business isolation.
   deterministic path remains fully operable.
 - If an adapter is authorized, it cannot mutate state or release content and
   can be replaced by the mock without domain/application changes.
+
+`npm.cmd run verify:provider-evaluation` proves that the deterministic mock
+remains functional; malformed, ungrounded, fabricated-source, authority-
+violating, refused, failed, and cancelled results produce no mutation,
+customer release, or network access; the evaluation records timeout,
+unavailability, privacy, credential, cost, transport, and separate-
+authorization requirements; and no provider dependency is selected.
 
 ### 8.7 Failure, Security, and Recovery
 

@@ -110,3 +110,7 @@ explicit durable activated mode through bounded UI read models. When no
 application runtime is injected, durable mode fails closed without fixture
 fallback. No path calls a provider, validates a model-produced draft for
 release, releases content, or performs an external action.
+
+Milestone 8.6 evaluates and defers a real provider. The existing provider-
+neutral mock and validation contracts remain unchanged; no adapter, network,
+credential, provider output, or additional authority enters this boundary.

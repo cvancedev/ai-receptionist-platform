@@ -452,7 +452,11 @@ the smallest accessible internal experience to the existing prototype. Its
 durable activated mode is explicit and fails closed unless its application
 runtime is injected. The UI renders bounded read models only and gains no
 repository, state, release, provider, or external-action authority. Milestone
-8.6 has not started. See
+8.6 evaluates and defers a real provider because no Sprint 8 acceptance gap
+requires one. The provider-neutral mock remains mandatory; no provider/model,
+adapter, SDK, credential, network call, or authority is added. Any networked
+development adapter still requires separate explicit authorization. Milestone
+8.7 has not started. See
 [End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md),
 [Sprint 8 Storage Decision](SPRINT_8_STORAGE_DECISION.md), and
 [Sprint 8 Test Plan](SPRINT_8_TEST_PLAN.md).

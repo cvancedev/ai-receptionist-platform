@@ -2,7 +2,7 @@
 
 ## Current Decision
 
-Customer response release remains disabled through Milestone 8.5.
+Customer response release remains disabled through Milestone 8.6.
 
 Milestones 8.3 through 8.5 may construct or display local fictional prompts and may validate a bounded
 grounded response candidate, but each carries literal false customer-release

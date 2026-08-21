@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 8.0 through 8.5 are complete. Sprints 1 through 7 remain certified
-complete. Milestone 8.6 has not started.
+Milestones 8.0 through 8.6 are complete. Sprints 1 through 7 remain certified
+complete. Milestone 8.7 has not started.
 
 This plan refines Phase 6 of the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md)
 without changing its position or expanding it into production release. Each
@@ -165,7 +165,7 @@ action, authentication, or Milestone 8.6 behavior is added.
 
 ### 8.6: Provider Evaluation and Conditional Development Adapter
 
-**Status: Not Started**
+**Status: Complete; provider deferred**
 
 - Evaluate whether a provider materially improves language interpretation or
   response drafting over the deterministic/mock baseline using fixed fictional
@@ -177,6 +177,14 @@ action, authentication, or Milestone 8.6 behavior is added.
   non-production, and subordinate to the same validation and decision path.
 - The deterministic mock remains the mandatory regression path and safe
   fallback. Deferring a provider does not authorize weaker validation.
+
+The [Sprint 8 Provider Evaluation](SPRINT_8_PROVIDER_EVALUATION.md) finds no
+unmet Sprint 8 exit criterion that requires a real provider. Potential gains in
+free-form interpretation and wording do not justify network, credential,
+privacy, latency, availability, and cost risk without fixed-scenario evidence
+of material improvement. No provider/model is selected and no adapter is
+implemented. Any networked development adapter still requires separate
+explicit authorization.
 
 ### 8.7: End-to-End Failure, Security, and Recovery Verification
 

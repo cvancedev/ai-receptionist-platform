@@ -146,7 +146,7 @@ Milestone 7.0 defines the sequence and boundaries in the [Sprint 7 Plan](docs/SP
 
 ## Sprint 8: End-to-End MVP
 
-**Status: In Progress - Milestones 8.0-8.3 Complete; Milestone 8.4 Not Started**
+**Status: Complete; certified**
 
 Connect the validated customer-to-human workflow only after the persistence and Business Configuration phases pass their entry and exit criteria. Communication and AI providers remain subject to separate technical and business evaluation.
 
@@ -180,7 +180,14 @@ revision, message sequence, and duplicate checks fail closed. It adds no
 durable turn/message evidence, migration, dependency, provider, UI, release,
 external action, or Milestone 8.4 behavior.
 
+Milestones 8.4 through 8.8 complete durable turn/message persistence and
+restart, the bounded internal fictional experience, provider evaluation and
+deferral, integrated failure/security/recovery verification, and Sprint 8
+certification. See the [Sprint 8 Certification](docs/certification/SPRINT8_CERTIFICATION.md).
+
 ## Sprint 9: Customer Validation and Hardening
+
+**Status: Planning complete; Milestone 9.1 Not Started**
 
 - Real-world testing
 - Reliability improvements
@@ -188,6 +195,14 @@ external action, or Milestone 8.4 behavior.
 - Security review
 - Bug fixes
 - Customer feedback
+
+Sprint 9 implements Phase 7 of the
+[Implementation Sequence](docs/IMPLEMENTATION_SEQUENCE.md): prepare the
+validated MVP for a separately authorized controlled-production evaluation.
+It does not itself authorize launch, real customer data, customer response
+release, a provider, a communication channel, or an external action. The
+milestone gates are defined in the [Sprint 9 Plan](docs/SPRINT_9_PLAN.md) and
+[Sprint 9 Test Plan](docs/SPRINT_9_TEST_PLAN.md).
 
 ## Future Features (Uncommitted)
 

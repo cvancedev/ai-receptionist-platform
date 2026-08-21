@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 9.0 - Production Readiness Planning
+
+- Defined Sprint 9 as roadmap-aligned Customer Validation and Hardening that
+  prepares the certified internal MVP for a separately authorized controlled-
+  production evaluation rather than silently authorizing launch.
+- Added gated milestones for risk review, environment/secrets, conditional
+  identity and authorization, operational PostgreSQL and recovery,
+  observability/privacy, reliability/accessibility/performance, controlled
+  validation, integrated verification, and certification/recommendation.
+- Added the Sprint 9 test strategy with full Sprint 1–8 regression, isolation,
+  security, PostgreSQL, migration, recovery, accessibility, performance,
+  dependency, and prohibited-capability gates.
+- Added documentation only. Milestone 9.1 remains Not Started; no runtime,
+  migration, dependency, provider, channel, release, deployment, external
+  action, production database, or lockfile change is included.
+
 ### Sprint 8.3 - Deterministic Multi-Turn Conversation Workflow
 
 - Added a transient application workflow that composes exact activated context

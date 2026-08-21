@@ -56,5 +56,6 @@ product capability or perform Sprint 8 certification.
 
 ## Scope
 
-This evidence record is not Sprint 8 certification. Milestone 8.8 remains Not
-Started and requires separate authorization.
+This Milestone 8.7 evidence record is incorporated into the separately
+authorized [Sprint 8 Certification](certification/SPRINT8_CERTIFICATION.md).
+Sprint 9 remains Not Started.

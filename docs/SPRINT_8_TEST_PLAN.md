@@ -170,6 +170,8 @@ non-replay evidence, and disabled release/external-action authority.
 
 ### 8.8 Certification
 
+**Status: Complete; Sprint 8 certified**
+
 - Re-run every focused Sprint 8 verifier and every certified Sprint 3 through
   Sprint 7 verifier.
 - Run durable suites against a disposable localhost-only PostgreSQL environment
@@ -178,6 +180,10 @@ non-replay evidence, and disabled release/external-action authority.
   routes, and runtime capability surface.
 - Record exact evidence, defects, limitations, security baseline, Git state,
   and a binary certification result.
+
+The complete matrix passed and is recorded in the
+[Sprint 8 Certification](certification/SPRINT8_CERTIFICATION.md). Sprint 9
+remains Not Started.
 
 ## End-to-End Acceptance Scenarios
 

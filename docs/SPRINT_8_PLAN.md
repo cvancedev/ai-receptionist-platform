@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 8.0 through 8.7 are complete. Sprints 1 through 7 remain certified
-complete. Milestone 8.8 has not started.
+Milestones 8.0 through 8.8 are complete. Sprints 1 through 8 are certified
+complete. Sprint 9 has not started.
 
 This plan refines Phase 6 of the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md)
 without changing its position or expanding it into production release. Each
@@ -205,7 +205,7 @@ added.
 
 ### 8.8: Sprint 8 Certification
 
-**Status: Not Started**
+**Status: Complete; Sprint 8 certified**
 
 - Audit every Sprint 8 exit criterion, architecture boundary, migration and
   dependency decision, acceptance scenario, documentation claim, and
@@ -213,6 +213,11 @@ added.
 - Create evidence-based certification only after all required deterministic
   and applicable provider-backed scenarios pass.
 - Do not authorize customer release or Sprint 9 hardening work.
+
+The [Sprint 8 Certification](certification/SPRINT8_CERTIFICATION.md) records
+the complete exit-criteria, architecture, migration, dependency, security,
+PostgreSQL, regression, and scope audit. Sprint 8 is certified only for the
+internal fictional boundary. Sprint 9 remains Not Started.
 
 ## 4. End-to-End Conversation Flow
 

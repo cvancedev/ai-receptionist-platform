@@ -459,7 +459,9 @@ development adapter still requires separate explicit authorization. Milestone
 8.7 adds focused verification-only evidence across application, grounding,
 configuration, persistence, restart, UI, provider-neutral, and release
 boundaries. It finds no production defect and adds no capability. Milestone
-8.8 has not started. See
+8.8 certifies the complete internal fictional Sprint 8 boundary without adding
+product behavior or Sprint 9 authority. See the
+[Sprint 8 Certification](certification/SPRINT8_CERTIFICATION.md),
 [End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md),
 [Sprint 8 Storage Decision](SPRINT_8_STORAGE_DECISION.md), and
 [Sprint 8 Test Plan](SPRINT_8_TEST_PLAN.md).

@@ -117,5 +117,6 @@ credential, provider output, or additional authority enters this boundary.
 
 Milestone 8.7 verifies the composed failure, security, rollback, isolation,
 configuration, grounding, and restart boundaries without changing this
-contract or adding product behavior. Sprint 8.8 certification remains
-separately gated.
+contract or adding product behavior. The separately authorized
+[Sprint 8 Certification](certification/SPRINT8_CERTIFICATION.md) confirms this
+boundary without granting release or Sprint 9 authority.

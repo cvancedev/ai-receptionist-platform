@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { PrototypeChat } from "@/components/prototype/PrototypeChat";
 
 export const metadata: Metadata = {
-  title: "Deterministic Chat Prototype",
-  description: "A fictional local interface for exercising deterministic intake behavior.",
+  title: "Internal Fictional MVP Experience",
+  description: "A local fictional interface for inspecting the deterministic receptionist workflow.",
   robots: { index: false, follow: false },
 };
 

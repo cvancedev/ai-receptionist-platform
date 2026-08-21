@@ -102,10 +102,11 @@ the certified Conversation Engine and State Manager path.
 
 ## Current Limitation
 
-The Milestone 8.3 session and every customer message remain transient. The
-workflow does not persist message evidence, approved state replacements, or
-execution evidence and therefore makes no restart-safe turn claim. It does not
-call a provider, validate a model-produced draft, release content, or perform
-an external action. Durable turn atomicity and restart evidence remain
-Milestone 8.4. The ordinary fixture-backed prototype remains unchanged, and
-the activated path has no fixture fallback.
+The Milestone 8.3 workflow remains transient. Milestone 8.4 separately adds
+the opt-in atomic approved-state, execution-evidence, and bounded-message
+commit plus restart recovery; evidence never reconstructs authoritative
+Conversation State. Milestone 8.5 presents the fixture-backed workflow and an
+explicit durable activated mode through bounded UI read models. When no
+application runtime is injected, durable mode fails closed without fixture
+fallback. No path calls a provider, validates a model-produced draft for
+release, releases content, or performs an external action.

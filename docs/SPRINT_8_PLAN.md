@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestones 8.0 through 8.4 are complete. Sprints 1 through 7 remain certified
-complete. Milestone 8.5 has not started.
+Milestones 8.0 through 8.5 are complete. Sprints 1 through 7 remain certified
+complete. Milestone 8.6 has not started.
 
 This plan refines Phase 6 of the [Implementation Sequence](IMPLEMENTATION_SEQUENCE.md)
 without changing its position or expanding it into production release. Each
@@ -142,7 +142,7 @@ external action, dependency, route, or UI is added.
 
 ### 8.5: Internal Fictional MVP Experience
 
-**Status: Not Started**
+**Status: Complete**
 
 - Integrate the end-to-end path into the existing prototype surface with the
   smallest accessible UI change needed to exercise and inspect the fictional
@@ -152,6 +152,16 @@ external action, dependency, route, or UI is added.
 - Keep the current fixture-backed deterministic prototype available as a
   regression and demonstration mode. The durable activated mode is explicit
   and has no fixture fallback.
+
+Milestone 8.5 adds an accessible mode selector and bounded internal experience
+to the existing prototype surface. Fixture-backed deterministic operation
+remains the default demonstration path. Durable activated operation is
+explicit and fails closed when no application-injected runtime is present; the
+browser does not open a database connection, read a repository, construct
+authoritative state, or substitute fixtures. The surface renders only the
+existing conversation read model, progress, safe failure, and derived handoff.
+No route, migration, schema, dependency, provider, release authority, external
+action, authentication, or Milestone 8.6 behavior is added.
 
 ### 8.6: Provider Evaluation and Conditional Development Adapter
 

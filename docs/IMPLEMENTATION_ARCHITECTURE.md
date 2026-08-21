@@ -447,8 +447,12 @@ duplicate guards. The 8.3 workflow remains transient. Milestone 8.4 adds an
 opt-in atomic approved-state, execution-evidence, and bounded-message boundary,
 restart decoding, and deterministic handoff reproduction. It calls no provider
 and grants no release or external action. The fixture-backed prototype remains
-unchanged, the activated path has no fixture fallback, and Milestone 8.5 has
-not started. See
+available and the activated path has no fixture fallback. Milestone 8.5 adds
+the smallest accessible internal experience to the existing prototype. Its
+durable activated mode is explicit and fails closed unless its application
+runtime is injected. The UI renders bounded read models only and gains no
+repository, state, release, provider, or external-action authority. Milestone
+8.6 has not started. See
 [End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md),
 [Sprint 8 Storage Decision](SPRINT_8_STORAGE_DECISION.md), and
 [Sprint 8 Test Plan](SPRINT_8_TEST_PLAN.md).

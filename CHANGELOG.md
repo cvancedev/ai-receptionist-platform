@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 9.1 - Controlled-Evaluation Boundary and Risk Review
+
+- Defined a later moderated local/test evaluation candidate restricted to
+  fictional or synthetic scenarios, named participant roles, bounded existing
+  surfaces, and explicit session stop and cleanup rules.
+- Added a complete data classification, data-flow and trust-boundary inventory,
+  threat model, risk register, residual-risk decision, conditional milestone
+  decisions, and binary go/no-go gates.
+- Added an isolated technology-neutral policy and focused verifier that fail
+  closed for prohibited data, environments, actors, capabilities, release,
+  external actions, malformed input, and unmoderated proposals while granting
+  no evaluation-execution authority.
+- Added no migration, dependency, runtime integration, real data,
+  authentication, provider, network call, channel, production database,
+  deployment, monitoring vendor, customer release, external action, or
+  Milestone 9.2 behavior.
+
 ### Sprint 9.0 - Production Readiness Planning
 
 - Defined Sprint 9 as roadmap-aligned Customer Validation and Hardening that

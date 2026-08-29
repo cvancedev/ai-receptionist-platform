@@ -2,8 +2,8 @@
 
 ## Status
 
-Milestone 9.0 planning is complete and ready for review. Milestones 9.1 through
-9.9 are Not Started and each requires separate explicit authorization.
+Milestones 9.0 and 9.1 are complete. Milestone 9.2 and later milestones are
+Not Started and each requires separate explicit authorization.
 
 Sprints 1 through 8 remain certified complete. This plan does not authorize
 production deployment, real customer data, customer response release, a real
@@ -99,7 +99,7 @@ Milestone 9.1 requires separate authorization.
 
 ### 9.1: Controlled-Evaluation Boundary and Risk Review
 
-**Status: Not Started**
+**Status: Complete**
 
 **Objective:** Define the exact controlled-evaluation target, actors, data
 classification, trust boundaries, threat model, abuse cases, risk ownership,
@@ -138,6 +138,21 @@ release needs. Unknown high-impact risks block later implementation.
 
 **Change assessment:** No migration or dependency expected. No network or
 external service. Separate authorization required.
+
+Milestone 9.1 selects only a candidate for a later moderated local/test
+evaluation using fictional or synthetic scenarios. It defines named
+participant roles, environment and exposed-surface limits, a complete data
+classification, data flow, trust boundaries, customer-validation protocol,
+threat model, risk register, residual risks, conditional milestone decisions,
+and binary go/no-go gates. An isolated technology-neutral policy contract
+fails closed for prohibited actors, data, environments, capabilities, release,
+and external actions while granting no evaluation-execution authority. No
+runtime integration, real data, authentication, provider, channel, deployment,
+production database, monitoring vendor, migration, dependency, customer
+release, external action, or Milestone 9.2 behavior is added. See the
+[Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md),
+[Data Classification](DATA_CLASSIFICATION.md), and
+[Threat Model and Risk Register](THREAT_MODEL_AND_RISK_REGISTER.md).
 
 ### 9.2: Environment, Runtime Configuration, and Secret Boundaries
 

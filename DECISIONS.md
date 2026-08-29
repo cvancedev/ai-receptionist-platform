@@ -301,3 +301,43 @@ This selection does not authorize production database implementation during Mile
 ### Status
 
 Accepted as part of Sprint 6.0.
+
+## Controlled-Evaluation Boundary Before Runtime Exposure
+
+### Decision
+
+Sprint 9 controlled evaluation begins with a deny-by-default planning boundary.
+The only candidate selected by Milestone 9.1 is a later moderated local/test
+session using fictional or synthetic scenarios, named participant roles, the
+existing bounded fictional experience, the deterministic mock, and optionally
+the existing fictional durable activated path.
+
+### Context
+
+Sprint 8 certifies an internal fictional MVP, not production identity, privacy,
+operations, deployment, provider, channel, or customer-release readiness.
+Treating certification as permission to introduce real users or data would
+collapse those distinct gates and expose tenant, privacy, credential, release,
+and operational risks before their controls exist.
+
+### Rationale
+
+Classifying actors, environments, data, surfaces, threats, owners, and stop
+conditions before runtime exposure preserves the certified architecture and
+lets later milestones prove only demonstrated controls. Fictional moderated
+evaluation can test usability and reliability without requiring premature
+authentication, protected-data handling, provider, channel, or production
+infrastructure.
+
+### Consequences
+
+Milestone 9.1 grants no authority to run an evaluation. Public/internal
+business information, customer-provided information, protected/sensitive data,
+credentials, production-like environments, providers, channels, response
+release, external actions, administration, and deployment fail closed. Later
+milestones remain separately authorized and unknown critical/high risks block
+progress.
+
+### Status
+
+Accepted as part of Sprint 9.1.

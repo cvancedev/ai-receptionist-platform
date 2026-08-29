@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 8 are certified complete. The certified internal fictional MVP composes exact activated configuration and grounded knowledge, deterministic multi-turn intake, atomic durable turns, restart-safe subordinate message and execution evidence, bounded read models, and derived handoff while preserving application authority. Sprint 9.0 defines the Customer Validation and Hardening plan; Milestone 9.1 is Not Started. No real AI provider, production database connection, authentication, external integration, customer response release, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 8 are certified complete. The certified internal fictional MVP composes exact activated configuration and grounded knowledge, deterministic multi-turn intake, atomic durable turns, restart-safe subordinate message and execution evidence, bounded read models, and derived handoff while preserving application authority. Sprint 9.1 defines the controlled-evaluation boundary, data classification, threat model, risk register, and go/no-go gates; Milestone 9.2 is Not Started. No evaluation execution, real AI provider, production database connection, authentication, external integration, customer response release, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -103,6 +103,16 @@ npm run verify:postgresql-business-profile-versions
 npm run verify:postgresql-knowledge-versions
 npm run verify:postgresql-configuration-activation
 npm run verify:activated-configuration-prototype
+npm run verify:business-configuration-recovery
+npm run verify:configuration-lifecycle-remediation
+npm run verify:end-to-end-contracts
+npm run verify:activated-context-grounding
+npm run verify:deterministic-multi-turn-workflow
+npm run verify:durable-turn-restart
+npm run verify:internal-fictional-mvp-experience
+npm run verify:provider-evaluation
+npm run verify:end-to-end-failure-security-recovery
+npm run verify:controlled-evaluation-policy
 ```
 
 ## Documentation
@@ -187,6 +197,12 @@ npm run verify:activated-configuration-prototype
 - [Sprint 5 boundary and security audit](docs/certification/SPRINT5_BOUNDARIES.md)
 - [Sprint 6 certification](docs/certification/SPRINT6_CERTIFICATION.md)
 - [Sprint 7 certification](docs/certification/SPRINT7_CERTIFICATION.md)
+- [Sprint 8 certification](docs/certification/SPRINT8_CERTIFICATION.md)
+- [Sprint 9 plan](docs/SPRINT_9_PLAN.md)
+- [Sprint 9 test plan](docs/SPRINT_9_TEST_PLAN.md)
+- [Controlled-evaluation boundary](docs/CONTROLLED_EVALUATION_BOUNDARY.md)
+- [Data classification](docs/DATA_CLASSIFICATION.md)
+- [Threat model and risk register](docs/THREAT_MODEL_AND_RISK_REGISTER.md)
 - [State execution architecture](docs/STATE_EXECUTION_ARCHITECTURE.md)
 - [Immutable Execution Journal](docs/EXECUTION_JOURNAL.md)
 - [Deterministic Conversation Progress Engine](docs/CONVERSATION_PROGRESS_ENGINE.md)
@@ -220,4 +236,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprint 3 through Sprint 7 are certified complete. Milestone 8.1 adds a technology-neutral application preflight for one exact fictional start or resume turn, and Milestone 8.2 adds immutable activated context plus exact grounded-source validation. Milestone 8.3 uses that context to drive a transient deterministic multi-turn workflow through the existing Conversation Engine, State Manager, progress/read-model, grounding, and handoff authorities. It proves ordered required-field collection, clarification, correction, confirmation, escalation, completion, and derived handoff with exact scope, revision, sequence, and duplicate guards. The ordinary prototype remains fixture-backed; the opt-in durable activated path has no fixture fallback. Milestone 8.4 separately couples approved state, required execution evidence, and bounded customer-message evidence atomically. Restart reads authoritative state, validates subordinate transcript provenance, and re-derives handoff from the pinned profile. It authorizes no release or external action and leaves Milestone 8.5 Not Started. See the [Sprint 8 Plan](docs/SPRINT_8_PLAN.md), [End-to-End Application Contract](docs/END_TO_END_APPLICATION_CONTRACT.md), and [Sprint 8 Test Plan](docs/SPRINT_8_TEST_PLAN.md).
+Sprints 3 through 8 are certified complete. Milestone 9.1 now defines one candidate for a later moderated local/test evaluation using fictional or synthetic scenarios only. It records participant roles, exposed surfaces, environment and data classifications, trust boundaries, threats, risk ownership, customer-validation protocol, residual risks, conditional later milestones, and explicit go/no-go gates. A focused policy contract rejects prohibited data, production-like environments, providers, channels, deployment, administration, customer release, and external actions while granting no authority to run an evaluation. Milestone 9.2 is Not Started. See the [Sprint 9 Plan](docs/SPRINT_9_PLAN.md), [Controlled-Evaluation Boundary](docs/CONTROLLED_EVALUATION_BOUNDARY.md), [Data Classification](docs/DATA_CLASSIFICATION.md), and [Threat Model and Risk Register](docs/THREAT_MODEL_AND_RISK_REGISTER.md).

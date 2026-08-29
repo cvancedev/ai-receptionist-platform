@@ -465,3 +465,21 @@ product behavior or Sprint 9 authority. See the
 [End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md),
 [Sprint 8 Storage Decision](SPRINT_8_STORAGE_DECISION.md), and
 [Sprint 8 Test Plan](SPRINT_8_TEST_PLAN.md).
+
+## Sprint 9.1 Controlled-Evaluation Policy Status
+
+Milestone 9.1 adds a documentation-first security and operational boundary
+plus one isolated synchronous policy contract. The contract can only classify
+a proposed later moderated fictional local/test evaluation; a conforming result
+still carries literal false evaluation-execution, production-like runtime,
+protected-data, customer-release, and external-action authority. It imports no
+application, domain, persistence, provider, UI, framework, network, or
+environment implementation and is not wired into a runtime path.
+
+The milestone adds no authentication, authorization implementation, real data,
+provider, channel, deployment, monitoring vendor, production database,
+migration, dependency, response release, external action, or Milestone 9.2
+behavior. See the
+[Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md),
+[Data Classification](DATA_CLASSIFICATION.md), and
+[Threat Model and Risk Register](THREAT_MODEL_AND_RISK_REGISTER.md).

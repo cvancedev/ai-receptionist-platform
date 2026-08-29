@@ -89,7 +89,7 @@ authored content; and Conversation State retains the exact selected profile
 version without gaining configuration authority. See
 [Sprint 7 Certification](certification/SPRINT7_CERTIFICATION.md).
 
-## Sprint 8.1-8.3 Composition Status
+## Certified Sprint 8 Composition Status
 
 The end-to-end preparation coordinator validates bounded fictional message
 input and returns message identity and sequence as persistence metadata.
@@ -102,15 +102,35 @@ application boundary. Grounding validation can accept only exact source
 references already present in that context and grants no release authority.
 
 The [Sprint 8 Storage Decision](SPRINT_8_STORAGE_DECISION.md) finds that no
-separate handoff record is required. It records that later restart-safe
-transcript/context provenance will require a separately authorized,
-application-scoped message-evidence contract and likely additive migration.
-No storage change is authorized by Milestone 8.1 or 8.2.
+separate handoff record is required. Milestone 8.4 implements the separately
+authorized application-scoped message-evidence contract and additive migration
+007. Approved state, required Execution Journal evidence, and bounded customer
+message evidence commit atomically. Message evidence remains subordinate and
+cannot be replayed to construct, repair, or override Conversation State.
 
 Milestone 8.3 owns only a transient in-process conversation session seeded
 from the exact Milestone 8.2 activated context. Accepted transient state is
 mutated only through the existing deterministic Conversation Engine and State
 Manager, while progress, grounding, and handoff remain derived. Turn IDs,
 message IDs, message content, state replacements, and execution evidence are
-not durably stored by this workflow. Durable atomic turn ownership remains a
-Milestone 8.4 decision and implementation boundary.
+not durably stored by that transient workflow itself. The separately composed
+durable turn boundary owns atomic persistence, and restart still reads
+authoritative Conversation State before independently validating subordinate
+evidence. Sprint 8 certification confirms those responsibilities and the
+derived, non-dispatched handoff boundary.
+
+## Sprint 9.1 Controlled-Evaluation Ownership
+
+Milestone 9.1 adds no authoritative data or runtime integration. Its policy
+contract classifies a proposed later fictional evaluation and returns only a
+non-executable conformance or rejection decision. Research feedback, participant
+statements, threat records, risk decisions, logs, and operational evidence are
+subordinate planning or audit evidence. They cannot become Conversation State,
+Business Configuration, Knowledge, authorization, a state transition, a retry,
+customer release, or an external action.
+
+Only fictional/test data and bounded operational evidence can conform to the
+planned local/test boundary. Public business information, internal business
+configuration, customer-provided information, protected/sensitive information,
+and credentials remain outside it. See [Data Classification](DATA_CLASSIFICATION.md)
+and [Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md).

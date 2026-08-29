@@ -52,6 +52,8 @@ Every milestone must prove:
 
 ### 9.1 Controlled-Evaluation Boundary and Risk Review
 
+**Status: Complete**
+
 - Trace roadmap/Phase 7 requirements to risks, owners, mitigations, tests, and
   go/no-go gates.
 - Threat-model business isolation, authorization absence, prompt injection,
@@ -61,6 +63,15 @@ Every milestone must prove:
   dependency is classified and minimized.
 - Require explicit decisions for conditional milestones and block unknown
   critical/high risks.
+
+`npm.cmd run verify:controlled-evaluation-policy` proves that only named
+participant roles, local/test environments, fictional/test data, bounded
+operational evidence, and the existing fictional surfaces can conform to the
+planned boundary. Conformance grants no authority to run an evaluation.
+Public/internal business data, customer information, protected data, secrets,
+production-like/production environments, providers, release, channels,
+external actions, deployment, administration, and malformed or unmoderated
+requests fail closed with every authority flag false.
 
 ### 9.2 Environment, Runtime Configuration, and Secrets
 

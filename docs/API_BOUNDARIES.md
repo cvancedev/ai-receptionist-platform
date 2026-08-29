@@ -137,3 +137,12 @@ persists no message or state, calls no provider, and authorizes no release or
 external action. See the
 [End-to-End Application Contract](END_TO_END_APPLICATION_CONTRACT.md) and
 [Response Release Boundary](RESPONSE_RELEASE_BOUNDARY.md).
+
+Milestone 9.1 adds one isolated technology-neutral policy contract, not an
+endpoint, route, controller, session, identity boundary, deployment interface,
+or runtime integration. It evaluates only whether a proposal matches the
+documented fictional local/test boundary and always returns false execution,
+production-like, protected-data, customer-release, and external-action
+authority. It cannot access application services, repositories, PostgreSQL,
+providers, environment variables, channels, or the UI. See the
+[Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md).

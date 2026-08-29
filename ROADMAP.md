@@ -187,7 +187,7 @@ certification. See the [Sprint 8 Certification](docs/certification/SPRINT8_CERTI
 
 ## Sprint 9: Customer Validation and Hardening
 
-**Status: Planning complete; Milestone 9.1 Not Started**
+**Status: In Progress - Milestones 9.0-9.1 Complete; Milestone 9.2 Not Started**
 
 - Real-world testing
 - Reliability improvements
@@ -203,6 +203,14 @@ It does not itself authorize launch, real customer data, customer response
 release, a provider, a communication channel, or an external action. The
 milestone gates are defined in the [Sprint 9 Plan](docs/SPRINT_9_PLAN.md) and
 [Sprint 9 Test Plan](docs/SPRINT_9_TEST_PLAN.md).
+
+Milestone 9.1 defines a later moderated fictional local/test evaluation
+candidate, complete data classification, threat model, risk register,
+customer-validation protocol, and explicit go/no-go gates. Its isolated policy
+contract grants no execution, production-like runtime, protected-data,
+customer-release, or external-action authority. It adds no migration,
+dependency, provider, channel, authentication, deployment, production database,
+monitoring vendor, administration, or Milestone 9.2 behavior.
 
 ## Future Features (Uncommitted)
 

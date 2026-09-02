@@ -341,3 +341,40 @@ progress.
 ### Status
 
 Accepted as part of Sprint 9.1.
+
+## Environment Identity Does Not Grant Capability Authority
+
+### Decision
+
+Server runtime identity, capability authorization, and credential availability
+are separate application-owned decisions. Milestone 9.2 recognizes local
+development, automated test, controlled evaluation, and production identities,
+but authorizes startup only for valid bounded local/test configurations.
+
+### Context
+
+Infrastructure signals such as `NODE_ENV`, hostnames, deployment-provider
+metadata, database URLs, or credential presence can be missing, malformed, or
+misconfigured and do not express product authority. Treating one of them as an
+authorization signal could accidentally enable production-like behavior,
+protected data, release, or external actions.
+
+### Rationale
+
+An exact application-owned parser, immutable sanitized configuration, explicit
+capability allowlist, and server-only credential references make each grant
+reviewable and testable. Deny-by-default preflight preserves existing domain
+and application authority and fails before a configuration-dependent
+capability can serve or mutate data.
+
+### Consequences
+
+Controlled evaluation and production remain unauthorized. Credential presence
+does not add a capability, secret material never enters the configuration
+contract, and client code cannot import the server authority. Future runtime,
+secret store, authentication, provider, channel, monitoring, production
+database, or deployment work requires separate authorization.
+
+### Status
+
+Accepted as part of Sprint 9.2.

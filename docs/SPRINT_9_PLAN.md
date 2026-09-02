@@ -2,7 +2,7 @@
 
 ## Status
 
-Milestones 9.0 and 9.1 are complete. Milestone 9.2 and later milestones are
+Milestones 9.0 through 9.2 are complete. Milestone 9.3 and later milestones are
 Not Started and each requires separate explicit authorization.
 
 Sprints 1 through 8 remain certified complete. This plan does not authorize
@@ -156,7 +156,7 @@ release, external action, or Milestone 9.2 behavior is added. See the
 
 ### 9.2: Environment, Runtime Configuration, and Secret Boundaries
 
-**Status: Not Started**
+**Status: Complete**
 
 **Objective:** Establish fail-closed separation among local, test, staging-like
 evaluation, and any later production environment; validate configuration and
@@ -195,6 +195,16 @@ mutating data.
 the platform/runtime should be used unless evidence justifies a separately
 approved addition. Network implications are configuration-only. Separate
 authorization required.
+
+Milestone 9.2 implements a disconnected server-only, technology-neutral
+preflight contract. It recognizes exact environment identities separately from
+startup authority, accepts only bounded local/test capabilities, requires
+explicit test credential references and availability receipts for the optional
+fictional durable path, returns immutable sanitized configuration/provenance,
+and rejects controlled-evaluation and production startup. It adds no runtime
+wiring, secret material, migration, dependency, network call, database
+connection, deployment, release, external action, or Milestone 9.3 behavior.
+See [Runtime Configuration and Secrets Boundary](RUNTIME_CONFIGURATION_AND_SECRETS.md).
 
 ### 9.3: Identity, Authorization, and Protected-Data Gate
 

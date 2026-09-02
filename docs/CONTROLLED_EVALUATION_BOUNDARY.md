@@ -120,7 +120,7 @@ blocking risk against its owning milestone.
 
 | Later milestone | 9.1 decision |
 | --- | --- |
-| 9.2 environment/runtime/secrets | Required before any production-like evaluation; no implementation started |
+| 9.2 environment/runtime/secrets | Complete; fail-closed server preflight exists, but no evaluation runtime or execution is authorized |
 | 9.3 identity/authorization | Deferred while evaluation remains moderated and fictional; becomes mandatory before protected data, administration, or unmoderated access |
 | 9.4 operational PostgreSQL/backup/restore | Required before a production-like durable evaluation; no production database authorized |
 | 9.5 observability/privacy/retention | Required before monitored evaluation; vendor selection remains deferred |
@@ -158,4 +158,3 @@ runtime, real data, deployment, customer release, and external action**.
 - [Sprint 9 Test Plan](SPRINT_9_TEST_PLAN.md)
 - [Data and State Ownership](DATA_AND_STATE_OWNERSHIP.md)
 - [Response Release Boundary](RESPONSE_RELEASE_BOUNDARY.md)
-

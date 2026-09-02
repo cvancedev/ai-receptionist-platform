@@ -52,4 +52,3 @@ storage, encryption and transport requirements, logging controls, retention,
 deletion, access review, incident response, and accountable operations.
 
 Related boundary: [Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md).
-

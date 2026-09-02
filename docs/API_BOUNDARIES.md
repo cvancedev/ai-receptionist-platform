@@ -146,3 +146,13 @@ production-like, protected-data, customer-release, and external-action
 authority. It cannot access application services, repositories, PostgreSQL,
 providers, environment variables, channels, or the UI. See the
 [Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md).
+
+Milestone 9.2 adds an internal server preflight contract, not a route,
+endpoint, public configuration API, deployment interface, or secret store. A
+server composition root must supply an explicit bounded snapshot; client,
+domain, application, and persistence code cannot read or import this authority.
+The contract may identify an already-certified local/test adapter capability,
+but it cannot select business truth, broaden scope, authorize production or
+controlled evaluation, or enable provider, release, channel, external action,
+or protected-data behavior. See
+[Runtime Configuration and Secrets Boundary](RUNTIME_CONFIGURATION_AND_SECRETS.md).

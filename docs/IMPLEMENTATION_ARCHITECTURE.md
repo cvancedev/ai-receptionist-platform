@@ -483,3 +483,30 @@ behavior. See the
 [Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md),
 [Data Classification](DATA_CLASSIFICATION.md), and
 [Threat Model and Risk Register](THREAT_MODEL_AND_RISK_REGISTER.md).
+
+## Sprint 9.2 Runtime Configuration Status
+
+Milestone 9.2 adds one disconnected server-runtime preflight boundary. It
+recognizes local development, automated test, controlled evaluation, and
+production identities while authorizing valid startup configuration only for
+bounded local/test capabilities. Environment identity, capability selection,
+and credential availability are distinct; infrastructure signals and
+credential presence grant no authority.
+
+The boundary parses an explicitly supplied namespaced environment snapshot and
+credential-availability receipts, rejects unknown or contradictory values,
+requires a scoped test-database reference and available receipt for the
+fictional durable capability, and returns deeply immutable configuration with
+sanitized provenance. Secret material is not accepted. The public projection
+contains no configuration ID, credential purpose/reference/state, or secret
+value, and client-facing code cannot import the server authority.
+
+The module reads no ambient environment, imports no application, domain,
+persistence, provider, framework, or UI authority, and is not wired into
+Next.js startup or the certified fixture/durable composition paths. It cannot
+override Conversation State, configuration pins, grounding, transitions,
+persistence ownership, release, or external actions. Production and controlled
+evaluation remain unauthorized. No migration, dependency, network call,
+database connection, secret, deployment, authentication, or Milestone 9.3
+behavior is added. See
+[Runtime Configuration and Secrets Boundary](RUNTIME_CONFIGURATION_AND_SECRETS.md).

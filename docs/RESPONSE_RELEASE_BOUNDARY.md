@@ -3,7 +3,7 @@
 ## Current Decision
 
 Customer response release remains disabled throughout certified Sprint 8 and
-Milestone 9.1.
+Milestones 9.1 through 9.2.
 
 Milestones 8.3 through 8.5 may construct or display local fictional prompts and may validate a bounded
 grounded response candidate, but each carries literal false customer-release
@@ -43,4 +43,6 @@ customer-content validation, idempotency, audit, privacy, retry, cancellation,
 and failure behavior. Sprint 9.1 classifies every customer-release or
 communication-channel proposal as prohibited and grants no evaluation-
 execution authority. No current milestone authorizes a real channel or
-customer release.
+customer release. Milestone 9.2 also exposes literal false release and external-
+action authority in every valid public runtime projection and every rejected
+preflight; environment identity or credential presence cannot change it.

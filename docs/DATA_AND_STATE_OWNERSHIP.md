@@ -134,3 +134,18 @@ planned local/test boundary. Public business information, internal business
 configuration, customer-provided information, protected/sensitive information,
 and credentials remain outside it. See [Data Classification](DATA_CLASSIFICATION.md)
 and [Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md).
+
+## Sprint 9.2 Runtime Configuration Ownership
+
+Runtime environment identity, requested capability names, credential
+references, availability receipts, public projection, and sanitized provenance
+are operational configuration, not domain or business truth. The server
+preflight owns their parsing and deny-by-default acceptance. It cannot alter
+Business Configuration, Knowledge, activation, Conversation State, revision,
+grounding, transition, persistence, release, or action authority.
+
+Secret material is not owned or stored by this contract. A credential receipt
+proves only bounded availability for one explicitly requested infrastructure
+capability; it grants no capability by presence and cannot be replayed as
+state, configuration, authorization, or audit truth. See
+[Runtime Configuration and Secrets Boundary](RUNTIME_CONFIGURATION_AND_SECRETS.md).

@@ -55,10 +55,10 @@ prevents a later controlled evaluation if its gate is not satisfied.
 | R9-06 | Atomic persistence failure, stale/duplicate turn, commit ambiguity, or corruption | High | Optimistic concurrency, atomic coordinator, exact IDs, rollback, restart/recovery suites | Production-like backup/restore and operational objectives unproven | Persistence/operations; 9.4 | Production-like durable evaluation no-go |
 | R9-07 | Unauthorized customer-response release | Critical | Literal false/absent release authority; local display only; no channel | Future route/channel could collapse validation and delivery | Application/security; separate release milestone | Release prohibited |
 | R9-08 | Unauthorized external action or handoff dispatch | Critical | No tools/channels/dispatch integrations; handoff is derived data | Future integrations require authentication, authorization, idempotency, audit, rollback | Application/security; future explicit milestone | External actions prohibited |
-| R9-09 | Credential, token, private-key, or connection-string exposure | Critical | No production credentials; source/build/log scans; process-scoped disposable test secrets | Environment schema, rotation, revocation, and secret store not implemented | Operations/security; 9.2 | Production-like runtime no-go |
+| R9-09 | Credential, token, private-key, or connection-string exposure | Critical | Server-only reference/availability contract, sanitized provenance, no secret material, production credentials prohibited | No secret store or production credential path exists; future implementations require separate review and leak verification | Operations/security; future credential milestone | Production-like runtime no-go |
 | R9-10 | Logs/telemetry expose customer, prompt, knowledge, SQL, or cross-tenant content | High | No monitoring vendor; bounded existing evidence; raw payloads excluded | Redaction, sink failure, access, retention, and deletion are not implemented | Privacy/operations; 9.5 | Monitored evaluation no-go |
 | R9-11 | Participant accidentally supplies real, protected, payment, health, legal, or minor data | High | Moderation, fictional scenarios, explicit prohibition, stop rule | Automated detection and incident process are not implemented | Research/privacy; 9.5 and 9.7 | Blocked without containment/deletion procedure |
-| R9-12 | Operator uses production/shared database, wrong environment, broad credentials, or skips cleanup | Critical | Disposable PostgreSQL rules and exact cleanup verification | Fail-closed environment schema and production-like runbooks unimplemented | Operations; 9.2 and 9.4 | Production-like evaluation no-go |
+| R9-12 | Operator uses production/shared database, wrong environment, broad credentials, or skips cleanup | Critical | Exact environment identity, deny-by-default capability preflight, test-only credential receipt, disposable PostgreSQL rules | Production-like database runbooks, least-privilege operation, backup/restore, and cleanup drills remain unproven | Operations; 9.4 | Production-like evaluation no-go |
 | R9-13 | Denial of service, oversized input, pool exhaustion, dependency outage, or repeated failure | High | Bounded messages/context/output, explicit failures, deterministic fallback, persistence recovery | Capacity budgets, timeouts, cancellation, and operational SLOs not certified | Reliability/operations; 9.4 and 9.6 | Participant evaluation no-go until budgets pass |
 | R9-14 | UI exposes raw state, internal knowledge, SQL, credentials, or authority controls | High | Bounded immutable read model and presentation-only certified UI | Accessibility/error changes can regress boundaries | UI/application; 9.6 and 9.8 | Blocked on raw fallback |
 | R9-15 | Research feedback is treated as configuration, customer fact, or product authority | Medium | Feedback is separate evidence; lifecycle and state contracts remain authoritative | Manual triage process must preserve provenance and scope | Product/research; 9.7 | Controlled by protocol |
@@ -68,20 +68,19 @@ prevents a later controlled evaluation if its gate is not satisfied.
 
 The certified system has strong deterministic scope, authority, persistence,
 and recovery controls for fictional use. It does not yet have authenticated
-identity, protected-data authorization, production environment validation,
+identity, protected-data authorization, authorized production runtime operation,
 production database operations, monitoring/privacy operations, incident
 response, capacity objectives, or release infrastructure. Those are explicit
 gaps, not implied capabilities.
 
 Accordingly:
 
-- **GO** only to separately authorized work on 9.2 and other required
-  hardening gates using fictional/synthetic data.
-- **NO-GO** for running participant evaluation during 9.1.
+- **GO** only to separately authorized work on later required hardening gates
+  using fictional/synthetic data.
+- **NO-GO** for running participant evaluation through Milestone 9.2.
 - **NO-GO** for protected/real data, production-like runtime, production
   database, deployment, provider calls, customer release, and external action.
 - Any unknown critical/high risk or failed certified boundary blocks progress
   and returns to its owning milestone; it is never accepted silently.
 
 Related boundary: [Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md).
-

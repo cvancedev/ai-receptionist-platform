@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 8 are certified complete. The certified internal fictional MVP composes exact activated configuration and grounded knowledge, deterministic multi-turn intake, atomic durable turns, restart-safe subordinate message and execution evidence, bounded read models, and derived handoff while preserving application authority. Sprint 9.1 defines the controlled-evaluation boundary, data classification, threat model, risk register, and go/no-go gates; Milestone 9.2 is Not Started. No evaluation execution, real AI provider, production database connection, authentication, external integration, customer response release, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 8 are certified complete. The certified internal fictional MVP composes exact activated configuration and grounded knowledge, deterministic multi-turn intake, atomic durable turns, restart-safe subordinate message and execution evidence, bounded read models, and derived handoff while preserving application authority. Sprint 9.1 defines the controlled-evaluation boundary, and Milestone 9.2 adds a disconnected fail-closed server runtime-configuration and secret-reference preflight. Milestone 9.3 is Not Started. No evaluation execution, real AI provider, production database connection, authentication, external integration, customer response release, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -42,6 +42,10 @@ No environment variables are required for the website, prototype, or default
 in-memory verification. PostgreSQL integration verification requires an
 isolated test database through `TEST_DATABASE_URL`; see
 [PostgreSQL Development](docs/POSTGRESQL_DEVELOPMENT.md).
+
+The Sprint 9.2 runtime contract is not wired into the current website or
+prototype. Its reserved namespaced inputs and safe handling rules are documented
+in [Runtime Configuration and Secrets](docs/RUNTIME_CONFIGURATION_AND_SECRETS.md).
 
 ## Available Routes
 
@@ -113,6 +117,7 @@ npm run verify:internal-fictional-mvp-experience
 npm run verify:provider-evaluation
 npm run verify:end-to-end-failure-security-recovery
 npm run verify:controlled-evaluation-policy
+npm run verify:runtime-configuration
 ```
 
 ## Documentation
@@ -201,6 +206,7 @@ npm run verify:controlled-evaluation-policy
 - [Sprint 9 plan](docs/SPRINT_9_PLAN.md)
 - [Sprint 9 test plan](docs/SPRINT_9_TEST_PLAN.md)
 - [Controlled-evaluation boundary](docs/CONTROLLED_EVALUATION_BOUNDARY.md)
+- [Runtime configuration and secrets](docs/RUNTIME_CONFIGURATION_AND_SECRETS.md)
 - [Data classification](docs/DATA_CLASSIFICATION.md)
 - [Threat model and risk register](docs/THREAT_MODEL_AND_RISK_REGISTER.md)
 - [State execution architecture](docs/STATE_EXECUTION_ARCHITECTURE.md)
@@ -236,4 +242,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprints 3 through 8 are certified complete. Milestone 9.1 now defines one candidate for a later moderated local/test evaluation using fictional or synthetic scenarios only. It records participant roles, exposed surfaces, environment and data classifications, trust boundaries, threats, risk ownership, customer-validation protocol, residual risks, conditional later milestones, and explicit go/no-go gates. A focused policy contract rejects prohibited data, production-like environments, providers, channels, deployment, administration, customer release, and external actions while granting no authority to run an evaluation. Milestone 9.2 is Not Started. See the [Sprint 9 Plan](docs/SPRINT_9_PLAN.md), [Controlled-Evaluation Boundary](docs/CONTROLLED_EVALUATION_BOUNDARY.md), [Data Classification](docs/DATA_CLASSIFICATION.md), and [Threat Model and Risk Register](docs/THREAT_MODEL_AND_RISK_REGISTER.md).
+Sprints 3 through 8 are certified complete. Milestone 9.1 defines one candidate for a later moderated local/test evaluation using fictional or synthetic scenarios only. Milestone 9.2 establishes exact environment identity, immutable sanitized runtime configuration, server-only credential references, deny-by-default capability gating, and safe preflight failure without wiring or authorizing an evaluation runtime. Controlled evaluation and production remain unauthorized. Milestone 9.3 is explicitly Not Started. See the [Sprint 9 Plan](docs/SPRINT_9_PLAN.md), [Controlled-Evaluation Boundary](docs/CONTROLLED_EVALUATION_BOUNDARY.md), [Runtime Configuration and Secrets](docs/RUNTIME_CONFIGURATION_AND_SECRETS.md), [Data Classification](docs/DATA_CLASSIFICATION.md), and [Threat Model and Risk Register](docs/THREAT_MODEL_AND_RISK_REGISTER.md).

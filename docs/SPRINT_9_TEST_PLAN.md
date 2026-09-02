@@ -75,6 +75,8 @@ requests fail closed with every authority flag false.
 
 ### 9.2 Environment, Runtime Configuration, and Secrets
 
+**Status: Complete**
+
 - Validate exact schemas and allowlists for each environment.
 - Fail before service/read/write on missing, extra, malformed, contradictory,
   cross-environment, or insecure-default configuration.
@@ -83,6 +85,16 @@ requests fail closed with every authority flag false.
 - Test least privilege, rotation, revocation, unavailable secret store, and
   deterministic local/test operation without production credentials.
 - Scan public environment variables and client dependency graphs.
+
+`npm.cmd run verify:runtime-configuration` proves all four exact identities are
+recognized separately from authority; only valid bounded local/test preflight
+can succeed. Unknown, missing, malformed, contradictory, production,
+controlled-evaluation, hostile-input, missing/unavailable/revoked credential,
+and prohibited-capability cases fail closed with sanitized immutable outcomes.
+Credential presence grants no capability, public/provenance projections retain
+no credential reference or secret value, client-facing sources cannot import
+the server authority, and infrastructure signals cannot override application
+environment identity.
 
 ### 9.3 Identity, Authorization, and Protected-Data Gate
 

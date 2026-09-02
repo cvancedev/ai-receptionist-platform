@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 9.2 - Environment, Runtime Configuration, and Secret Boundaries
+
+- Added an isolated server-only preflight contract for exact local, test,
+  controlled-evaluation, and production environment identity with startup
+  authority kept separate and denied for controlled evaluation and production.
+- Added immutable sanitized runtime configuration/provenance, explicit bounded
+  local/test capability selection, server-only test credential references, and
+  missing/unavailable/revoked credential failure behavior.
+- Added focused verification for malformed and hostile input, contradictory
+  capabilities, secret/reference non-disclosure, client/server separation,
+  infrastructure-signal non-authority, and credential-presence non-authority.
+- Added no secret material, runtime wiring, migration, dependency, database
+  connection, network call, provider, channel, deployment, authentication,
+  customer release, external action, or Milestone 9.3 behavior.
+
 ### Sprint 9.1 - Controlled-Evaluation Boundary and Risk Review
 
 - Defined a later moderated local/test evaluation candidate restricted to

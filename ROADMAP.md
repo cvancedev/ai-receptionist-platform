@@ -187,7 +187,7 @@ certification. See the [Sprint 8 Certification](docs/certification/SPRINT8_CERTI
 
 ## Sprint 9: Customer Validation and Hardening
 
-**Status: In Progress - Milestones 9.0-9.1 Complete; Milestone 9.2 Not Started**
+**Status: In Progress - Milestones 9.0-9.2 Complete; Milestone 9.3 Not Started**
 
 - Real-world testing
 - Reliability improvements
@@ -211,6 +211,15 @@ contract grants no execution, production-like runtime, protected-data,
 customer-release, or external-action authority. It adds no migration,
 dependency, provider, channel, authentication, deployment, production database,
 monitoring vendor, administration, or Milestone 9.2 behavior.
+
+Milestone 9.2 adds an isolated server-only runtime preflight for exact
+environment identity, immutable sanitized configuration, credential
+references/availability, and deny-by-default capability selection. Only
+bounded local/test configuration may pass; controlled evaluation and
+production remain unauthorized. It adds no runtime wiring, secret material,
+migration, dependency, database connection, network call, provider, channel,
+deployment, release, external action, authentication, or Milestone 9.3
+behavior.
 
 ## Future Features (Uncommitted)
 

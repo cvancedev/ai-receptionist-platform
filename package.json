@@ -34,7 +34,8 @@
     "verify:internal-fictional-mvp-experience": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/internal-fictional-mvp-experience.verify.js",
     "verify:provider-evaluation": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/provider-evaluation.verify.js",
     "verify:end-to-end-failure-security-recovery": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/end-to-end-failure-security-recovery.verify.js",
-    "verify:controlled-evaluation-policy": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/controlled-evaluation-policy.verify.js"
+    "verify:controlled-evaluation-policy": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/controlled-evaluation-policy.verify.js",
+    "verify:runtime-configuration": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/runtime-configuration.verify.js"
   },
   "dependencies": {
     "next": "16.3.0",

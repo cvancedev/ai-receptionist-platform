@@ -408,3 +408,22 @@ persistence, release, and external-action boundaries are unchanged.
 ### Status
 
 Accepted as the conditional outcome of Sprint 9.3.
+
+## Require Disposable Restore Proof Before Database Readiness
+
+### Decision
+
+Operational PostgreSQL readiness requires fixed migration-source integrity and
+a successful logical backup/restore drill into a separate disposable local
+database. No production connection or migration 008 is authorized.
+
+### Rationale
+
+Existing transaction and restart suites prove persistence behavior but not
+independent backup restoration. A bounded `pg_dump`/`pg_restore` drill proves
+the artifact while fresh application adapters prove Conversation State remains
+authoritative and evidence remains subordinate after restore.
+
+### Status
+
+Accepted and verified as part of Sprint 9.4.

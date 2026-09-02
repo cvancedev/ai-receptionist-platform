@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 9.4 - Operational PostgreSQL Readiness
+
+- Added certified SHA-256 preflight for unchanged migrations 001-007 before
+  any database connection or migration SQL.
+- Added repository-only integrity verification and a separate disposable
+  PostgreSQL backup/restore/recovery verifier using fictional data.
+- Documented recovery, credential, artifact, provisional RPO/RTO, isolation,
+  and no-fixture-fallback boundaries.
+- Live local PostgreSQL migration, backup/restore, recovery, restart, and
+  persistence regression evidence passed. No migration, dependency, production
+  connection, provider, monitoring, or Sprint 9.5 behavior was added.
+
 ### Sprint 9.3 - Conditional Identity and Protected-Data Gate
 
 - Confirmed the moderated fictional local/test evaluation does not justify a

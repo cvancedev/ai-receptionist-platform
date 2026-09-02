@@ -187,7 +187,7 @@ certification. See the [Sprint 8 Certification](docs/certification/SPRINT8_CERTI
 
 ## Sprint 9: Customer Validation and Hardening
 
-**Status: In Progress - Milestones 9.0-9.3 Complete; Milestone 9.4 Not Started**
+**Status: In Progress - Milestones 9.0-9.4 Complete; Milestone 9.5 Not Started**
 
 - Real-world testing
 - Reliability improvements
@@ -229,6 +229,11 @@ shape but grants no authorization. Protected data, non-public conversation
 access, administration, controlled-evaluation execution, and production remain
 prohibited. It adds no identity provider, session, account, route, UI,
 migration, dependency, network call, or Milestone 9.4 behavior.
+
+Milestone 9.4 adds certified migration-source integrity and an isolated
+disposable PostgreSQL backup/restore proof. Live local migration, persistence,
+recovery, restart, and backup/restore evidence passed. It adds no schema or
+migration and grants no production database authority or Milestone 9.5 behavior.
 
 ## Future Features (Uncommitted)
 

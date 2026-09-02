@@ -163,3 +163,9 @@ or repository capability. It parses exact actor/resource claims only to deny
 them under the continuing protected-data gate. Client code cannot import the
 policy. See [Identity, Authorization, and Protected-Data
 Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md).
+
+Sprint 9.4 adds no API. Migration, backup, restore, and recovery remain offline
+operator/verifier procedures against disposable databases. No route, client,
+request handler, or application service receives database administration or
+credential authority. See [Operational PostgreSQL
+Readiness](OPERATIONAL_POSTGRESQL_READINESS.md).

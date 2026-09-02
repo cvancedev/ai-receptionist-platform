@@ -123,6 +123,11 @@ remain denied.
 
 ### 9.4 Operational PostgreSQL, Migration, Backup, and Restore
 
+The repository preflight verifies fixed SHA-256 integrity for migrations
+`001`–`007`, including missing and modified source rejection. The separate
+`verify:operational-postgresql-backup-restore` gate passed against an isolated
+local test database, together with the applicable PostgreSQL regression matrix.
+
 - Run all PostgreSQL suites against disposable isolated databases.
 - Test clean install and exact upgrade from approved predecessor histories.
 - Reject unknown, renamed, missing-predecessor, out-of-order, duplicate, and

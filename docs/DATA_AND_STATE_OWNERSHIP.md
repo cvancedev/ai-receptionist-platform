@@ -160,3 +160,11 @@ administration, transition, release, or action authority. Exact business and
 conversation scope checks remain mandatory but cannot create authority by
 matching. See [Identity, Authorization, and Protected-Data
 Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md).
+
+## Sprint 9.4 Restore Ownership
+
+A backup or restored row is storage material, not application authority.
+Recovery accepts Conversation State only through its existing decoder and exact
+scope/version checks. Journal and message evidence are restored and decoded
+independently but cannot replay, reconstruct, or override state. See
+[Operational PostgreSQL Readiness](OPERATIONAL_POSTGRESQL_READINESS.md).

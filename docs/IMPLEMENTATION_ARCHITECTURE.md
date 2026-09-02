@@ -526,3 +526,12 @@ runtime-preflight, or repository wiring. Protected data, administration,
 non-public conversation access, controlled evaluation, and production remain
 unauthorized. See [Identity, Authorization, and Protected-Data
 Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md).
+
+## Sprint 9.4 Operational PostgreSQL Readiness Status
+
+The migration runner now checks a fixed SHA-256 manifest for certified sources
+001-007 before connecting. Existing transactional exact-prefix history checks
+and pending-only application remain unchanged. A separate verifier owns the
+disposable `pg_dump`/`pg_restore` drill; application request paths have no
+backup, restore, migration, credential, or production connection authority.
+See [Operational PostgreSQL Readiness](OPERATIONAL_POSTGRESQL_READINESS.md).

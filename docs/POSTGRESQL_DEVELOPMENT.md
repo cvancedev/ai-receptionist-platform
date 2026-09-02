@@ -43,6 +43,8 @@ npm.cmd run verify:activated-configuration-prototype
 npm.cmd run verify:business-configuration-recovery
 npm.cmd run verify:configuration-lifecycle-remediation
 npm.cmd run verify:durable-turn-restart
+npm.cmd run verify:operational-postgresql-readiness
+npm.cmd run verify:operational-postgresql-backup-restore
 ```
 
 Do not commit the connection URL or place it in application source. The
@@ -61,6 +63,10 @@ The ordered migrations are:
 - [`database/migrations/005_configuration_activations.sql`](../database/migrations/005_configuration_activations.sql); and
 - [`database/migrations/006_configuration_lifecycle_transitions.sql`](../database/migrations/006_configuration_lifecycle_transitions.sql).
 - [`database/migrations/007_message_evidence.sql`](../database/migrations/007_message_evidence.sql).
+
+Sprint 9.4 verifies every migration source against the certified SHA-256
+manifest before opening a connection. See [Operational PostgreSQL
+Readiness](OPERATIONAL_POSTGRESQL_READINESS.md).
 
 They create only:
 

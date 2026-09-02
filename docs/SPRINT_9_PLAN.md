@@ -261,7 +261,7 @@ Authorization, and Protected-Data Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DAT
 
 ### 9.4: Operational PostgreSQL, Migration, Backup, and Restore Readiness
 
-**Status: Not Started**
+**Status: Complete; live disposable PostgreSQL evidence passed**
 
 **Objective:** Prove that the certified durable model can be operated safely
 in an isolated production-like environment, including migration execution,

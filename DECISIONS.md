@@ -378,3 +378,33 @@ database, or deployment work requires separate authorization.
 ### Status
 
 Accepted as part of Sprint 9.2.
+
+## Defer Real Authentication and Preserve the Protected-Data Gate
+
+### Decision
+
+Milestone 9.3 does not implement authentication. The approved evaluation is
+moderated, local/test, and fictional/synthetic; it requires no protected
+business data, non-public customer conversation, business administration, or
+unmoderated actor flow. A disconnected application-owned server policy makes
+the resulting denial explicit and testable.
+
+### Rationale
+
+An identity provider, session authority, accounts, membership persistence, and
+protected-data controls would introduce capability unsupported by current
+evaluation evidence. Actor labels, matching scope, client claims, environment,
+runtime configuration, credential presence, and database existence therefore
+remain non-authoritative. Protected data and administration stay impossible.
+
+### Consequences
+
+Every Sprint 9.3 authorization decision is denied. Future protected workflows
+must separately justify and authorize server-validated identity, exact
+application authorization, privacy and session controls, persistence/vendor
+choices, and negative security verification. Existing state, configuration,
+persistence, release, and external-action boundaries are unchanged.
+
+### Status
+
+Accepted as the conditional outcome of Sprint 9.3.

@@ -52,3 +52,9 @@ storage, encryption and transport requirements, logging controls, retention,
 deletion, access review, incident response, and accountable operations.
 
 Related boundary: [Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md).
+
+Milestone 9.3 does not change these classifications or authorize a broader
+class. Protected/sensitive information, credentials/secrets, and unknown/mixed
+data remain prohibited. Exact actor and resource identifiers cannot reclassify
+data or open the gate. See [Identity, Authorization, and Protected-Data
+Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md).

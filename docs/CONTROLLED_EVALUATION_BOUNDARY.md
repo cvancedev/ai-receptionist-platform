@@ -121,7 +121,7 @@ blocking risk against its owning milestone.
 | Later milestone | 9.1 decision |
 | --- | --- |
 | 9.2 environment/runtime/secrets | Complete; fail-closed server preflight exists, but no evaluation runtime or execution is authorized |
-| 9.3 identity/authorization | Deferred while evaluation remains moderated and fictional; becomes mandatory before protected data, administration, or unmoderated access |
+| 9.3 identity/authorization | Conditional gate complete without real authentication; explicit server policy preserves denial because evaluation remains moderated and fictional |
 | 9.4 operational PostgreSQL/backup/restore | Required before a production-like durable evaluation; no production database authorized |
 | 9.5 observability/privacy/retention | Required before monitored evaluation; vendor selection remains deferred |
 | 9.6 reliability/accessibility/performance | Required before participant evaluation evidence can support a go recommendation |

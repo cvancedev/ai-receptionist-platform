@@ -510,3 +510,19 @@ evaluation remain unauthorized. No migration, dependency, network call,
 database connection, secret, deployment, authentication, or Milestone 9.3
 behavior is added. See
 [Runtime Configuration and Secrets Boundary](RUNTIME_CONFIGURATION_AND_SECRETS.md).
+
+## Sprint 9.3 Identity and Protected-Data Gate Status
+
+Milestone 9.3 resolves its conditional gate without real authentication. A
+disconnected module under `src/server/authorization` recognizes bounded actor,
+operation, environment, scope, and classification shapes, performs exact
+business/conversation comparisons, and returns only deeply immutable denied
+decisions. Actor labels, client claims, infrastructure signals, runtime
+configuration, credentials, matching identifiers, and database existence grant
+no authority.
+
+The module has no route, UI, session, provider, network, persistence, domain,
+runtime-preflight, or repository wiring. Protected data, administration,
+non-public conversation access, controlled evaluation, and production remain
+unauthorized. See [Identity, Authorization, and Protected-Data
+Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md).

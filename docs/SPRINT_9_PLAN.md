@@ -208,7 +208,7 @@ See [Runtime Configuration and Secrets Boundary](RUNTIME_CONFIGURATION_AND_SECRE
 
 ### 9.3: Identity, Authorization, and Protected-Data Gate
 
-**Status: Not Started; conditional**
+**Status: Complete; conditional gate resolved without real authentication**
 
 **Objective:** If 9.1 proves protected business data, business administration,
 or non-public conversation access is required for controlled evaluation,
@@ -250,6 +250,14 @@ not prove need, this milestone is explicitly deferred rather than implemented.
 dependency may be necessary, but neither is preauthorized. Network/vendor
 access may be implicated. Any selection and implementation require a separate
 milestone authorization with an explicit migration/dependency decision.
+
+Milestone 9.1 did not prove a need for protected data, administration, or
+non-public conversation access. Milestone 9.3 therefore implements only a
+disconnected server-side denial policy with exact actor and resource-scope
+validation. Every identity remains unvalidated and every decision denied.
+There is no provider, session, account, membership, route, UI, protected data,
+migration, dependency, network call, or runtime wiring. See [Identity,
+Authorization, and Protected-Data Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md).
 
 ### 9.4: Operational PostgreSQL, Migration, Backup, and Restore Readiness
 

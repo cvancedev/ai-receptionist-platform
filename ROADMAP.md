@@ -187,7 +187,7 @@ certification. See the [Sprint 8 Certification](docs/certification/SPRINT8_CERTI
 
 ## Sprint 9: Customer Validation and Hardening
 
-**Status: In Progress - Milestones 9.0-9.2 Complete; Milestone 9.3 Not Started**
+**Status: In Progress - Milestones 9.0-9.3 Complete; Milestone 9.4 Not Started**
 
 - Real-world testing
 - Reliability improvements
@@ -220,6 +220,15 @@ production remain unauthorized. It adds no runtime wiring, secret material,
 migration, dependency, database connection, network call, provider, channel,
 deployment, release, external action, authentication, or Milestone 9.3
 behavior.
+
+Milestone 9.3 resolves its conditional gate without implementing real
+authentication because the approved evaluation remains moderated, local/test,
+and fictional/synthetic. A disconnected server-side policy validates exact
+actor, business, conversation, operation, environment, and classification
+shape but grants no authorization. Protected data, non-public conversation
+access, administration, controlled-evaluation execution, and production remain
+prohibited. It adds no identity provider, session, account, route, UI,
+migration, dependency, network call, or Milestone 9.4 behavior.
 
 ## Future Features (Uncommitted)
 

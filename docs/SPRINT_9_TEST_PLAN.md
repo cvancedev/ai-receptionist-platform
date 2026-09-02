@@ -102,6 +102,14 @@ This suite is required only if the milestone is activated by a documented 9.1
 need. Otherwise certification must prove it remains deferred and that no
 protected-data or administrative capability entered scope.
 
+Milestone 9.3 takes the latter path. The focused
+`npm.cmd run verify:identity-authorization` suite proves that all recognized
+actors remain unvalidated, exact business/conversation matches grant no
+authority, malformed and hostile inputs fail closed, client claims and
+infrastructure signals are inert, and protected data, administration,
+non-public conversations, evaluation execution, release, and external actions
+remain denied.
+
 - Test unauthenticated, expired, revoked, malformed, replayed, and wrong-
   environment sessions.
 - Test wrong-business, wrong-role, wrong-profile, wrong-conversation, object-ID

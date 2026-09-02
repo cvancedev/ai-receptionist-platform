@@ -149,3 +149,14 @@ proves only bounded availability for one explicitly requested infrastructure
 capability; it grants no capability by presence and cannot be replayed as
 state, configuration, authorization, or audit truth. See
 [Runtime Configuration and Secrets Boundary](RUNTIME_CONFIGURATION_AND_SECRETS.md).
+
+## Sprint 9.3 Identity and Authorization Ownership
+
+Actor claims, identity evidence, membership, roles, and access decisions are
+not domain truth and cannot alter authoritative Conversation State or Business
+Configuration. The server policy owns only fail-closed validation and denial.
+It stores no identity/session data and grants no repository, protected-data,
+administration, transition, release, or action authority. Exact business and
+conversation scope checks remain mandatory but cannot create authority by
+matching. See [Identity, Authorization, and Protected-Data
+Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md).

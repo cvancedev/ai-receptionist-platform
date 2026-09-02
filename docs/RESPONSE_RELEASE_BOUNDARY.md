@@ -46,3 +46,8 @@ execution authority. No current milestone authorizes a real channel or
 customer release. Milestone 9.2 also exposes literal false release and external-
 action authority in every valid public runtime projection and every rejected
 preflight; environment identity or credential presence cannot change it.
+
+Milestone 9.3 identity labels and authorization requests add no release path.
+Authentication, if later implemented, would prove identity only; neither
+identity nor access authorization can release a customer response. The current
+policy returns literal false release authority for every decision.

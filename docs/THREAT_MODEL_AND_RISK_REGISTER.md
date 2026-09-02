@@ -84,3 +84,10 @@ Accordingly:
   and returns to its owning milestone; it is never accepted silently.
 
 Related boundary: [Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md).
+
+Milestone 9.3 reduces confused-deputy, identifier-tampering, client-claim, and
+infrastructure-signal risk by making exact scope checks and universal denial
+executable. Residual identity, session, membership, CSRF, replay, revocation,
+and protected-data risks remain blocking because no real authentication system
+or protected workflow exists. Those controls remain prerequisites for any
+later protected-data or administration authorization.

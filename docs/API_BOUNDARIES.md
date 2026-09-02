@@ -156,3 +156,10 @@ but it cannot select business truth, broaden scope, authorize production or
 controlled evaluation, or enable provider, release, channel, external action,
 or protected-data behavior. See
 [Runtime Configuration and Secrets Boundary](RUNTIME_CONFIGURATION_AND_SECRETS.md).
+
+Milestone 9.3 adds an internal server authorization policy, not an endpoint,
+middleware layer, server action, login/session API, public permission surface,
+or repository capability. It parses exact actor/resource claims only to deny
+them under the continuing protected-data gate. Client code cannot import the
+policy. See [Identity, Authorization, and Protected-Data
+Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md).

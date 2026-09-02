@@ -124,14 +124,17 @@ mutating through a configuration-dependent capability.
 
 There is no real secret, secret store, provider SDK, network call, production
 database connection, deployment, authentication, monitoring vendor, channel,
-customer release, external action, migration, dependency, or Sprint 9.3
+customer release, external action, migration, dependency, or authenticated identity
 implementation. The controlled-evaluation boundary from Milestone 9.1 remains
-in force.
+in force. Milestone 9.3 keeps runtime configuration and credential
+availability outside identity and authorization; neither can validate an actor,
+grant scope, or authorize protected data.
 
 Related documents:
 
 - [Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md)
 - [Data Classification](DATA_CLASSIFICATION.md)
+- [Identity, Authorization, and Protected-Data Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md)
 - [Threat Model and Risk Register](THREAT_MODEL_AND_RISK_REGISTER.md)
 - [Sprint 9 Plan](SPRINT_9_PLAN.md)
 - [Sprint 9 Test Plan](SPRINT_9_TEST_PLAN.md)

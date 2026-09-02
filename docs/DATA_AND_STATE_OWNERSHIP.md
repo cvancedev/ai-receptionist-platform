@@ -168,3 +168,11 @@ Recovery accepts Conversation State only through its existing decoder and exact
 scope/version checks. Journal and message evidence are restored and decoded
 independently but cannot replay, reconstruct, or override state. See
 [Operational PostgreSQL Readiness](OPERATIONAL_POSTGRESQL_READINESS.md).
+
+## Sprint 9.5 Operational Evidence Ownership
+
+Operational evidence owns no business or conversation truth. It cannot replay,
+reconstruct, authorize, configure, recover, release, or execute anything. Its
+bounded correlation and failure metadata remain subordinate to Conversation
+State, configuration, and the existing journal/message boundaries. See
+[Operational Evidence, Privacy, Retention, and Incidents](OPERATIONAL_EVIDENCE_PRIVACY_AND_INCIDENTS.md).

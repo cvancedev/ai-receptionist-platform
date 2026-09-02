@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 9.5 - Bounded Observability, Privacy, Retention, and Incidents
+
+- Added an allowlisted, immutable, in-memory fictional operational-evidence
+  model with literal false replay, authority, export, release, and action flags.
+- Added bounded hostile-input inspection that discards all untrusted values and
+  fails closed for throwing, excessive, or malformed input.
+- Added a 100-entry capacity, provisional 24-hour fictional retention cleanup,
+  and high-severity/unknown incident blocking decisions.
+- Added no telemetry vendor, network export, durable store, migration,
+  dependency, protected data, monitoring credential, or Sprint 9.6 behavior.
+
 ### Sprint 9.4 - Operational PostgreSQL Readiness
 
 - Added certified SHA-256 preflight for unchanged migrations 001-007 before

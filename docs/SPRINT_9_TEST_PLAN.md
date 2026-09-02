@@ -144,6 +144,11 @@ local test database, together with the applicable PostgreSQL regression matrix.
 
 ### 9.5 Observability, Privacy, Retention, and Incidents
 
+`npm.cmd run verify:operational-evidence` proves bounded immutable events,
+complete untrusted-context discard, hostile-input containment, capacity and
+24-hour fictional cleanup, non-authority/non-replay, no export, and fail-closed
+high-severity incident decisions.
+
 - Map required signals to bounded technology-neutral events and metrics.
 - Inject secret, message, prompt, knowledge, SQL, and cross-tenant canaries and
   prove redaction/minimization.

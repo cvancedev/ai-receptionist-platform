@@ -58,3 +58,8 @@ class. Protected/sensitive information, credentials/secrets, and unknown/mixed
 data remain prohibited. Exact actor and resource identifiers cannot reclassify
 data or open the gate. See [Identity, Authorization, and Protected-Data
 Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md).
+
+Milestone 9.5 permits only minimized fictional operational metadata. Customer
+content, protected/sensitive information, credentials/secrets, and unknown or
+mixed content are prohibited evidence classes and are never retained. See
+[Operational Evidence, Privacy, Retention, and Incidents](OPERATIONAL_EVIDENCE_PRIVACY_AND_INCIDENTS.md).

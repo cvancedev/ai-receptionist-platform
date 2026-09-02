@@ -91,3 +91,10 @@ executable. Residual identity, session, membership, CSRF, replay, revocation,
 and protected-data risks remain blocking because no real authentication system
 or protected workflow exists. Those controls remain prerequisites for any
 later protected-data or administration authorization.
+
+Milestone 9.5 treats secret/protected-data exposure, cross-scope access,
+authorization bypass, state corruption, migration/recovery failure,
+environment/configuration failure, high or critical dependency vulnerability,
+unauthorized release/action, and evidence sanitization failure as blocking
+incidents. Unknown incident classifications also fail closed. See [Operational
+Evidence, Privacy, Retention, and Incidents](OPERATIONAL_EVIDENCE_PRIVACY_AND_INCIDENTS.md).

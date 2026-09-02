@@ -535,3 +535,11 @@ and pending-only application remain unchanged. A separate verifier owns the
 disposable `pg_dump`/`pg_restore` drill; application request paths have no
 backup, restore, migration, credential, or production connection authority.
 See [Operational PostgreSQL Readiness](OPERATIONAL_POSTGRESQL_READINESS.md).
+
+## Sprint 9.5 Operational Evidence Status
+
+The disconnected `src/observability` module accepts only exact allowlisted
+fictional operational metadata, discards all untrusted values, and stores at
+most 100 immutable process-local entries. It has no application/domain,
+persistence, runtime, authorization, UI, network, or vendor wiring. See
+[Operational Evidence, Privacy, Retention, and Incidents](OPERATIONAL_EVIDENCE_PRIVACY_AND_INCIDENTS.md).

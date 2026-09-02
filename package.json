@@ -38,7 +38,8 @@
     "verify:runtime-configuration": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/runtime-configuration.verify.js",
     "verify:identity-authorization": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/identity-authorization.verify.js",
     "verify:operational-postgresql-readiness": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/operational-postgresql-readiness.verify.js",
-    "verify:operational-postgresql-backup-restore": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/operational-postgresql-backup-restore.verify.js"
+    "verify:operational-postgresql-backup-restore": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/operational-postgresql-backup-restore.verify.js",
+    "verify:operational-evidence": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/operational-evidence.verify.js"
   },
   "dependencies": {
     "next": "16.3.0",

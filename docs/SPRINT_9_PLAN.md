@@ -303,7 +303,7 @@ to explicitly authorized disposable or isolated production-like databases.
 
 ### 9.5: Observability, Privacy, Retention, and Incident Readiness
 
-**Status: Not Started**
+**Status: Complete; bounded local/test evidence only**
 
 **Objective:** Define and implement bounded operational signals and response
 procedures that detect failures without logging sensitive content or creating

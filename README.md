@@ -6,7 +6,7 @@ This project is intended to help small businesses never miss another customer by
 
 ## Project Status
 
-Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 8 are certified complete. The certified internal fictional MVP composes exact activated configuration and grounded knowledge, deterministic multi-turn intake, atomic durable turns, restart-safe subordinate message and execution evidence, bounded read models, and derived handoff while preserving application authority. Sprint 9.1 defines the controlled-evaluation boundary, Milestone 9.2 adds a disconnected fail-closed server runtime-configuration and secret-reference preflight, Milestone 9.3 preserves the conditional protected-data gate, and Milestone 9.4 completes operational PostgreSQL readiness with live disposable backup/restore evidence. Milestone 9.5 is Not Started. No evaluation execution, real AI provider, production database connection, authentication, protected data, external integration, customer response release, or production customer experience has been implemented.
+Sprint 0 established the foundation at `v0.0.1`, and Sprint 1 certified the customer-validation website at `v0.1.0`. Sprint 2 defined customer discovery and platform architecture. Sprints 3 through 8 are certified complete. The certified internal fictional MVP composes exact activated configuration and grounded knowledge, deterministic multi-turn intake, atomic durable turns, restart-safe subordinate message and execution evidence, bounded read models, and derived handoff while preserving application authority. Sprint 9.1 defines the controlled-evaluation boundary, Milestone 9.2 adds a disconnected fail-closed server runtime-configuration and secret-reference preflight, Milestone 9.3 preserves the conditional protected-data gate, Milestone 9.4 completes operational PostgreSQL readiness with live disposable backup/restore evidence, and Milestone 9.5 adds disconnected bounded operational evidence, privacy, retention, and incident policy. Milestone 9.6 is Not Started. No evaluation execution, real AI provider, production database connection, authentication, protected data, external integration, telemetry export, customer response release, or production customer experience has been implemented.
 
 The website explains the intended product direction, shows a clearly fictional inquiry preview, and uses email links for early-access and support contact. It does not include a contact form or store customer data in the application.
 
@@ -129,6 +129,7 @@ npm run verify:runtime-configuration
 npm run verify:identity-authorization
 npm run verify:operational-postgresql-readiness
 npm run verify:operational-postgresql-backup-restore
+npm run verify:operational-evidence
 ```
 
 ## Documentation
@@ -220,6 +221,7 @@ npm run verify:operational-postgresql-backup-restore
 - [Runtime configuration and secrets](docs/RUNTIME_CONFIGURATION_AND_SECRETS.md)
 - [Identity, authorization, and protected-data gate](docs/IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md)
 - [Operational PostgreSQL readiness](docs/OPERATIONAL_POSTGRESQL_READINESS.md)
+- [Operational evidence, privacy, retention, and incidents](docs/OPERATIONAL_EVIDENCE_PRIVACY_AND_INCIDENTS.md)
 - [Data classification](docs/DATA_CLASSIFICATION.md)
 - [Threat model and risk register](docs/THREAT_MODEL_AND_RISK_REGISTER.md)
 - [State execution architecture](docs/STATE_EXECUTION_ARCHITECTURE.md)
@@ -255,4 +257,4 @@ Semantic design tokens live in [`app/globals.css`](app/globals.css), while share
 
 ## Current Milestone
 
-Sprints 3 through 8 are certified complete. Milestone 9.1 defines one candidate for a later moderated local/test evaluation using fictional or synthetic scenarios only. Milestone 9.2 establishes exact environment identity and safe preflight failure. Milestone 9.3 preserves explicit protected-data denial. Milestone 9.4 adds certified migration-source integrity and a passing disposable backup/restore and recovery proof. Controlled evaluation, production, protected data, release, and external actions remain unauthorized. Milestone 9.5 is Not Started. See the [Sprint 9 Plan](docs/SPRINT_9_PLAN.md), [Operational PostgreSQL Readiness](docs/OPERATIONAL_POSTGRESQL_READINESS.md), and [Controlled-Evaluation Boundary](docs/CONTROLLED_EVALUATION_BOUNDARY.md).
+Sprints 3 through 8 are certified complete. Milestone 9.1 defines one candidate for a later moderated local/test evaluation using fictional or synthetic scenarios only. Milestone 9.2 establishes exact environment identity and safe preflight failure. Milestone 9.3 preserves explicit protected-data denial. Milestone 9.4 adds certified migration-source integrity and a passing disposable backup/restore and recovery proof. Milestone 9.5 adds disconnected, in-memory, non-authoritative operational evidence and fail-closed incident decisions. Controlled evaluation, production, protected data, telemetry export, release, and external actions remain unauthorized. Milestone 9.6 is Not Started. See the [Sprint 9 Plan](docs/SPRINT_9_PLAN.md), [Operational Evidence, Privacy, Retention, and Incidents](docs/OPERATIONAL_EVIDENCE_PRIVACY_AND_INCIDENTS.md), and [Controlled-Evaluation Boundary](docs/CONTROLLED_EVALUATION_BOUNDARY.md).

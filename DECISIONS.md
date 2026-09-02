@@ -427,3 +427,21 @@ authoritative and evidence remains subordinate after restore.
 ### Status
 
 Accepted and verified as part of Sprint 9.4.
+
+## Keep Operational Evidence Bounded, In Memory, and Non-Authoritative
+
+### Decision
+
+Milestone 9.5 retains only allowlisted fictional operational metadata in a
+bounded process-local store. All untrusted context values are discarded, and
+high-severity or unknown incidents block evaluation and release.
+
+### Rationale
+
+Current controlled-evaluation planning needs negative security and failure
+evidence, not a monitoring platform. Durable telemetry or vendor export would
+create unjustified privacy, credential, retention, and authority risk.
+
+### Status
+
+Accepted as part of Sprint 9.5.

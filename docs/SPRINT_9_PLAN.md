@@ -345,7 +345,7 @@ separate demonstrated storage/vendor decision and explicit authorization.
 
 ### 9.6: Reliability, Accessibility, Performance, and Usability Hardening
 
-**Status: Not Started**
+**Status: Complete**
 
 **Objective:** Measure and correct demonstrated defects in the certified MVP
 without broadening product capability.

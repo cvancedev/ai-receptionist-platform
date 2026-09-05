@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 9.6 - Reliability, Accessibility, Performance, and Usability Hardening
+
+- Rejected empty, oversized, and overlapping duplicate fictional submissions
+  before they can produce duplicate processing or authoritative state changes.
+- Bounded fictional input to 500 characters and retained UI message state to
+  100 entries while preserving stable message identities.
+- Replaced user-visible internal validation, projection, and exception details
+  with useful bounded failure messages and explicit reset guidance.
+- Improved busy/disabled clarity, programmatic help and status associations,
+  live-region behavior, and accessible mode-control state without adding a new
+  workflow or expanding the client/server boundary.
+- Added focused Sprint 9.6 runtime and static verification. No dependency,
+  lockfile, migration, network, provider, persistence, release, external
+  action, or Sprint 9.7 behavior was added.
+
 ### Sprint 9.5 - Bounded Observability, Privacy, Retention, and Incidents
 
 - Added an allowlisted, immutable, in-memory fictional operational-evidence

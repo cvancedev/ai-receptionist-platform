@@ -15,9 +15,16 @@ export function PrototypeChat() {
   const [session] = useState(createPrototypeChatSession);
   const [view, setView] = useState(() => session.view());
   const [mode, setMode] = useState<"fixture" | "durable-activated">("fixture");
+  const [busy, setBusy] = useState(false);
 
   async function submit(message: string) {
-    setView(await session.submit(message));
+    if (busy) return;
+    setBusy(true);
+    try {
+      setView(await session.submit(message));
+    } finally {
+      setBusy(false);
+    }
   }
 
   function reset() {
@@ -50,7 +57,8 @@ export function PrototypeChat() {
           <button
             type="button"
             onClick={reset}
-            disabled={mode !== "fixture"}
+            disabled={mode !== "fixture" || busy}
+            aria-describedby="prototype-operation-status"
             className="min-h-11 rounded-lg border border-border bg-surface-primary px-4 py-2.5 text-sm font-semibold text-primary shadow-[var(--shadow-subtle)] hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             Reset prototype
@@ -60,13 +68,16 @@ export function PrototypeChat() {
         <fieldset className="mt-6 rounded-2xl border border-border bg-surface-primary p-4 shadow-[var(--shadow-subtle)] sm:p-5">
           <legend className="px-1 text-sm font-semibold text-primary">Experience mode</legend>
           <div className="grid gap-3 sm:grid-cols-2">
-            <ModeOption checked={mode === "fixture"} description="The certified in-memory regression and demonstration flow." label="Fixture-backed deterministic" onChange={() => setMode("fixture")} value="fixture" />
-            <ModeOption checked={mode === "durable-activated"} description="Requires an explicitly injected activated PostgreSQL runtime; never uses fixtures." label="Durable activated" onChange={() => setMode("durable-activated")} value="durable-activated" />
+            <ModeOption checked={mode === "fixture"} disabled={busy} description="The certified in-memory regression and demonstration flow." label="Fixture-backed deterministic" onChange={() => setMode("fixture")} value="fixture" />
+            <ModeOption checked={mode === "durable-activated"} disabled={busy} description="Requires an explicitly injected activated PostgreSQL runtime; never uses fixtures." label="Durable activated" onChange={() => setMode("durable-activated")} value="durable-activated" />
           </div>
         </fieldset>
 
         <p className="sr-only" role="status" aria-live="polite">
           {mode === "fixture" ? "Fixture-backed deterministic mode selected." : "Durable activated mode selected. No runtime is connected in this local browser surface."}
+        </p>
+        <p id="prototype-operation-status" className="sr-only" role="status" aria-live="polite">
+          {busy ? "A fictional operation is in progress." : "No fictional operation is in progress."}
         </p>
 
         {mode === "durable-activated" ? <DurableActivatedBoundary /> : <>
@@ -84,8 +95,7 @@ export function PrototypeChat() {
         {view.integration.status === "projection-failure" ? (
           <div role="alert" className="mt-5 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900">
             <span className="font-semibold">Projection unavailable:</span>{" "}
-            {view.integration.errors.join(" ")
-              || "The conversation read model failed closed."}
+            The conversation read model failed closed. Reset the prototype before continuing.
           </div>
         ) : null}
 
@@ -95,6 +105,7 @@ export function PrototypeChat() {
             onSubmit={submit}
             disabled={
               view.integration.status === "projection-failure"
+              || busy
               || view.integration.readModel.stage === "handoff"
               || view.integration.readModel.stage === "completed"
             }
@@ -114,16 +125,17 @@ export function PrototypeChat() {
   );
 }
 
-function ModeOption({ checked, description, label, onChange, value }: {
+function ModeOption({ checked, disabled, description, label, onChange, value }: {
   checked: boolean;
+  disabled: boolean;
   description: string;
   label: string;
   onChange: () => void;
   value: string;
 }) {
   return (
-    <label className={`flex min-h-20 cursor-pointer items-start gap-3 rounded-xl border p-4 ${checked ? "border-brand bg-brand-surface" : "border-border bg-page"}`}>
-      <input className="mt-1 size-4 accent-[var(--brand-primary)]" type="radio" name="experience-mode" value={value} checked={checked} onChange={onChange} />
+    <label className={`flex min-h-20 items-start gap-3 rounded-xl border p-4 ${disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"} ${checked ? "border-brand bg-brand-surface" : "border-border bg-page"}`}>
+      <input className="mt-1 size-4 accent-[var(--brand-primary)]" type="radio" name="experience-mode" value={value} checked={checked} disabled={disabled} onChange={onChange} />
       <span><span className="block text-sm font-semibold text-primary">{label}</span><span className="mt-1 block text-xs leading-5 text-secondary">{description}</span></span>
     </label>
   );

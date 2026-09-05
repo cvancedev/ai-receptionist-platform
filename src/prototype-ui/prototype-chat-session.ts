@@ -26,6 +26,17 @@ export interface PrototypeChatView {
   pendingFieldId: string | null;
 }
 
+export const MAX_PROTOTYPE_MESSAGE_LENGTH = 500;
+export const MAX_PROTOTYPE_MESSAGES = 100;
+
+const EMPTY_MESSAGE_ERROR = "Enter a fictional message before submitting.";
+const LONG_MESSAGE_ERROR = `Keep the fictional message to ${MAX_PROTOTYPE_MESSAGE_LENGTH} characters or fewer.`;
+const BUSY_MESSAGE_ERROR = "Wait for the current fictional operation to finish before submitting again.";
+const REJECTED_OPERATION_ERROR =
+  "The fictional operation was rejected because the supplied value did not meet the configured intake rules.";
+const UNEXPECTED_OPERATION_ERROR =
+  "The fictional operation could not be completed safely. Reset the prototype before continuing.";
+
 export class PrototypeChatSession {
   private foundation = createPrototypeFoundation();
   private orchestrator = this.createOrchestrator();
@@ -37,6 +48,8 @@ export class PrototypeChatSession {
   private error: string | null = null;
   private controlledExecution: AiControlledExecutionSnapshot | null = null;
   private controlledExecutionAttempted = false;
+  private operationInProgress = false;
+  private nextMessageId = 1;
 
   constructor() {
     this.addAssistant(
@@ -47,12 +60,21 @@ export class PrototypeChatSession {
   async submit(rawText: string): Promise<PrototypeChatView> {
     const text = rawText.trim();
     if (!text) {
-      this.error = "Enter a fictional message before submitting.";
+      this.error = EMPTY_MESSAGE_ERROR;
       return this.view();
     }
-    this.error = null;
-    this.addCustomer(text);
+    if (text.length > MAX_PROTOTYPE_MESSAGE_LENGTH) {
+      this.error = LONG_MESSAGE_ERROR;
+      return this.view();
+    }
+    if (this.operationInProgress) {
+      this.error = BUSY_MESSAGE_ERROR;
+      return this.view();
+    }
+    this.operationInProgress = true;
     try {
+      this.error = null;
+      this.addCustomer(text);
       const executionAccepted = await this.ensureControlledExecution();
       if (!executionAccepted) return this.view();
       const state = this.readState();
@@ -67,14 +89,20 @@ export class PrototypeChatSession {
       } else {
         this.handleFieldAnswer(text);
       }
-    } catch (error) {
-      this.error = error instanceof Error ? error.message : "The deterministic prototype could not process this message.";
+    } catch {
+      this.error = UNEXPECTED_OPERATION_ERROR;
       this.addAssistant("The prototype rejected that operation. Review the displayed error and reset if needed.");
+    } finally {
+      this.operationInProgress = false;
     }
     return this.view();
   }
 
   reset(): PrototypeChatView {
+    if (this.operationInProgress) {
+      this.error = BUSY_MESSAGE_ERROR;
+      return this.view();
+    }
     this.foundation = createPrototypeFoundation();
     this.orchestrator = this.createOrchestrator();
     this.aiOrchestrator = this.createAiOrchestrator();
@@ -85,6 +113,8 @@ export class PrototypeChatSession {
     this.error = null;
     this.controlledExecution = null;
     this.controlledExecutionAttempted = false;
+    this.operationInProgress = false;
+    this.nextMessageId = 1;
     this.addAssistant("Prototype reset. What fictional service would you like help with?");
     return this.view();
   }
@@ -270,20 +300,29 @@ export class PrototypeChatSession {
   }
 
   private source(label: string) {
-    return `prototype-ui-${label}-${this.messages.length}`;
+    return `prototype-ui-${label}-${this.nextMessageId}`;
   }
 
   private fail(errors: readonly string[]) {
-    this.error = errors.join(" ") || "The operation failed closed.";
+    void errors;
+    this.error = REJECTED_OPERATION_ERROR;
     this.addAssistant("The deterministic backend rejected that operation.");
   }
 
   private addCustomer(text: string) {
-    this.messages.push({ id: this.messages.length + 1, role: "customer", text });
+    this.addMessage("customer", text);
   }
 
   private addAssistant(text: string) {
-    this.messages.push({ id: this.messages.length + 1, role: "assistant", text });
+    this.addMessage("assistant", text);
+  }
+
+  private addMessage(role: PrototypeMessage["role"], text: string) {
+    this.messages.push({ id: this.nextMessageId, role, text });
+    this.nextMessageId += 1;
+    if (this.messages.length > MAX_PROTOTYPE_MESSAGES) {
+      this.messages.splice(0, this.messages.length - MAX_PROTOTYPE_MESSAGES);
+    }
   }
 }
 

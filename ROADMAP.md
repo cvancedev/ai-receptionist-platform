@@ -187,7 +187,7 @@ certification. See the [Sprint 8 Certification](docs/certification/SPRINT8_CERTI
 
 ## Sprint 9: Customer Validation and Hardening
 
-**Status: In Progress - Milestones 9.0-9.5 Complete; Milestone 9.6 Not Started**
+**Status: In Progress - Milestones 9.0-9.6 Complete; Milestone 9.7 Not Started**
 
 - Real-world testing
 - Reliability improvements
@@ -240,6 +240,14 @@ discard of untrusted context, provisional fictional retention cleanup, and
 fail-closed incident blocking. It adds no durable telemetry, migration,
 dependency, monitoring vendor, export, production data, or Milestone 9.6
 behavior.
+
+Milestone 9.6 hardens only the approved internal fictional MVP. It rejects
+overlapping, empty, and oversized submissions before duplicate processing,
+bounds retained UI state, sanitizes user-visible failures, and improves
+programmatic labels, status communication, and disabled-state clarity. It adds
+no dependency, migration, cache, network behavior, product workflow, provider,
+production capability, external action, customer release, or Milestone 9.7
+behavior. Milestone 9.7 remains Not Started and requires separate authorization.
 
 ## Future Features (Uncommitted)
 

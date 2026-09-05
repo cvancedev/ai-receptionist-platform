@@ -1,5 +1,8 @@
 import { useState, type FormEvent } from "react";
-import type { PrototypeMessage } from "@/src/prototype-ui/prototype-chat-session";
+import {
+  MAX_PROTOTYPE_MESSAGE_LENGTH,
+  type PrototypeMessage,
+} from "@/src/prototype-ui/prototype-chat-session";
 
 export function ChatWindow({
   messages,
@@ -7,18 +10,29 @@ export function ChatWindow({
   disabled,
 }: {
   messages: readonly PrototypeMessage[];
-  onSubmit: (message: string) => void;
+  onSubmit: (message: string) => Promise<void>;
   disabled: boolean;
 }) {
   const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const value = message.trim();
-    if (!value) return;
-    onSubmit(value);
-    setMessage("");
+    if (!value || submitting || disabled) return;
+    setSubmitting(true);
+    try {
+      await onSubmit(value);
+      setMessage("");
+    } finally {
+      setSubmitting(false);
+    }
   }
+
+  const inputDisabled = disabled || submitting;
+  const inputHelp = disabled
+    ? "Reset the prototype to begin another fictional scenario."
+    : `Fictional data only. Maximum ${MAX_PROTOTYPE_MESSAGE_LENGTH} characters.`;
 
   return (
     <section className="flex min-h-[38rem] flex-col overflow-hidden rounded-2xl border border-border bg-surface-primary shadow-[var(--shadow-subtle)]" aria-labelledby="chat-heading">
@@ -26,7 +40,7 @@ export function ChatWindow({
         <h2 id="chat-heading" className="font-semibold text-primary">Fictional conversation</h2>
         <p className="mt-1 text-xs text-muted">Messages are numbered rather than timestamped so runs remain deterministic.</p>
       </div>
-      <ol className="flex-1 space-y-4 overflow-y-auto p-5 sm:p-6" aria-live="polite" aria-label="Prototype messages">
+      <ol className="flex-1 space-y-4 overflow-y-auto p-5 sm:p-6" aria-live="polite" aria-relevant="additions" aria-label="Prototype messages">
         {messages.map((item) => (
           <li key={item.id} className={`flex ${item.role === "customer" ? "justify-end" : "justify-start"}`}>
             <div className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-6 ${item.role === "customer" ? "bg-brand text-white" : "border border-border bg-page text-primary"}`}>
@@ -40,19 +54,25 @@ export function ChatWindow({
       </ol>
       <form onSubmit={submit} className="border-t border-border p-4 sm:p-5">
         <label htmlFor="prototype-message" className="text-sm font-semibold text-primary">Fictional customer message</label>
+        <p id="prototype-message-help" className="mt-1 text-xs text-muted">{inputHelp}</p>
         <div className="mt-2 flex flex-col gap-3 sm:flex-row">
           <input
             id="prototype-message"
             value={message}
             onChange={(event) => setMessage(event.target.value)}
-            disabled={disabled}
+            disabled={inputDisabled}
+            maxLength={MAX_PROTOTYPE_MESSAGE_LENGTH}
+            aria-describedby="prototype-message-help prototype-submit-status"
             placeholder={disabled ? "Reset to begin another scenario" : "Type a fictional response"}
             className="min-h-11 min-w-0 flex-1 rounded-lg border border-border bg-white px-3.5 py-2 text-sm text-primary placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:bg-surface-secondary"
           />
-          <button type="submit" disabled={disabled || !message.trim()} className="min-h-11 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50">
-            Submit
+          <button type="submit" disabled={inputDisabled || !message.trim()} className="min-h-11 rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50">
+            {submitting ? "Submitting…" : "Submit"}
           </button>
         </div>
+        <p id="prototype-submit-status" className="sr-only" role="status" aria-live="polite">
+          {submitting ? "Submitting fictional message." : "Ready for a fictional message."}
+        </p>
       </form>
     </section>
   );

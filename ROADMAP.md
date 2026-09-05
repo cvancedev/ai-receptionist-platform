@@ -187,7 +187,7 @@ certification. See the [Sprint 8 Certification](docs/certification/SPRINT8_CERTI
 
 ## Sprint 9: Customer Validation and Hardening
 
-**Status: In Progress - Milestones 9.0-9.8 Complete; Milestone 9.9 Not Started**
+**Status: Complete - Internal Fictional Boundary Certified; Advancement Recommendation NO**
 
 - Real-world testing
 - Reliability improvements
@@ -265,7 +265,14 @@ live PostgreSQL suites were not rerun because `TEST_DATABASE_URL` was absent
 and persistence did not change. The release gate remains `NOT_READY` pending
 actual manual accessibility/usability review. No product behavior, dependency,
 migration, release, deployment, external action, or Milestone 9.9 behavior was
-added. Milestone 9.9 remains Not Started and requires separate authorization.
+added before Milestone 9.9 was separately authorized.
+
+Milestone 9.9 certifies Sprint 9's completed internal fictional scope and issues
+a separate binary `NO` advancement recommendation. The Sprint 9.7 gate remains
+`NOT_READY` because manual accessibility/usability review is pending, and live
+PostgreSQL suites were not freshly executed without `TEST_DATABASE_URL`.
+Certification grants no controlled-evaluation, production, deployment, data,
+customer-response, provider, channel, or external-action authority.
 
 ## Future Features (Uncommitted)
 

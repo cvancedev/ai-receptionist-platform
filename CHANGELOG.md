@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 9.9 - Certification and Binary Release Recommendation
+
+- Certified Milestones 9.0–9.8 only for their verified internal fictional
+  planning, control, hardening, evidence, and integrated-verification boundaries.
+- Issued a separate binary `NO` recommendation for advancement into a controlled
+  customer evaluation, aligned with the Sprint 9.7 `NOT_READY` gate.
+- Preserved pending manual accessibility/usability review and documented live
+  PostgreSQL suites as not freshly executed because `TEST_DATABASE_URL` was absent.
+- Added no dependency, lockfile, migration, feature, production capability,
+  deployment, release, external participant, provider, or external action.
+
 ### Sprint 9.8 - Integrated Security, Failure, and Operational Verification
 
 - Added an integrated verifier composing runtime, authorization, protected-data,

@@ -2,8 +2,9 @@
 
 ## Status
 
-Milestones 9.0 through 9.2 are complete. Milestone 9.3 and later milestones are
-Not Started and each requires separate explicit authorization.
+Milestones 9.0 through 9.9 are complete. Sprint 9 is certified only for the
+documented internal fictional boundary. The separate advancement recommendation
+is `NO`, and production and controlled customer evaluation remain unauthorized.
 
 Sprints 1 through 8 remain certified complete. This plan does not authorize
 production deployment, real customer data, customer response release, a real
@@ -462,7 +463,7 @@ or external service. Separate authorization required.
 
 ### 9.9: Sprint 9 Certification and Release Recommendation
 
-**Status: Not Started**
+**Status: Complete - Certified Boundary; Recommendation NO**
 
 **Objective:** Audit every Sprint 9 exit criterion and issue a binary Sprint 9
 certification plus a separate release recommendation.

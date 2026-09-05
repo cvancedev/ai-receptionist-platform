@@ -187,7 +187,7 @@ certification. See the [Sprint 8 Certification](docs/certification/SPRINT8_CERTI
 
 ## Sprint 9: Customer Validation and Hardening
 
-**Status: In Progress - Milestones 9.0-9.6 Complete; Milestone 9.7 Not Started**
+**Status: In Progress - Milestones 9.0-9.7 Complete; Milestone 9.8 Not Started**
 
 - Real-world testing
 - Reliability improvements
@@ -247,7 +247,16 @@ bounds retained UI state, sanitizes user-visible failures, and improves
 programmatic labels, status communication, and disabled-state clarity. It adds
 no dependency, migration, cache, network behavior, product workflow, provider,
 production capability, external action, customer release, or Milestone 9.7
-behavior. Milestone 9.7 remains Not Started and requires separate authorization.
+behavior before Milestone 9.7 was separately authorized.
+
+Milestone 9.7 adds process-local, sanitized validation evidence and a pure
+application-owned release-readiness recommendation. Missing, stale, duplicate,
+contradictory, failed, blocked, unknown/mixed-classification, and pending manual
+evidence cannot produce readiness. The current gate is honestly `NOT_READY`
+because required human accessibility and usability reviews have not occurred.
+No evaluation execution, participant onboarding, deployment, release, external
+action, dependency, migration, or Milestone 9.8 behavior was added. Milestone
+9.8 remains Not Started and requires separate authorization.
 
 ## Future Features (Uncommitted)
 

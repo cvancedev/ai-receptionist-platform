@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 9.7 - Controlled Validation Evidence and Release Gate
+
+- Added a bounded, immutable, process-local validation-evidence model that
+  discards untrusted content and grants no state, replay, configuration,
+  authorization, deployment, release, protected-data, or external-action authority.
+- Added a pure deterministic release-readiness gate requiring explicit,
+  unique, current positive evidence for every mandatory fictional scenario.
+- Added fail-closed handling for missing, malformed, duplicate, contradictory,
+  stale, unknown/mixed-classification, failed, blocked, and pending-manual evidence.
+- Added focused synthetic verification and documented the honest current
+  `NOT_READY` recommendation because required human accessibility and usability
+  reviews have not occurred.
+- Added no dependency, lockfile, migration, durable store, network behavior,
+  participant onboarding, release action, external action, or Sprint 9.8 behavior.
+
 ### Sprint 9.6 - Reliability, Accessibility, Performance, and Usability Hardening
 
 - Rejected empty, oversized, and overlapping duplicate fictional submissions

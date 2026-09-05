@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 9.8 - Integrated Security, Failure, and Operational Verification
+
+- Added an integrated verifier composing runtime, authorization, protected-data,
+  migration-integrity, operational-evidence, validation-evidence, incident, and
+  release-gate boundaries.
+- Verified cross-scope denial, inert client/runtime claims, secret-shaped input
+  discard, subordinate evidence non-authority, failure/rollback coverage,
+  certified migrations, and absence of release/deployment/action side effects.
+- Reconstructed current fictional validation evidence and confirmed the release
+  gate remains `NOT_READY` because manual accessibility/usability review is pending.
+- Added no application behavior, dependency, lockfile, migration, database
+  access, provider/network behavior, production capability, or Sprint 9.9 work.
+
 ### Sprint 9.7 - Controlled Validation Evidence and Release Gate
 
 - Added a bounded, immutable, process-local validation-evidence model that

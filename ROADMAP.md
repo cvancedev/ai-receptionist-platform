@@ -187,7 +187,7 @@ certification. See the [Sprint 8 Certification](docs/certification/SPRINT8_CERTI
 
 ## Sprint 9: Customer Validation and Hardening
 
-**Status: In Progress - Milestones 9.0-9.7 Complete; Milestone 9.8 Not Started**
+**Status: In Progress - Milestones 9.0-9.8 Complete; Milestone 9.9 Not Started**
 
 - Real-world testing
 - Reliability improvements
@@ -256,7 +256,16 @@ evidence cannot produce readiness. The current gate is honestly `NOT_READY`
 because required human accessibility and usability reviews have not occurred.
 No evaluation execution, participant onboarding, deployment, release, external
 action, dependency, migration, or Milestone 9.8 behavior was added. Milestone
-9.8 remains Not Started and requires separate authorization.
+9.8 remained separately gated until authorization.
+
+Milestone 9.8 adds integrated verification across state, configuration,
+runtime, identity, protected-data denial, persistence readiness, subordinate
+evidence, hardening, incidents, and the release gate. Repository checks pass;
+live PostgreSQL suites were not rerun because `TEST_DATABASE_URL` was absent
+and persistence did not change. The release gate remains `NOT_READY` pending
+actual manual accessibility/usability review. No product behavior, dependency,
+migration, release, deployment, external action, or Milestone 9.9 behavior was
+added. Milestone 9.9 remains Not Started and requires separate authorization.
 
 ## Future Features (Uncommitted)
 

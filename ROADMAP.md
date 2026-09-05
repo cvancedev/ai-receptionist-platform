@@ -252,8 +252,9 @@ behavior before Milestone 9.7 was separately authorized.
 Milestone 9.7 adds process-local, sanitized validation evidence and a pure
 application-owned release-readiness recommendation. Missing, stale, duplicate,
 contradictory, failed, blocked, unknown/mixed-classification, and pending manual
-evidence cannot produce readiness. The current gate is honestly `NOT_READY`
-because required human accessibility and usability reviews have not occurred.
+evidence cannot produce readiness. With complete current evidence, the gate is
+honestly `READY_FOR_CONTROLLED_EVALUATION`; all required human accessibility,
+usability, and fresh live PostgreSQL reviews passed.
 No evaluation execution, participant onboarding, deployment, release, external
 action, dependency, migration, or Milestone 9.8 behavior was added. Milestone
 9.8 remained separately gated until authorization.
@@ -261,16 +262,16 @@ action, dependency, migration, or Milestone 9.8 behavior was added. Milestone
 Milestone 9.8 adds integrated verification across state, configuration,
 runtime, identity, protected-data denial, persistence readiness, subordinate
 evidence, hardening, incidents, and the release gate. Repository checks pass;
-live PostgreSQL suites were not rerun because `TEST_DATABASE_URL` was absent
-and persistence did not change. The release gate remains `NOT_READY` pending
-actual manual accessibility/usability review. No product behavior, dependency,
+live PostgreSQL suites were subsequently rerun with `TEST_DATABASE_URL` set and
+passed. Together with completed manual reviews, the release gate is
+`READY_FOR_CONTROLLED_EVALUATION`. No product behavior, dependency,
 migration, release, deployment, external action, or Milestone 9.9 behavior was
 added before Milestone 9.9 was separately authorized.
 
 Milestone 9.9 certifies Sprint 9's completed internal fictional scope and issues
-a separate binary `NO` advancement recommendation. The Sprint 9.7 gate remains
-`NOT_READY` because manual accessibility/usability review is pending, and live
-PostgreSQL suites were not freshly executed without `TEST_DATABASE_URL`.
+a separate binary `YES` advancement recommendation. The Sprint 9.7 gate is
+`READY_FOR_CONTROLLED_EVALUATION` because fresh live PostgreSQL suites and all
+required manual accessibility/usability reviews passed.
 Certification grants no controlled-evaluation, production, deployment, data,
 customer-response, provider, channel, or external-action authority.
 

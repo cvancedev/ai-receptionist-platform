@@ -5,8 +5,9 @@
 Sprint 9 is **CERTIFIED** for the planning, policy, disconnected controls,
 fictional hardening, evidence framework, and integrated verification completed
 by Milestones 9.0 through 9.8. Certification does not mean the build is ready
-for controlled customer evaluation: the separate recommendation is **NO** and
-the Sprint 9.7 gate remains **NOT_READY**.
+for production. The separate controlled-evaluation recommendation is **YES** and
+the Sprint 9.7 gate is **READY_FOR_CONTROLLED_EVALUATION**; neither result
+automatically authorizes or starts an evaluation.
 
 ## 2. Evidence Status Vocabulary
 
@@ -25,10 +26,10 @@ the Sprint 9.7 gate remains **NOT_READY**.
 | 9.1 | Fictional controlled-evaluation boundary and risk review | Complete; verifier executed |
 | 9.2 | Runtime/environment and secret-reference preflight | Complete; verifier executed |
 | 9.3 | Identity, authorization, and protected-data denial | Complete; verifier executed |
-| 9.4 | PostgreSQL readiness, recovery design, and prior live proof | Complete; source/checksum verifier executed; live suites not re-executed |
+| 9.4 | PostgreSQL readiness, recovery design, and live proof | Complete; source/checksum and fresh live suites executed |
 | 9.5 | Bounded operational evidence, privacy, retention, incidents | Complete; verifier executed |
-| 9.6 | Reliability, accessibility, performance, usability hardening | Complete; automated verifier executed; human review pending |
-| 9.7 | Validation evidence and recommendation-only release gate | Complete; verifier executed; current gate `NOT_READY` |
+| 9.6 | Reliability, accessibility, performance, usability hardening | Complete; automated verifier and required human reviews passed |
+| 9.7 | Validation evidence and recommendation-only release gate | Complete; verifier executed; current gate `READY_FOR_CONTROLLED_EVALUATION` |
 | 9.8 | Integrated security, failure, and operational verification | Complete; verifier executed |
 
 ## 4. Preserved Architecture and Security Boundaries
@@ -53,9 +54,9 @@ implemented.
 ## 5. Operational, Hardening, and Gate Evidence
 
 Migration history remains exactly 001–007 and the certified SHA-256 source
-manifest passes. Sprint 9.4 historically executed disposable local PostgreSQL
-migration, backup/restore, recovery, restart, persistence, and isolation suites.
-Those are documented prior results, not fresh Sprint 9.9 execution.
+manifest passes. Fresh current Sprint 9.9 execution with `TEST_DATABASE_URL`
+set passed the complete approved PostgreSQL migration, backup/restore, recovery,
+restart, persistence, configuration, transaction, and isolation suite.
 
 Operational evidence remains in-memory, bounded, sanitized, non-authoritative,
 and non-exporting. Incident conditions block evaluation/release without
@@ -73,19 +74,25 @@ non-incremental TypeScript, production build, full and production-only npm
 audits, dependency-tree validation, Markdown links, diff whitespace, and
 capability/authority/PostgreSQL/secrets/network/logging scans were executed.
 
-## 7. Verification Not Executed in Sprint 9.9
+## 7. Fresh Live PostgreSQL Verification
 
-`TEST_DATABASE_URL` was absent. The following live PostgreSQL suites were not
-run: backup/restore, durable restart/recovery, configuration recovery, and the
-PostgreSQL store/transaction/version/activation suites. Their Sprint 9.4
-historical passes are not treated as fresh Sprint 9.9 results.
+With `TEST_DATABASE_URL` set, every approved live PostgreSQL verifier passed:
+conversation store, execution journal, transactional execution, restart-safe
+prototype, persistence recovery, Business Profile versions, knowledge versions,
+configuration activation, activated prototype, business-configuration recovery,
+configuration-lifecycle remediation, durable-turn restart, operational
+readiness, and operational backup/restore.
 
 ## 8. Pending and Known Limitations
 
-Required human review remains pending for keyboard traversal, screen-reader
-behavior, forced colors, contrast, 200%/400% zoom, text spacing, real-device
-reflow, touch targets, and human comprehension/usability. No manual result or
-formal WCAG certification is claimed.
+Keyboard navigation, 200% and 400% browser zoom/reflow, screen-reader behavior,
+forced colors / Windows High Contrast, contrast/readability, text spacing,
+real-device reflow, touch targets, and human comprehension/usability all have
+genuine manual PASS evidence. No formal WCAG certification is claimed. See
+[Manual Accessibility Evidence](../SPRINT_9_MANUAL_ACCESSIBILITY_EVIDENCE.md).
+
+No mandatory evidence blocker remains. The deterministic gate recommendation
+does not authorize production or automatically authorize or start evaluation.
 
 The MVP remains internal and fictional. No external participants, real customer
 or protected data, response release, production runtime, or external action is
@@ -95,5 +102,7 @@ certified capabilities.
 ## 9. Certification Conclusion
 
 Sprint 9.0–9.8 completion and the stated internal fictional boundaries are
-certified. Advancement into controlled customer evaluation is not certified or
-authorized. See the separate [Sprint 9 Release Recommendation](../SPRINT_9_RELEASE_RECOMMENDATION.md).
+certified. The evidence supports a YES recommendation for advancement into a
+separately approved controlled customer evaluation. No evaluation is
+automatically authorized or started. See the separate
+[Sprint 9 Release Recommendation](../SPRINT_9_RELEASE_RECOMMENDATION.md).

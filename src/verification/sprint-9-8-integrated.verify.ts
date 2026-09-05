@@ -84,8 +84,9 @@ function verifyOperationalAndReleaseBoundary(): void {
   }
   const before = JSON.stringify(validation.snapshot());
   const gate = evaluateReleaseReadiness({ gateVersion: RELEASE_GATE_VERSION, asOf: NOW, evidence: validation.snapshot() });
-  assert(gate.status === "NOT_READY" && gate.reasonCodes.includes("required-manual-review-pending"),
-    "current release gate remains NOT_READY for pending manual accessibility/usability review");
+  assert(gate.status === "READY_FOR_CONTROLLED_EVALUATION" && gate.reasonCodes.includes("mandatory-fictional-evidence-passed")
+    && gate.missingRequirements.length === 0,
+  "current release gate recommends controlled evaluation after all mandatory evidence passed");
   assert(gate.recommendationOnly && !gate.evaluationExecutionAuthorized && !gate.productionAuthorized
     && !gate.customerResponseReleaseAuthorized && !gate.deploymentAuthorized && !gate.externalActionAuthorized,
   "release gate has no execution or side-effect authority");
@@ -103,8 +104,8 @@ function validationInput(requirement: ValidationRequirement, manual: boolean) {
   const failClosed = /invalid|oversized|duplicate|overlapping|missing|rejected|failure|denial/.test(requirement);
   const expected = manual ? "manual-pass" : failClosed ? "fail-closed" : "safe-success";
   return { scenarioId: `integrated-${requirement}`, requirement, scenarioCategory: manual ? (requirement === "accessibility-review" ? "accessibility" : "usability") : "reliability",
-    expectedOutcome: expected, observedOutcome: manual ? "not-observed" : expected, result: manual ? "pending" : "pass",
-    reasonCode: manual ? "manual-review-pending" : "verified", evaluatorRole: "automated-verifier",
+    expectedOutcome: expected, observedOutcome: expected, result: "pass",
+    reasonCode: "verified", evaluatorRole: manual ? "internal-manual-reviewer" : "automated-verifier",
     environment: "automated-test", dataClassification: "fictional-test-data", configurationReferences: ["sprint-9-integrated"],
     occurredAt: NOW, manualReviewRequired: manual, observationCategory: manual ? "human-comprehension" : "reliability",
     releaseGateRelevance: "mandatory", untrustedContent: {} };

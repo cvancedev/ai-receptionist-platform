@@ -4,8 +4,9 @@
 
 Sprint 9.8 verifies the approved MVP and Sprint 9 controls as one fail-closed
 system. It adds no product feature or authority. The integrated automated and
-static matrix passes. The Sprint 9.7 release gate remains **NOT_READY** because
-required human accessibility and usability reviews remain pending.
+static matrix passes. With the subsequently completed fresh live PostgreSQL and
+manual evidence, the Sprint 9.7 release gate is
+**READY_FOR_CONTROLLED_EVALUATION**.
 
 ## Integrated Matrix
 
@@ -18,7 +19,7 @@ required human accessibility and usability reviews remain pending.
 | PostgreSQL readiness | Exact 001–007 sources and certified checksums verified without a connection | PASS |
 | Operational evidence and incidents | Bounded, sanitized, non-replayable evidence; incident blocks evaluation | PASS |
 | Sprint 9.6 hardening | Oversized/overlapping rejection, sanitized failure, accessibility semantics retained | PASS |
-| Validation evidence and release gate | Current synthetic evidence plus pending manual reviews produces `NOT_READY` | PASS |
+| Validation evidence and release gate | Current complete evidence produces `READY_FOR_CONTROLLED_EVALUATION` | PASS |
 
 ## Security and Failure Findings
 
@@ -41,18 +42,15 @@ is additive verification only.
 
 ## Operational and Live Coverage
 
-`TEST_DATABASE_URL` was absent. Therefore no live PostgreSQL verifier was run:
-
-- operational backup/restore;
-- durable turn/restart;
-- configuration recovery;
-- PostgreSQL conversation, journal, transaction, activation, or version stores.
-
-No result for those live runs is fabricated. Their previously certified source
-coverage remains unchanged. The disconnected readiness verifier revalidated
-the exact migration manifest, all seven SHA-256 checksums, missing/changed/
-unknown-source rejection, and sanitized failure behavior. Persistence code,
-schema, migrations, and database configuration did not change.
+Fresh current Sprint 9.9 live verification ran successfully with
+`TEST_DATABASE_URL` set: operational backup/restore and readiness, durable
+turn/restart, persistence and configuration recovery, and every PostgreSQL
+conversation, journal, transaction, Business Profile, knowledge, activation,
+activated-prototype, restart-safe-prototype, and lifecycle suite passed. The
+disconnected readiness verifier also revalidated the exact migration manifest,
+all seven SHA-256 checksums, missing/changed/unknown-source rejection, and
+sanitized failure behavior. Persistence code, schema, migrations, and database
+configuration did not change.
 
 The fixture experience remains deterministic, while the durable activated path
 remains opt-in and explicitly prohibits fixture fallback. Operational and
@@ -62,15 +60,14 @@ production capability is enabled.
 
 ## Manual Review and Release Gate
 
-The current evidence set intentionally records accessibility and usability as
-pending. Keyboard traversal, screen-reader behavior, forced colors, contrast,
-200%/400% zoom, text spacing, real-device reflow, touch targets, and human
-comprehension/usability still require real human review. No manual result was
-invented and no WCAG certification is claimed.
+Keyboard navigation, 200% and 400% browser zoom/reflow, screen-reader behavior,
+forced colors / Windows High Contrast, contrast/readability, text spacing,
+real-device reflow, touch targets, and human comprehension/usability now have
+genuine manual PASS evidence. No WCAG certification is claimed.
 
-Successful Sprint 9.8 verification does not change the gate to ready. It only
-confirms that pending manual evidence continues to produce `NOT_READY` and that
-the gate cannot execute evaluation, deploy, release, or act externally.
+The complete current evidence produces `READY_FOR_CONTROLLED_EVALUATION`. The
+gate remains recommendation-only and cannot execute evaluation, deploy,
+release, authorize production, or act externally.
 
 ## Remaining Work
 

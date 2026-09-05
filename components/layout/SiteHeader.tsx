@@ -11,11 +11,11 @@ const navigation = [
 export function SiteHeader() {
   return (
     <header className="border-b border-border/80 bg-surface-primary/95">
-      <Container className="flex min-h-18 items-center justify-between gap-4 py-3">
+      <Container className="flex min-h-18 flex-wrap items-center justify-between gap-3 py-3">
         <Logo />
-        <div className="flex items-center gap-3 sm:gap-5">
-          <nav aria-label="Primary navigation" className="hidden md:block">
-            <ul className="flex items-center gap-1">
+        <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto sm:gap-5">
+          <nav aria-label="Primary navigation" className="min-w-0 flex-1 sm:flex-none">
+            <ul className="flex flex-wrap items-center gap-1">
               {navigation.map((item) => (
                 <li key={item.href}>
                   <Link

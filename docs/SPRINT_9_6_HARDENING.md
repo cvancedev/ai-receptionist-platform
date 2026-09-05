@@ -70,20 +70,16 @@ No operational payload, stack trace, SQL/database detail, credential,
 connection string, protected data, secret, raw provider output, or internal
 implementation detail is intentionally rendered or logged.
 
-## Manual Review Required
+## Manual Review Results
 
-Automated and static checks cannot establish formal WCAG conformance. Before
-any separately authorized participant evaluation, a human must review:
-
-- full keyboard traversal, focus visibility, and focus order in supported
-  browsers;
-- screen-reader announcements and verbosity with at least one desktop and one
-  mobile screen reader;
-- contrast, forced-colors/high-contrast presentation, 200% and 400% zoom,
-  text spacing, narrow reflow, and touch-target comfort;
-- comprehension of fictional-data, correction, escalation, handoff, busy,
-  disabled, and error wording with representative users;
-- real-device responsiveness and layout stability.
+Automated and static checks cannot establish formal WCAG conformance. Curt has
+manually passed keyboard navigation and 200% and 400% browser zoom/reflow. The
+400% retest confirmed both primary navigation links remained visible, readable,
+keyboard reachable, operable, unobscured, and free of unreasonable horizontal
+scrolling. Curt also manually passed screen-reader behavior, forced colors /
+Windows High Contrast, contrast/readability, text spacing, real-device reflow,
+touch targets, and human comprehension/usability. All required Sprint 9 manual
+accessibility and usability reviews are complete.
 
 No formal WCAG certification is claimed.
 

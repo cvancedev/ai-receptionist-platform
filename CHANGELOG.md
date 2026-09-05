@@ -8,10 +8,12 @@ All notable changes to this project will be documented in this file. The format 
 
 - Certified Milestones 9.0–9.8 only for their verified internal fictional
   planning, control, hardening, evidence, and integrated-verification boundaries.
-- Issued a separate binary `NO` recommendation for advancement into a controlled
-  customer evaluation, aligned with the Sprint 9.7 `NOT_READY` gate.
-- Preserved pending manual accessibility/usability review and documented live
-  PostgreSQL suites as not freshly executed because `TEST_DATABASE_URL` was absent.
+- Issued a separate binary `YES` recommendation for advancement into a separately
+  approved controlled customer evaluation, aligned with the Sprint 9.7
+  `READY_FOR_CONTROLLED_EVALUATION` gate.
+- Recorded genuine PASS evidence for every required manual accessibility/usability
+  review and recorded fresh successful live PostgreSQL verification with
+  `TEST_DATABASE_URL` set.
 - Added no dependency, lockfile, migration, feature, production capability,
   deployment, release, external participant, provider, or external action.
 
@@ -24,7 +26,7 @@ All notable changes to this project will be documented in this file. The format 
   discard, subordinate evidence non-authority, failure/rollback coverage,
   certified migrations, and absence of release/deployment/action side effects.
 - Reconstructed current fictional validation evidence and confirmed the release
-  gate remains `NOT_READY` because manual accessibility/usability review is pending.
+  gate is `READY_FOR_CONTROLLED_EVALUATION` after complete current evidence passed.
 - Added no application behavior, dependency, lockfile, migration, database
   access, provider/network behavior, production capability, or Sprint 9.9 work.
 

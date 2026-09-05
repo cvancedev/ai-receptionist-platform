@@ -4,9 +4,10 @@
 
 Sprint 9.7 implements the evidence and recommendation framework for deciding
 whether the existing internal fictional MVP may be considered for a later,
-separately authorized controlled evaluation. The current decision is
-**NOT_READY** because required manual accessibility and usability review has
-not occurred. No manual result is inferred or fabricated.
+separately authorized controlled evaluation. The current deterministic decision
+is **READY_FOR_CONTROLLED_EVALUATION** because every mandatory current evidence
+item passed. All required manual accessibility/usability reviews and fresh live
+PostgreSQL checks have genuine PASS evidence.
 
 `READY_FOR_CONTROLLED_EVALUATION` would be a bounded recommendation only. It
 does not authorize evaluation execution, external participants, production,
@@ -56,10 +57,10 @@ boundaries. Required accessibility and usability reviews must be supplied by
 an internal manual reviewer with a `manual-pass` observed outcome. Pending or
 automated substitutes return `NOT_READY`.
 
-Manual work still required includes keyboard traversal, screen-reader behavior,
-forced colors, contrast, 200%/400% zoom, text spacing, real-device reflow,
-touch targets, and human comprehension of workflow, correction, escalation,
-handoff, status, and error language. No WCAG certification is claimed.
+Keyboard navigation, 200% and 400% browser zoom/reflow, screen-reader behavior,
+forced colors / Windows High Contrast, contrast/readability, text spacing,
+real-device reflow, touch targets, and human comprehension/usability have all
+manually passed. No WCAG certification is claimed.
 
 ## Release-Gate Algorithm and Results
 
@@ -88,8 +89,10 @@ production, protected-data, release, deployment, or action authority. Calling
 the gate performs no mutation, release, publish, deploy, send, activation, or
 external operation.
 
-## Remaining Work
+## Current Evidence Result
 
-Sprint 9.8 remains **Not Started** and requires separate authorization. It is
-expected to re-audit the complete security, failure, recovery, authority, and
-operational boundary. Sprint 9.7 adds none of that future milestone's behavior.
+The deterministic gate evaluates the actual current evidence as
+`READY_FOR_CONTROLLED_EVALUATION` with `mandatory-fictional-evidence-passed`. Fresh
+live PostgreSQL restart/recovery evidence and completed manual reviews close the
+previous gaps. This recommendation does not itself authorize or start an
+evaluation and never authorizes production.

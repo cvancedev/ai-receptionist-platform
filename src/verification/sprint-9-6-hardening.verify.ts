@@ -53,6 +53,7 @@ function verifyAccessibleAndUsableSurface(): void {
   const chat = source("components/prototype/ChatWindow.tsx");
   const shell = source("components/prototype/PrototypeChat.tsx");
   const progress = source("components/prototype/StageProgress.tsx");
+  const header = source("components/layout/SiteHeader.tsx");
   for (const required of [
     'htmlFor="prototype-message"', 'id="prototype-message"', "maxLength={MAX_PROTOTYPE_MESSAGE_LENGTH}",
     'aria-describedby="prototype-message-help prototype-submit-status"', 'role="status"',
@@ -63,6 +64,26 @@ function verifyAccessibleAndUsableSurface(): void {
     'role="alert"', "fails closed instead of substituting fixture data",
   ]) assert(shell.includes(required), `prototype shell includes ${required}`);
   assert(progress.includes('aria-current={active ? "step" : undefined}'), "progress identifies its current step");
+  assert(header.includes('aria-label="Primary navigation"'), "site navigation has an accessible name");
+  assert(header.includes("How It Works") && header.includes("Early Access"), "primary links remain present");
+  assert(!/aria-label="Primary navigation" className="[^"]*hidden/.test(header),
+    "primary navigation is not removed at narrow or zoomed viewport widths");
+  assert(header.includes("flex-wrap") && header.includes("sm:w-auto"),
+    "header navigation reflows without forcing a horizontal layout");
+  const manualEvidence = source("docs/SPRINT_9_MANUAL_ACCESSIBILITY_EVIDENCE.md");
+  for (const passed of [
+    "Keyboard navigation", "200% browser zoom", "400% browser zoom/reflow",
+    "Screen-reader behavior", "Forced colors / Windows High Contrast",
+    "Contrast/readability", "Text spacing", "Real-device reflow",
+    "Touch targets", "Human comprehension/usability",
+  ]) {
+    assert(manualEvidence.includes(`| ${passed} | **PASS** |`), `${passed} manual PASS is recorded`);
+  }
+  assert(manualEvidence.includes("All required Sprint 9 manual accessibility and usability reviews are complete"),
+    "manual evidence records completion without substituting automated evidence");
+  assert(manualEvidence.includes("deterministic gate")
+    && manualEvidence.includes("`READY_FOR_CONTROLLED_EVALUATION`"),
+  "manual evidence records the current recommendation-only release gate result");
   for (const uiSource of [chat, shell, progress]) {
     assert(!/tabIndex\s*=\s*[{"']?[1-9]/.test(uiSource), "UI has no positive tabindex");
     assert(!uiSource.includes("onClick") || uiSource.includes("<button"), "click behavior uses native buttons");

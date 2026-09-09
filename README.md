@@ -87,7 +87,7 @@ Canonical URLs, domain-dependent metadata, sitemap discovery in `robots.txt`, an
 - The AI receptionist product is under development and does not provide live call handling.
 - Contact is email-based; there are no forms, accounts, storage, payments, analytics, scheduling, or dashboards.
 - The current brand and contact information are placeholders.
-- Next.js is pinned to `16.3.0`. Its supported dependency tree resolves PostCSS `8.5.23`, Sharp `0.35.3`, and nanoid `3.3.18`; `npm audit --omit=dev` reports zero vulnerabilities. The remediation and future review conditions are recorded in the [Implementation Architecture dependency-security record](docs/IMPLEMENTATION_ARCHITECTURE.md#dependency-security-risk-status).
+- Next.js is pinned to `16.3.3`. Bounded Sprint 10.2 security remediation resolves Sharp `0.35.4` and development-only js-yaml `4.3.2`; PostCSS `8.5.23` and nanoid `3.3.18` are unchanged. Fresh full and production-only audits report zero vulnerabilities. See the [dependency-security record](docs/IMPLEMENTATION_ARCHITECTURE.md#dependency-security-risk-status) and [Sprint 10.2 entry review](docs/SPRINT_10_2_AUTOMATED_ENTRY_REVIEW.md). This clears the dependency blocker only; manual rehearsal and entry gates remain pending.
 
 ## Validation
 
@@ -216,6 +216,8 @@ npm run verify:operational-evidence
 - [Sprint 7 certification](docs/certification/SPRINT7_CERTIFICATION.md)
 - [Sprint 8 certification](docs/certification/SPRINT8_CERTIFICATION.md)
 - [Sprint 9 plan](docs/SPRINT_9_PLAN.md)
+- [Sprint 10 plan](docs/SPRINT_10_PLAN.md)
+- [Sprint 10 test and evaluation plan](docs/SPRINT_10_TEST_PLAN.md)
 - [Sprint 9 test plan](docs/SPRINT_9_TEST_PLAN.md)
 - [Controlled-evaluation boundary](docs/CONTROLLED_EVALUATION_BOUNDARY.md)
 - [Runtime configuration and secrets](docs/RUNTIME_CONFIGURATION_AND_SECRETS.md)
@@ -256,5 +258,25 @@ Branding is centralized in [`config/branding.ts`](config/branding.ts). The curre
 Semantic design tokens live in [`app/globals.css`](app/globals.css), while shared layout and UI components live under [`components`](components). Branding remains centralized in [`config/branding.ts`](config/branding.ts). The completed Sprint 1 website applies that foundation to customer messaging and early validation without representing the product as operational.
 
 ## Current Milestone
+
+Sprint 10 — Moderated Fictional Customer Evaluation has started. Milestone
+10.0 (Evaluation Scope, Plan, and Acceptance Gates) and 10.1 (Scenario Pack and
+Moderator Runbook) are complete. Sprint 10.2 is **INCOMPLETE / NOT_READY**:
+automated entry checks and dependency remediation passed, but manual rehearsal
+gates remain pending. Milestones 10.3–10.5 and participant evaluation have not
+started. The first evaluation will use the
+existing local deterministic fixture interface; durable browser integration is
+not required. The current incomplete milestone is 10.2 — Internal
+Rehearsal and Evaluation Entry Review. Curt Vance is assigned as moderator and
+evidence/cleanup owner for materials and internal rehearsal.
+The [scenario pack](docs/evaluation/sprint-10/scenario-pack.md),
+[participant cards](docs/evaluation/sprint-10/participant-cards.md),
+[runbook](docs/evaluation/sprint-10/moderator-runbook.md),
+[blank evidence templates](docs/evaluation/sprint-10/evidence-templates.json),
+and [feedback/severity rubric](docs/evaluation/sprint-10/feedback-and-severity.md)
+prepare later work only. Run `npm run verify:sprint-10-materials` to verify this package.
+Run `npm run verify:sprint-10-planning` to check the planning contracts. This
+check grants no session or production authority. See the [Sprint 10 Plan](docs/SPRINT_10_PLAN.md)
+and [Test Plan](docs/SPRINT_10_TEST_PLAN.md).
 
 Sprints 3 through 9 are certified complete for their stated internal fictional boundaries. Sprint 9's binary recommendation is `YES`; the Sprint 9.7 gate is `READY_FOR_CONTROLLED_EVALUATION` after all required manual accessibility/usability reviews and fresh approved live PostgreSQL verification passed. A controlled evaluation still requires separate explicit authorization and has not started. Production, protected data, telemetry export, release, and external actions remain unauthorized. See the [Sprint 9 Certification](docs/certification/SPRINT9_CERTIFICATION.md), [Sprint 9 Release Recommendation](docs/SPRINT_9_RELEASE_RECOMMENDATION.md), [Sprint 9 Plan](docs/SPRINT_9_PLAN.md), and [Controlled-Evaluation Boundary](docs/CONTROLLED_EVALUATION_BOUNDARY.md).

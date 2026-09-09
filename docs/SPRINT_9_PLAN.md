@@ -4,7 +4,18 @@
 
 Milestones 9.0 through 9.9 are complete. Sprint 9 is certified only for the
 documented internal fictional boundary. The separate advancement recommendation
-is `NO`, and production and controlled customer evaluation remain unauthorized.
+is `YES` for consideration of a separately approved controlled evaluation.
+Milestone 9.9 is CERTIFIED. Production launch and evaluation execution remain
+unauthorized by Sprint 9 certification.
+
+Historical context: the initial 9.7 framework reported `NOT_READY`, and the
+initial 9.9 recommendation was `NO` while required evidence was incomplete.
+The final September 5, 2026 certification update (`96d205c`) recorded completed
+manual reviews and fresh live PostgreSQL evidence, superseding those statuses
+with `READY_FOR_CONTROLLED_EVALUATION` and `YES`. Earlier objectives below are
+the original planning scope; they do not assert that participant sessions ran.
+See [Sprint 9 Certification](certification/SPRINT9_CERTIFICATION.md) and
+[Release Recommendation](SPRINT_9_RELEASE_RECOMMENDATION.md).
 
 Sprints 1 through 8 remain certified complete. This plan does not authorize
 production deployment, real customer data, customer response release, a real
@@ -384,7 +395,12 @@ assumed. Any necessity requires explicit evidence and separate authorization.
 
 ### 9.7: Controlled Customer Validation and Release Gate
 
-**Status: Complete - Framework Implemented; Current Gate NOT_READY**
+**Status: Complete - Framework Implemented; Final Certification Gate READY_FOR_CONTROLLED_EVALUATION**
+
+Final delivered scope: bounded validation evidence and a recommendation-only
+gate, with required internal manual reviews completed by 9.9. External
+participant evaluation was not executed. The original objective below remains
+historical planning context; later sessions are planned in [Sprint 10](SPRINT_10_PLAN.md).
 
 **Objective:** Execute the approved validation protocol and assemble go/no-go
 evidence for a later controlled-production-evaluation decision without
@@ -463,7 +479,7 @@ or external service. Separate authorization required.
 
 ### 9.9: Sprint 9 Certification and Release Recommendation
 
-**Status: Complete - Certified Boundary; Recommendation NO**
+**Status: Complete - CERTIFIED Internal Fictional Boundary; Recommendation YES**
 
 **Objective:** Audit every Sprint 9 exit criterion and issue a binary Sprint 9
 certification plus a separate release recommendation.
@@ -562,7 +578,7 @@ Sprint 9 may be certified only when:
 - certification records a binary Sprint 9 result and a separate binary release
   recommendation with exact exclusions and residual risk.
 
-## 8. Sprint 9.0 Definition of Done
+## 8. Sprint 9.0 Definition of Done (Historical Planning Checkpoint)
 
 - The roadmap definition is preserved without treating hardening as launch.
 - Milestones 9.1–9.9 have objective, scope, prohibitions, boundaries,
@@ -573,4 +589,5 @@ Sprint 9 may be certified only when:
   capabilities, and final certification.
 - Documentation changes only; production source, migrations, dependencies, and
   lockfile remain unchanged.
-- Sprint 9.1 remains Not Started and separately authorized.
+- At completion of 9.0, Sprint 9.1 remained Not Started and separately authorized;
+  milestones 9.1–9.9 have subsequently completed as recorded above.

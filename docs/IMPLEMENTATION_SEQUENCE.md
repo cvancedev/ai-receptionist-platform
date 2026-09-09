@@ -74,6 +74,29 @@ Build small vertical slices that produce observable customer and handoff outcome
 - **Exit criteria:** Critical risks have tested controls and accountable owners.
 - **Testing:** Adversarial, load appropriate to expected use, recovery, accessibility, security, and regression suites.
 
+## Phase 8: Moderated Fictional Customer Evaluation (Sprint 10)
+
+- **Goal:** Evaluate intake comprehension and handoff usefulness with moderated
+  fictional tasks before expanding implementation.
+- **Scope:** Existing local deterministic fixture interface, scenario/runbook
+  preparation, internal rehearsal, separately authorized participant sessions,
+  minimized evidence, bounded findings/remediation, and a next-step recommendation.
+- **Non-goals:** Durable browser integration, production deployment, real data,
+  providers/channels, authentication, external actions, or unsupervised operation.
+- **Entry criteria:** Sprint 9 certified; Sprint 10.0 planning authorized. Actual
+  sessions additionally require fresh evidence and separate cohort authorization.
+- **Exit criteria:** Evaluation results, acceptance gates, findings, retests and
+  cleanup are audited; failed/insufficient evidence produces NO advancement.
+- **Testing:** [Sprint 10 Test Plan](SPRINT_10_TEST_PLAN.md).
+
+10.0 planning and 10.1 materials are complete. The
+[moderator runbook](evaluation/sprint-10/moderator-runbook.md) assigns Curt Vance
+to moderation and evidence/cleanup for materials and internal rehearsal. Sprint
+10.2 is INCOMPLETE / NOT_READY: automated entry checks and dependency remediation
+passed; manual gates remain pending. 10.3–10.5 remain Not Started as defined in
+the [Sprint 10 Plan](SPRINT_10_PLAN.md).
+This phase is not production launch and no human evaluation has been conducted.
+
 ## Sequencing Guardrails
 
 - A phase starts only when its entry criteria are met.

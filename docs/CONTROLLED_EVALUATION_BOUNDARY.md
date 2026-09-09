@@ -2,6 +2,15 @@
 
 ## Decision
 
+Current planning update (Sprint 10.0): Sprint 9 is complete and 9.9 certified
+with a YES recommendation for consideration of a separately approved evaluation.
+The [Sprint 10 Plan](SPRINT_10_PLAN.md) selects the existing local fixture surface
+only and defines later session-entry gates. No evaluation has started or is
+authorized by 10.0. References below to later Sprint 9 milestones describe the
+original 9.1 readiness policy; completed 9.7 evidence-framework work did not
+execute participant sessions. Sprint 10 narrows the first study to fixture mode,
+without the optional durable path described in the original candidate below.
+
 Milestone 9.1 defines one candidate for a later controlled evaluation: a
 moderated session using the existing local or isolated test experience,
 fictional or synthetic scenarios, the deterministic mock, and optionally the

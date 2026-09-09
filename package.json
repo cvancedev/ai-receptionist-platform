@@ -43,10 +43,12 @@
     "verify:sprint-9-6-hardening": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/sprint-9-6-hardening.verify.js",
     "verify:controlled-validation-gate": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/controlled-validation-gate.verify.js",
     "verify:sprint-9-8-integrated": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/sprint-9-8-integrated.verify.js",
-    "verify:sprint-9-certification": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/sprint-9-certification.verify.js"
+    "verify:sprint-9-certification": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/sprint-9-certification.verify.js",
+    "verify:sprint-10-planning": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/sprint-10-planning.verify.js",
+    "verify:sprint-10-materials": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/sprint-10-materials.verify.js"
   },
   "dependencies": {
-    "next": "16.3.0",
+    "next": "16.3.3",
     "pg": "8.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"

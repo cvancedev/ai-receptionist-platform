@@ -97,7 +97,22 @@ Technology selection does not authorize implementation or grant application auth
 
 ### Dependency Security Risk Status
 
-The supported Next.js `16.3.0` upgrade closes the prior temporary PostCSS and
+Current Sprint 10.2 remediation pins Next.js `16.3.3` and normally updates the
+transitive lockfile to Sharp `0.35.4` and development-only js-yaml `4.3.2`.
+These are the patched floors on the existing release lines for the
+[Windows Next.js advisory](https://github.com/advisories/GHSA-p293-qw3h-jr36),
+[AVIF Next.js advisory](https://github.com/advisories/GHSA-2xp9-vwfh-vxw4),
+[Sharp advisory](https://github.com/advisories/GHSA-rgj7-g3m4-5g8c) and
+[js-yaml advisory](https://github.com/advisories/GHSA-2883-xcg3-v3hh).
+No override, direct transitive dependency, major upgrade or application change
+is required. Fresh full and production-only npm audits report zero findings.
+See the [entry review](SPRINT_10_2_AUTOMATED_ENTRY_REVIEW.md) for verification
+and remaining manual gates; this is not rehearsal completion or release authority.
+
+Historical maintenance record below (the resolved versions and clean audits
+describe that earlier review, not the current candidate):
+
+The supported Next.js `16.3.0` upgrade closed the prior temporary PostCSS and
 Sharp risks and the later nanoid finding without overrides or direct transitive
 dependencies. The resolved production tree uses PostCSS `8.5.23`, Sharp
 `0.35.3`, and nanoid `3.3.18`; `npm audit --omit=dev` reports zero

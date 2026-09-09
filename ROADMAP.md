@@ -187,7 +187,7 @@ certification. See the [Sprint 8 Certification](docs/certification/SPRINT8_CERTI
 
 ## Sprint 9: Customer Validation and Hardening
 
-**Status: Complete - Internal Fictional Boundary Certified; Advancement Recommendation NO**
+**Status: Complete - Internal Fictional Boundary Certified; Advancement Recommendation YES**
 
 - Real-world testing
 - Reliability improvements
@@ -274,6 +274,28 @@ a separate binary `YES` advancement recommendation. The Sprint 9.7 gate is
 required manual accessibility/usability reviews passed.
 Certification grants no controlled-evaluation, production, deployment, data,
 customer-response, provider, channel, or external-action authority.
+
+## Sprint 10: Moderated Fictional Customer Evaluation
+
+**Status: Started; Milestones 10.0 and 10.1 Complete; Sprint 10.2 INCOMPLETE / NOT_READY; Participant Evaluation Not Started**
+
+- Milestone 10.0: Evaluation Scope, Plan, and Acceptance Gates — Complete
+- Milestone 10.1: Scenario Pack and Moderator Runbook — Complete
+- Milestone 10.2: Internal Rehearsal and Evaluation Entry Review — INCOMPLETE / NOT_READY
+- Milestone 10.3: Separately Authorized Moderated Evaluation — Not Started
+- Milestone 10.4: Findings, Bounded Remediation, and Retest — Not Started
+- Milestone 10.5: Evaluation Certification and Next-Step Recommendation — Not Started
+
+Use the existing local `/prototype` fixture-backed deterministic interface to
+evaluate intake comprehension, correction, safe escalation, and handoff usefulness.
+Durable browser integration is not required for this first evaluation. Sprint
+10.0 defines planning; 10.1 prepares versioned scenarios, task cards, a runbook,
+feedback/severity rules and blank evidence templates. Later milestones remain
+separately authorized; no internal rehearsal or participant session has occurred.
+No participant session, production launch, real customer/business data, provider,
+channel, authentication, deployment, or unsupervised operation is authorized.
+See the [Sprint 10 Plan](docs/SPRINT_10_PLAN.md) and
+[Sprint 10 Test Plan](docs/SPRINT_10_TEST_PLAN.md).
 
 ## Future Features (Uncommitted)
 

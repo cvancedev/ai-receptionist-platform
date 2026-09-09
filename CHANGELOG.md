@@ -4,6 +4,53 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Sprint 10.2 Entry - Bounded Dependency Remediation
+
+- Resolved the reported Critical/High dependency blocker with minimum patched
+  versions: Next.js 16.3.3, Sharp 0.35.4 and js-yaml 4.3.2. Only Next.js's
+  direct pin changed; transitive updates use existing parent ranges.
+- Reviewed the normal npm lockfile update: 40 package entries changed within
+  the target dependency families, no package paths added/removed and no unrelated
+  direct upgrades. No forced fix, override or application compatibility edit.
+- Passed reproducible install, full/production audits with zero findings,
+  Sprint 10 verifiers, 24 regressions, lint, TypeScript, build and diff checks.
+- Preserved the initial failed audit as history and recorded patched build and
+  lockfile identities. Dependency entry gate passes; manual rehearsal remains
+  pending, Sprint 10.2 is incomplete and Sprint 10.3 remains unauthorized.
+- No rehearsal server, participant activity, production deployment, real
+  provider connection or human evidence was introduced.
+
+### Sprint 10.1 - Scenario Pack and Moderator Runbook
+
+- Completed materials preparation for F01–F06: moderator specifications,
+  separate non-coaching participant cards, neutral feedback questions, severity
+  rules and seven blank reusable evidence-record sections.
+- Documented repeatable fixture setup, moderation/consent, timing, observation,
+  stop/termination, evidence retention, cleanup and reset procedures. Assigned
+  Curt Vance as moderator and evidence/cleanup owner for materials and 10.2 rehearsal.
+- Added deterministic materials checks, negative cases for missing/fabricated
+  evidence and card coaching, and automated checks of the prepared fixture paths.
+  Updated the planning verifier to recognize separately authorized 10.1 preparation.
+- Completed lint, TypeScript, build and affected regressions before marking
+  10.1 complete. 10.2–10.5 remain Not Started; no human rehearsal or participant
+  session occurred and no evaluation result was fabricated.
+- Added no dependency, lockfile, migration, product feature, provider, real
+  customer data, authentication, durable browser integration or deployment.
+
+### Sprint 10.0 - Evaluation Scope, Plan, and Acceptance Gates
+
+- Established Sprint 10 as Moderated Fictional Customer Evaluation, with only
+  10.0 complete and later milestones and participant sessions not started.
+- Selected the existing local fixture interface; no durable browser integration
+  is required for the first study. Defined scenarios, measurable gates, moderation,
+  evidence freshness, retention/cleanup, stop conditions, and the evaluation plan.
+- Reconciled stale Sprint 9 NO/NOT_READY statuses with final 9.9 YES/certification
+  while preserving the earlier incomplete-evidence decision as history.
+- Classified the two unused context/output interfaces as obsolete/removable
+  later without changing them. Added deterministic planning verification.
+- Added no dependency, lockfile, migration, product behavior, evaluation execution,
+  provider, customer data, authentication, deployment, or external action.
+
 ### Sprint 9.9 - Certification and Binary Release Recommendation
 
 - Certified Milestones 9.0–9.8 only for their verified internal fictional

@@ -33,6 +33,7 @@
     "verify:durable-turn-restart": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/durable-turn-restart.verify.js",
     "verify:internal-fictional-mvp-experience": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/internal-fictional-mvp-experience.verify.js",
     "verify:provider-evaluation": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/provider-evaluation.verify.js",
+    "verify:ai-demo-adapter": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/ai-demo-adapter.verify.js",
     "verify:end-to-end-failure-security-recovery": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/end-to-end-failure-security-recovery.verify.js",
     "verify:controlled-evaluation-policy": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/controlled-evaluation-policy.verify.js",
     "verify:runtime-configuration": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/runtime-configuration.verify.js",

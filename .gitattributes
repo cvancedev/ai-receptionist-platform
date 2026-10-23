@@ -1,0 +1,5 @@
+# Certified migration sources are hashed byte-for-byte, so they must be
+# checked out with their committed LF line endings on every platform.
+# This file stays LF too, so its patterns never carry a stray CR.
+/.gitattributes text eol=lf
+database/migrations/*.sql text eol=lf

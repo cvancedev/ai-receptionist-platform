@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { AiDemoChatPanel } from "./AiDemoChatPanel";
 import { ChatWindow } from "./ChatWindow";
 import { ConversationStatus } from "./ConversationStatus";
 import { DataPanels } from "./DataPanels";
@@ -10,11 +11,16 @@ import { StageProgress } from "./StageProgress";
 import {
   createPrototypeChatSession,
 } from "@/src/prototype-ui/prototype-chat-session";
+import {
+  AI_SIMULATED_MODE_ENABLED_BY_DEFAULT,
+} from "@/src/prototype-ui/prototype-experience-mode";
 
 export function PrototypeChat() {
   const [session] = useState(createPrototypeChatSession);
   const [view, setView] = useState(() => session.view());
   const [mode, setMode] = useState<"fixture" | "durable-activated">("fixture");
+  const [aiDemo, setAiDemo] = useState(AI_SIMULATED_MODE_ENABLED_BY_DEFAULT);
+  const [aiPanelKey, setAiPanelKey] = useState(0);
   const [busy, setBusy] = useState(false);
 
   async function submit(message: string) {
@@ -29,6 +35,7 @@ export function PrototypeChat() {
 
   function reset() {
     setView(session.reset());
+    setAiPanelKey((key) => key + 1);
   }
 
   return (
@@ -49,9 +56,9 @@ export function PrototypeChat() {
               Deterministic intake workspace
             </h1>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-secondary sm:text-base">
-              Step through the local Business Profile-driven flow. Only the
-              deterministic mock AI boundary is used; there is no real model,
-              network request, persistence, or production customer data.
+              Step through the local Business Profile-driven flow. Only deterministic
+              and simulated AI boundaries are used; there is no real model, network
+              request, persistence, or production customer data.
             </p>
           </div>
           <button
@@ -67,20 +74,25 @@ export function PrototypeChat() {
 
         <fieldset className="mt-6 rounded-2xl border border-border bg-surface-primary p-4 shadow-[var(--shadow-subtle)] sm:p-5">
           <legend className="px-1 text-sm font-semibold text-primary">Experience mode</legend>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <ModeOption checked={mode === "fixture"} disabled={busy} description="The certified in-memory regression and demonstration flow." label="Fixture-backed deterministic" onChange={() => setMode("fixture")} value="fixture" />
-            <ModeOption checked={mode === "durable-activated"} disabled={busy} description="Requires an explicitly injected activated PostgreSQL runtime; never uses fixtures." label="Durable activated" onChange={() => setMode("durable-activated")} value="durable-activated" />
+          <div className="grid gap-3 sm:grid-cols-3">
+            <ModeOption checked={!aiDemo && mode === "fixture"} disabled={busy} description="The certified in-memory regression and demonstration flow." label="Fixture-backed deterministic" onChange={() => { setAiDemo(false); setMode("fixture"); }} value="fixture" />
+            <ModeOption checked={aiDemo} disabled={busy} description="Offline simulated language layer. No provider, network, credential, or customer release." label="AI-assisted (simulated)" onChange={() => { setAiDemo(true); setMode("fixture"); }} value="ai-simulated" />
+            <ModeOption checked={!aiDemo && mode === "durable-activated"} disabled={busy} description="Requires an explicitly injected activated PostgreSQL runtime; never uses fixtures." label="Durable activated" onChange={() => { setAiDemo(false); setMode("durable-activated"); }} value="durable-activated" />
           </div>
         </fieldset>
 
         <p className="sr-only" role="status" aria-live="polite">
-          {mode === "fixture" ? "Fixture-backed deterministic mode selected." : "Durable activated mode selected. No runtime is connected in this local browser surface."}
+          {aiDemo
+            ? "Simulated AI mode selected. No provider or network is connected."
+            : mode === "fixture"
+              ? "Fixture-backed deterministic mode selected."
+              : "Durable activated mode selected. No runtime is connected in this local browser surface."}
         </p>
         <p id="prototype-operation-status" className="sr-only" role="status" aria-live="polite">
           {busy ? "A fictional operation is in progress." : "No fictional operation is in progress."}
         </p>
 
-        {mode === "durable-activated" ? <DurableActivatedBoundary /> : <>
+        {aiDemo ? <AiDemoChatPanel key={aiPanelKey} /> : mode === "durable-activated" ? <DurableActivatedBoundary /> : <>
 
         {view.integration.status === "success" ? (
           <StageProgress activeStage={view.integration.readModel.stage} />

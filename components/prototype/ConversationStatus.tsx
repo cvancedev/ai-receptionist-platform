@@ -1,6 +1,9 @@
 import type { PrototypeChatView } from "@/src/prototype-ui/prototype-chat-session";
 
-export function ConversationStatus({ view }: { view: PrototypeChatView }) {
+export function ConversationStatus({ view, aiDemo }: {
+  view: PrototypeChatView;
+  aiDemo?: { readonly decision: string; readonly turns: number };
+}) {
   if (view.integration.status === "projection-failure") {
     return (
       <section className="rounded-2xl border border-border bg-surface-primary p-5 shadow-[var(--shadow-subtle)]" aria-labelledby="status-heading">
@@ -31,8 +34,12 @@ export function ConversationStatus({ view }: { view: PrototypeChatView }) {
     ],
     ["Revision", String(model.revision)],
     ["Profile version", String(model.identity.businessProfileVersion)],
-    ["AI decision", view.integration.decision?.decision ?? "Not attempted"],
-    ["Execution", view.integration.execution?.reason ?? "Not attempted"],
+    ["AI decision", view.integration.decision?.decision ?? aiDemo?.decision ?? "Not attempted"],
+    [
+      "Execution",
+      view.integration.execution?.reason
+        ?? (aiDemo && aiDemo.turns > 0 ? "deterministic engine" : "Not attempted"),
+    ],
     ["Handoff", view.handoff ? "Available" : "Unavailable"],
   ] as const;
 

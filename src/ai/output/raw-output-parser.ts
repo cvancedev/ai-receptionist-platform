@@ -1,4 +1,5 @@
 import type { OperationResult } from "../contracts/results";
+import { parseJsonWithoutDuplicateKeys } from "../providers/provider-output-schema";
 import { deepFreeze } from "../shared/immutable";
 
 export class BoundedRawOutputParser {
@@ -8,15 +9,15 @@ export class BoundedRawOutputParser {
     if (typeof rawOutput !== "string" || rawOutput.length === 0 || rawOutput.length > this.maxLength) {
       return { status: "failure", failures: ["RawOutputMalformed"] };
     }
-    try {
-      const parsed: unknown = JSON.parse(rawOutput);
-      if (!isPlainRecord(parsed) || exceedsDepth(parsed, this.maxDepth) || hasDangerousKeys(parsed)) {
-        return { status: "failure", failures: ["RawOutputMalformed"] };
-      }
-      return { status: "success", value: deepFreeze(parsed) };
-    } catch {
+    const strict = parseJsonWithoutDuplicateKeys(rawOutput);
+    if (strict.status !== "parsed") {
       return { status: "failure", failures: ["RawOutputMalformed"] };
     }
+    const parsed = strict.value;
+    if (!isPlainRecord(parsed) || exceedsDepth(parsed, this.maxDepth) || hasDangerousKeys(parsed)) {
+      return { status: "failure", failures: ["RawOutputMalformed"] };
+    }
+    return { status: "success", value: deepFreeze(parsed) };
   }
 }
 

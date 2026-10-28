@@ -1,14 +1,15 @@
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import type { OfflineTransport } from "../../ai/providers/transport-model-provider-adapter";
+import type { IssuedSession } from "../auth/session-authority";
+import { PersistentSessionAuthority } from "../auth/persistent-session-authority";
 import {
-  SessionAuthority,
-  type IssuedSession,
-} from "../auth/session-authority";
+  DurableReceptionistConversationService,
+} from "../conversation/durable-receptionist-conversation-service";
 import {
-  ReceptionistConversationService,
   MAXIMUM_MESSAGE_LENGTH,
   type ReceptionistBusiness,
 } from "../conversation/receptionist-conversation-service";
+import type { ReceptionistPersistence } from "../persistence/receptionist-persistence";
 import {
   DEFAULT_IP_RATE_LIMIT,
   DEFAULT_MAXIMUM_REQUEST_BYTES,
@@ -37,17 +38,16 @@ if (typeof window !== "undefined") {
  * Pilot composition root.
  *
  * A pilot runtime exists only if an explicit, fully specified configuration
- * validates. It has no arbitrary session-issuance method: the only ways to
- * obtain a session are a customer issuance bound to a configured widget and its
- * permitted origin, or an operator issuance verified against a server-held
- * credential digest. Both are server-side calls, which is what a future
- * telephony edge needs and what a browser cannot forge.
+ * validates, and only if the composition supplies the durable persistence port
+ * named by that configuration. Sessions and conversation state live in that
+ * port, so a restart does not invalidate a live session or lose a conversation.
  *
- * B2.3.1 still performs no provider network work: the provider descriptor is
- * the offline simulator, and the configuration module refuses any provider
- * network authorization.
+ * There is no arbitrary session-issuance method: the only ways to obtain a
+ * session are a customer issuance bound to a configured widget and permitted
+ * origin, or an operator issuance verified against a server-held credential
+ * digest. B2.3.2A still performs no provider network work.
  */
-export const PILOT_RUNTIME_VERSION = "b2.3.1-pilot-runtime/v1" as const;
+export const PILOT_RUNTIME_VERSION = "b2.3.2a-pilot-runtime/v1" as const;
 
 const OPERATOR_ID_PATTERN = /^[A-Za-z0-9._:-]{1,64}$/;
 const WIDGET_ID_PATTERN = /^[A-Za-z0-9._-]{8,64}$/;
@@ -61,8 +61,10 @@ export type PilotSessionIssueResult =
 export interface PilotReceptionistRuntime extends ReceptionistTurnRuntime {
   readonly version: typeof PILOT_RUNTIME_VERSION;
   readonly pilotConfiguration: ValidatedPilotRuntimeConfiguration;
-  readonly issueCustomerSession: (input: unknown) => PilotSessionIssueResult;
-  readonly issueOperatorSession: (input: unknown) => PilotSessionIssueResult;
+  readonly sessions: PersistentSessionAuthority;
+  readonly conversations: DurableReceptionistConversationService;
+  readonly issueCustomerSession: (input: unknown) => Promise<PilotSessionIssueResult>;
+  readonly issueOperatorSession: (input: unknown) => Promise<PilotSessionIssueResult>;
 }
 
 export type PilotRuntimeCreationRejection =
@@ -70,7 +72,9 @@ export type PilotRuntimeCreationRejection =
   | "InvalidInput"
   | "InvalidBusinesses"
   | "BusinessNotConfigured"
-  | "ConfiguredBusinessUnavailable";
+  | "ConfiguredBusinessUnavailable"
+  | "PersistenceUnavailable"
+  | "DatabaseNotAuthorized";
 
 export type PilotRuntimeCreationResult =
   | { readonly status: "created"; readonly runtime: PilotReceptionistRuntime }
@@ -79,6 +83,13 @@ export type PilotRuntimeCreationResult =
 export interface CreatePilotReceptionistRuntimeInput {
   readonly configuration: unknown;
   readonly businesses: readonly ReceptionistBusiness[];
+  readonly persistence?: ReceptionistPersistence;
+  /**
+   * Must equal the credential reference named by the configuration. Requiring
+   * it twice makes durable-database authorization a deliberate composition
+   * decision rather than a default.
+   */
+  readonly databaseCredentialReference?: string;
   readonly transport?: OfflineTransport;
   readonly now?: () => number;
   readonly conversationIdFactory?: (businessId: string) => string;
@@ -99,6 +110,11 @@ export function createPilotReceptionistRuntime(
     return rejected(configurationResult.reason);
   }
   const configuration = configurationResult.value;
+
+  if (!isPersistencePort(input.persistence)) return rejected("PersistenceUnavailable");
+  if (input.databaseCredentialReference !== configuration.persistence.credentialReference) {
+    return rejected("DatabaseNotAuthorized");
+  }
 
   const businesses = input.businesses;
   if (!Array.isArray(businesses) || businesses.length === 0) {
@@ -130,21 +146,32 @@ export function createPilotReceptionistRuntime(
     if (!configuredIds.has(businessId)) return rejected("BusinessNotConfigured");
   }
 
+  const businessById = new Map<string, ReceptionistBusiness>();
+  for (const business of businesses as ReceptionistBusiness[]) {
+    businessById.set(business.profile.id, business);
+  }
+
   const now = typeof input.now === "function" ? (input.now as () => number) : Date.now;
-  const sessions = new SessionAuthority({
+  const persistence = input.persistence;
+  const sessions = new PersistentSessionAuthority({
+    persistence,
     now,
     ttlMs: configuration.sessionTtlMs,
   });
   const limiter = new FixedWindowRateLimiter({ now });
 
-  let conversations: ReceptionistConversationService;
+  let conversations: DurableReceptionistConversationService;
   try {
-    conversations = new ReceptionistConversationService(businesses as ReceptionistBusiness[], {
-      transport: typeof input.transport === "function"
-        ? (input.transport as OfflineTransport)
-        : undefined,
-      maximumConversations: boundedInteger(input.maximumConversations, 1, 2_000) ?? undefined,
-    });
+    conversations = new DurableReceptionistConversationService(
+      businesses as ReceptionistBusiness[],
+      {
+        persistence,
+        transport: typeof input.transport === "function"
+          ? (input.transport as OfflineTransport)
+          : undefined,
+        maximumConversations: boundedInteger(input.maximumConversations, 1, 2_000) ?? undefined,
+      },
+    );
   } catch {
     return rejected("InvalidBusinesses");
   }
@@ -175,28 +202,36 @@ export function createPilotReceptionistRuntime(
     configuration.businesses.map((entry) => [entry.widgetId, entry] as const),
   );
 
-  const startConversation = (
+  const startConversation = async (
     businessId: string,
     actorId: string,
-  ): PilotSessionIssueResult => {
-    if (!conversations.hasBusiness(businessId)) {
+  ): Promise<PilotSessionIssueResult> => {
+    const business = businessById.get(businessId);
+    if (!business || !conversations.hasBusiness(businessId)) {
       return Object.freeze({ status: "denied" as const });
     }
     const conversationId = conversationIdFactory(businessId);
-    const conversationHandle = conversations.begin(businessId, conversationId);
+    const conversationHandle = await conversations.begin(businessId, conversationId);
     if (!conversationHandle) return Object.freeze({ status: "denied" as const });
-    return Object.freeze({
-      status: "issued" as const,
-      session: sessions.issue({
-        businessId,
-        conversationId,
-        conversationHandle,
-        actorId,
-      }, true),
-    });
+    try {
+      return Object.freeze({
+        status: "issued" as const,
+        session: await sessions.issue({
+          businessId,
+          conversationId,
+          conversationHandle,
+          businessProfileVersion: business.profile.version,
+          actorId,
+        }, true),
+      });
+    } catch {
+      return Object.freeze({ status: "denied" as const });
+    }
   };
 
-  const issueCustomerSession = (request: unknown): PilotSessionIssueResult => {
+  const issueCustomerSession = async (
+    request: unknown,
+  ): Promise<PilotSessionIssueResult> => {
     if (!isPlainRecord(request)) return Object.freeze({ status: "denied" as const });
     const keys = Object.keys(request);
     if (keys.length !== 2 || !keys.includes("widgetId") || !keys.includes("origin")) {
@@ -224,7 +259,9 @@ export function createPilotReceptionistRuntime(
     return startConversation(registration.businessId, "customer:anonymous");
   };
 
-  const issueOperatorSession = (request: unknown): PilotSessionIssueResult => {
+  const issueOperatorSession = async (
+    request: unknown,
+  ): Promise<PilotSessionIssueResult> => {
     const denied = Object.freeze({ status: "denied" as const });
     if (!isPlainRecord(request)) return denied;
     const keys = Object.keys(request);
@@ -267,6 +304,26 @@ export function createPilotReceptionistRuntime(
   });
 
   return Object.freeze({ status: "created" as const, runtime });
+}
+
+function isPersistencePort(value: unknown): value is ReceptionistPersistence {
+  if (!isPlainRecord(value)) return false;
+  if (value.kind !== "postgresql" && value.kind !== "in-memory") return false;
+  for (const method of [
+    "createConversation",
+    "loadConversation",
+    "findScopeByHandleHash",
+    "commitTurn",
+    "createSession",
+    "findSession",
+    "revokeSession",
+    "countSessions",
+    "pruneSessions",
+    "close",
+  ]) {
+    if (typeof value[method] !== "function") return false;
+  }
+  return true;
 }
 
 function safeEqualHex(left: string, right: string): boolean {

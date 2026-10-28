@@ -5,11 +5,13 @@ import { fictionalKnowledgeRecords } from "../../fixtures/knowledge";
 import {
   SessionAuthority,
   type IssuedSession,
+  type SessionAuthenticationSource,
 } from "../auth/session-authority";
 import {
   ReceptionistConversationService,
   MAXIMUM_MESSAGE_LENGTH,
   type ReceptionistBusiness,
+  type ReceptionistTurnOutcome,
 } from "../conversation/receptionist-conversation-service";
 import {
   FixedWindowRateLimiter,
@@ -59,9 +61,12 @@ export const OFFLINE_PROVIDER_DESCRIPTOR = Object.freeze({
  */
 export interface ReceptionistTurnRuntime {
   readonly version: string;
-  readonly sessions: SessionAuthority;
+  readonly sessions: SessionAuthenticationSource;
   readonly limiter: FixedWindowRateLimiter;
-  readonly conversations: ReceptionistConversationService;
+  readonly conversations: {
+    submit(input: unknown): Promise<ReceptionistTurnOutcome>;
+    hasBusiness(businessId: unknown): boolean;
+  };
   readonly ipRateLimit: RateLimitPolicy;
   readonly sessionRateLimit: RateLimitPolicy;
   readonly maximumRequestBytes: number;
@@ -73,6 +78,8 @@ export interface ReceptionistTurnRuntime {
 /** Local/demo composition. `issueSession` is trusted server composition only. */
 export interface ReceptionistRuntime extends ReceptionistTurnRuntime {
   readonly version: typeof RECEPTIONIST_RUNTIME_VERSION;
+  readonly sessions: SessionAuthority;
+  readonly conversations: ReceptionistConversationService;
   readonly issueSession: (businessId: unknown, actorId: unknown) => IssuedSession;
 }
 

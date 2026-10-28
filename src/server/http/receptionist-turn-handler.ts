@@ -92,7 +92,7 @@ export async function handleReceptionistTurn(
     );
     if (!clientLimit.allowed) return rateLimitResponse(clientLimit);
 
-    const authentication = runtime.sessions.authenticate(
+    const authentication = await runtime.sessions.authenticate(
       parseSessionCookie(request.headers.get("cookie")),
       request.headers.get("x-csrf-token"),
     );
@@ -133,16 +133,22 @@ export async function handleReceptionistTurn(
     if (!runtime.hasBusiness(principal.businessId)) {
       return errorResponse(403, "forbidden");
     }
-    // The conversation is selected only by the opaque handle the server bound
-    // to this session. No client field can name a conversation or a business.
-    if (principal.conversationHandle === null) {
-      return errorResponse(403, "forbidden");
-    }
+    // The conversation is selected only by server-bound session state: the
+    // opaque handle while it is resident, or the session's own durable scope
+    // after a restart. No client field can name a conversation or a business.
+    const submission = principal.conversationHandle !== null
+      ? { handle: principal.conversationHandle, message: parsed.message }
+      : principal.businessProfileVersion !== null
+        ? {
+          businessId: principal.businessId,
+          conversationId: principal.conversationId,
+          businessProfileVersion: principal.businessProfileVersion,
+          message: parsed.message,
+        }
+        : null;
+    if (submission === null) return errorResponse(403, "forbidden");
 
-    const outcome = await runtime.conversations.submit({
-      handle: principal.conversationHandle,
-      message: parsed.message,
-    });
+    const outcome = await runtime.conversations.submit(submission);
     return turnResponse(outcome, principal, runtime.provider);
   } catch {
     return errorResponse(500, "internal_error");

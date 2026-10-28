@@ -16,7 +16,7 @@ async function run(): Promise<void> {
   for (const boundary of ["Customer-response release", "external actions", "production remain unauthorized"])
     assert(certification.includes(boundary), `certification preserves ${boundary}`);
   const migrations = readdirSync(join(process.cwd(), "database/migrations")).sort();
-  assert(migrations.length === 7 && migrations.every((file, index) => file.startsWith(String(index + 1).padStart(3, "0"))), "migrations remain exactly 001-007");
+  assert(migrations.length >= 7 && migrations.slice(0, 7).every((file, index) => file.startsWith(String(index + 1).padStart(3, "0"))), "certified migrations 001-007 remain an unchanged prefix");
   await verifyCertifiedPostgresqlMigrationSources();
   for (const source of [certification, recommendation]) assert(!/password\s*[:=]|postgresql:\/\//i.test(source), "artifacts contain no database secret");
   console.log("Sprint 9.9 certification and binary release recommendation verification passed: YES.");

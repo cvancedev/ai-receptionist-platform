@@ -110,8 +110,8 @@ function verifyArchitecture(): void {
     assert(!source.includes(prohibited), `gate excludes ${prohibited}`);
   }
   const migrations = readdirSync(join(process.cwd(), "database/migrations")).sort();
-  assert(migrations.length === 7 && migrations[0]?.startsWith("001_") && migrations[6]?.startsWith("007_"),
-    "migration history remains exactly 001-007");
+  assert(migrations.length >= 7 && migrations.slice(0, 7).every((file, index) => file.startsWith(String(index + 1).padStart(3, "0"))),
+    "certified migration prefix remains exactly 001-007");
 }
 
 function passingEvidence(occurredAt = NOW): readonly ValidationEvidence[] {

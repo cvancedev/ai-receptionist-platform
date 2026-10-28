@@ -8,6 +8,8 @@ import {
 import { createSimulatedModelTransport } from "../../ai/demo/simulated-model-transport";
 import type { OfflineTransport } from "../../ai/providers/transport-model-provider-adapter";
 import { ConversationStateManager } from "../../conversation/conversation-state-manager";
+import { InMemoryConversationStore } from "../../conversation/in-memory-conversation-store";
+import { decodeConversationState } from "../../validation/conversation-state-codec";
 import type { ConversationScope } from "../../conversation/conversation-state-updates";
 import type { BusinessProfile } from "../../domain/business-profile";
 import type { ConversationState } from "../../domain/conversation-state";
@@ -33,9 +35,11 @@ if (typeof window !== "undefined") {
  * Turns for one conversation are serialized so concurrent HTTP requests cannot
  * interleave reads, provider work, and state replacements.
  */
-export const RECEPTIONIST_SERVICE_VERSION = "b2.2-receptionist-service/v1" as const;
+export const RECEPTIONIST_SERVICE_VERSION = "b2.3.2-receptionist-service/v1" as const;
 export const MAXIMUM_MESSAGE_LENGTH = 2_000;
 export const MAXIMUM_CONVERSATIONS = 2_000;
+export const INITIAL_GREETING =
+  "Simulated AI receptionist for a fictional business. No model provider, network, credential, or real customer data is used. What fictional service do you need?";
 const MAXIMUM_RETURNED_MESSAGES = 40;
 
 const CONTROL_CHARACTERS = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/;
@@ -45,6 +49,32 @@ const CORRECTION_MESSAGE = /^correct\s+([a-z0-9-]+)\s*:\s*(.+)$/i;
 export interface ReceptionistBusiness {
   readonly profile: BusinessProfile;
   readonly knowledge: readonly KnowledgeRecord[];
+}
+
+export interface DurableConversationSnapshot {
+  readonly state: ConversationState;
+  readonly messages: readonly InternalMessageSnapshot[];
+  readonly pendingFieldId: string | null;
+  readonly handoffAvailable: boolean;
+  readonly turn: number;
+  readonly nextMessageId: number;
+}
+
+export interface InternalMessageSnapshot {
+  readonly messageId: number;
+  readonly role: "customer" | "assistant";
+  readonly content: string;
+}
+
+export interface HydrateConversationInput {
+  readonly businessId: string;
+  readonly conversationId: string;
+  readonly state: Readonly<ConversationState>;
+  readonly messages: readonly InternalMessageSnapshot[];
+  readonly pendingFieldId: string | null;
+  readonly handoffAvailable: boolean;
+  readonly turn: number;
+  readonly nextMessageId: number;
 }
 
 export interface SanitizedMessage {
@@ -111,6 +141,8 @@ export class ReceptionistConversationService {
   private readonly conversations = new Map<string, ConversationRuntime>();
   /** Handle digest to conversation key. Handles are never stored in clear. */
   private readonly handles = new Map<string, string>();
+  /** Raw handle is retained in memory only, for in-process reuse. */
+  private readonly rawHandleByKey = new Map<string, string>();
   private readonly queues = new Map<string, Promise<void>>();
   private readonly transport: OfflineTransport | undefined;
   private readonly maximumConversations: number;
@@ -183,24 +215,117 @@ export class ReceptionistConversationService {
       turn: 0,
       nextMessageId: 1,
     };
-    this.addMessage(
-      runtime,
-      "assistant",
-      "Simulated AI receptionist for a fictional business. No model provider, network, credential, or real customer data is used. What fictional service do you need?",
-    );
+    this.addMessage(runtime, "assistant", INITIAL_GREETING);
     this.conversations.set(key, runtime);
+    return this.registerHandle(key);
+  }
 
-    // A minted handle is accepted only if its digest is not already mapped, so
-    // a defective entropy source cannot silently alias two conversations.
-    for (let attempt = 0; attempt < 4; attempt += 1) {
-      const handle = createConversationHandle();
-      const handleDigest = digestConversationHandle(handle);
-      if (this.handles.has(handleDigest)) continue;
-      this.handles.set(handleDigest, key);
-      return handle;
+  /**
+   * Rebuild a conversation from a persisted snapshot. This is used after a
+   * restart or on the first turn served by a new instance, so the engine sees
+   * exactly the durable state and message history rather than a fresh scope.
+   */
+  hydrate(input: HydrateConversationInput): string | null {
+    const business = this.businesses.get(input.businessId);
+    if (!business || business.profile.status !== "active") return null;
+    if (!isIdentifier(input.conversationId)) return null;
+    if (input.state.conversationId !== input.conversationId
+      || input.state.businessProfileId !== business.profile.id
+      || input.state.businessProfileVersion !== business.profile.version) return null;
+    const decoded = decodeConversationState(input.state, {
+      conversationId: input.conversationId,
+      businessProfileId: business.profile.id,
+      businessProfileVersion: business.profile.version,
+    });
+    if (decoded.status === "failure") return null;
+
+    const key = conversationKey(input.businessId, input.conversationId);
+    if (this.conversations.has(key)) return null;
+    if (this.conversations.size >= this.maximumConversations) return null;
+
+    if (!Number.isInteger(input.turn) || input.turn < 0) return null;
+    if (!Number.isInteger(input.nextMessageId) || input.nextMessageId < 1) return null;
+    if (input.messages.length > 100) return null;
+    const messages: InternalMessage[] = [];
+    const ids = new Set<number>();
+    for (const message of input.messages) {
+      if (!Number.isInteger(message.messageId) || message.messageId < 1) return null;
+      if (ids.has(message.messageId)) return null;
+      if (message.role !== "customer" && message.role !== "assistant") return null;
+      if (typeof message.content !== "string" || message.content.length === 0) return null;
+      if (message.messageId >= input.nextMessageId) return null;
+      ids.add(message.messageId);
+      messages.push(Object.freeze({
+        id: message.messageId,
+        role: message.role,
+        text: message.content,
+      }));
     }
+    messages.sort((left, right) => left.id - right.id);
+
+    const store = new InMemoryConversationStore();
+    const seeded = store.create(decoded.state);
+    if (seeded.status === "failure") return null;
+    const manager = ConversationStateManager.usingStore(store);
+    const orchestrator = new PrototypeConversationOrchestrator(
+      business.profile,
+      manager,
+      input.conversationId,
+    );
+    this.conversations.set(key, {
+      business,
+      conversationId: input.conversationId,
+      scope: {
+        conversationId: input.conversationId,
+        businessProfileId: business.profile.id,
+        businessProfileVersion: business.profile.version,
+      },
+      manager,
+      orchestrator,
+      messages,
+      pendingFieldId: input.pendingFieldId,
+      handoffAvailable: input.handoffAvailable,
+      turn: input.turn,
+      nextMessageId: input.nextMessageId,
+    });
+    return this.registerHandle(key);
+  }
+
+  /** Server-only snapshot used by the durable layer to commit one turn. */
+  exportForPersistence(handle: unknown): DurableConversationSnapshot | null {
+    const runtime = this.resolveHandle(handle);
+    if (!runtime) return null;
+    const state = this.managerSnapshot(runtime);
+    if (!state) return null;
+    return Object.freeze({
+      state,
+      messages: Object.freeze(runtime.messages.map((message) => Object.freeze({
+        messageId: message.id,
+        role: message.role,
+        content: message.text,
+      }))),
+      pendingFieldId: runtime.pendingFieldId,
+      handoffAvailable: runtime.handoffAvailable,
+      turn: runtime.turn,
+      nextMessageId: runtime.nextMessageId,
+    });
+  }
+
+  handleForScope(businessId: unknown, conversationId: unknown): string | null {
+    if (!isIdentifier(businessId) || !isIdentifier(conversationId)) return null;
+    return this.rawHandleByKey.get(conversationKey(businessId, conversationId)) ?? null;
+  }
+
+  /** Drop an in-memory conversation after a failed durable commit. */
+  discard(handle: unknown): void {
+    const runtime = this.resolveHandle(handle);
+    if (!runtime) return;
+    const key = conversationKey(runtime.business.profile.id, runtime.conversationId);
     this.conversations.delete(key);
-    return null;
+    this.rawHandleByKey.delete(key);
+    for (const [handleDigest, mappedKey] of this.handles) {
+      if (mappedKey === key) this.handles.delete(handleDigest);
+    }
   }
 
   revisionOfHandle(handle: unknown): number | null {
@@ -598,6 +723,21 @@ export class ReceptionistConversationService {
     return message;
   }
 
+  private registerHandle(key: string): string | null {
+    // A minted handle is accepted only if its digest is not already mapped, so
+    // a defective entropy source cannot silently alias two conversations.
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      const handle = createConversationHandle();
+      const handleDigest = digestConversationHandle(handle);
+      if (this.handles.has(handleDigest)) continue;
+      this.handles.set(handleDigest, key);
+      this.rawHandleByKey.set(key, handle);
+      return handle;
+    }
+    this.conversations.delete(key);
+    return null;
+  }
+
   private resolveHandle(handle: unknown): ConversationRuntime | null {
     if (!isConversationHandle(handle)) return null;
     const key = this.handles.get(digestConversationHandle(handle));
@@ -616,6 +756,31 @@ export class ReceptionistConversationService {
   private source(runtime: ConversationRuntime, label: string): string {
     return `server-${runtime.conversationId}-${label}-${runtime.turn}`;
   }
+}
+
+/**
+ * Produce the revision-zero state for a new conversation. Shared by the
+ * in-memory and durable services so both start from identical authority.
+ */
+export function createInitialConversationState(
+  business: ReceptionistBusiness,
+  conversationId: string,
+): ConversationState | null {
+  const manager = new ConversationStateManager();
+  const initialized = manager.initialize({
+    conversationId,
+    businessProfileId: business.profile.id,
+    businessProfileVersion: business.profile.version,
+    requiredFields: ["requested-service"],
+    authorizedEscalationDestination: business.profile.escalation.destination,
+  });
+  if (initialized.status === "failure") return null;
+  const snapshot = manager.snapshot({
+    conversationId,
+    businessProfileId: business.profile.id,
+    businessProfileVersion: business.profile.version,
+  });
+  return snapshot.status === "success" ? snapshot.state : null;
 }
 
 function normalizeBusiness(business: unknown): ReceptionistBusiness | null {

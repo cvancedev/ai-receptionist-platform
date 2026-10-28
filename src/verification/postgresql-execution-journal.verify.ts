@@ -69,6 +69,7 @@ async function verifyMigration() {
       { version: 5, name: "configuration_activations" },
       { version: 6, name: "configuration_lifecycle_transitions" },
       { version: 7, name: "message_evidence" },
+      { version: 8, name: "receptionist_persistence" },
     ],
     "ordered migrations are recorded exactly once",
   );

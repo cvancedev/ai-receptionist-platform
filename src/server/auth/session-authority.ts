@@ -45,6 +45,8 @@ export interface SessionPrincipal {
    * trusted composition that has not begun a conversation yields null.
    */
   readonly conversationHandle: string | null;
+  /** Business profile version the conversation is scoped to, when known. */
+  readonly businessProfileVersion: number | null;
   readonly actorId: string;
   readonly expiresAt: number;
   /** Server-only rate-limit key; never returned to a client. */
@@ -64,6 +66,20 @@ export type SessionAuthentication =
   | { readonly status: "invalid" }
   | { readonly status: "csrf" };
 
+/**
+ * Structural session boundary used by the turn handler. The demo authority is
+ * synchronous and in-memory; the pilot authority is asynchronous and durable.
+ * The handler awaits either shape, so no caller needs to know which is active.
+ */
+export interface SessionAuthenticationSource {
+  authenticate(
+    token: unknown,
+    csrfToken: unknown,
+  ): SessionAuthentication | Promise<SessionAuthentication>;
+  revoke(token: unknown): void | Promise<void>;
+  size(): number | Promise<number>;
+}
+
 export interface SessionAuthorityOptions {
   readonly now?: () => number;
   readonly ttlMs?: number;
@@ -77,6 +93,7 @@ interface SessionRecord {
   readonly businessId: string;
   readonly conversationId: string;
   readonly conversationHandle: string | null;
+  readonly businessProfileVersion: number | null;
   readonly actorId: string;
   readonly createdAt: number;
   readonly expiresAt: number;
@@ -116,8 +133,8 @@ export class SessionAuthority {
       this.sessions.delete(oldest);
     }
 
-    const token = this.generateToken();
-    const csrfToken = this.generateToken();
+    const token = createSessionToken(this.generateBytes);
+    const csrfToken = createSessionToken(this.generateBytes);
     const now = this.currentTime();
     const expiresAt = now + this.ttlMs;
     const tokenHash = digest(token);
@@ -127,6 +144,7 @@ export class SessionAuthority {
       businessId: fields.businessId,
       conversationId: fields.conversationId,
       conversationHandle: fields.conversationHandle,
+      businessProfileVersion: fields.businessProfileVersion,
       actorId: fields.actorId,
       createdAt: now,
       expiresAt,
@@ -180,14 +198,6 @@ export class SessionAuthority {
     return this.sessions.size;
   }
 
-  private generateToken(): string {
-    const bytes = this.generateBytes(32);
-    if (!Buffer.isBuffer(bytes) || bytes.byteLength < 32) {
-      throw new Error("The session token source is unavailable.");
-    }
-    return bytes.toString("base64url");
-  }
-
   private currentTime(): number {
     const value = this.now();
     if (typeof value !== "number" || !Number.isFinite(value)) {
@@ -239,12 +249,14 @@ const ISSUE_INPUT_KEYS = new Set([
   "conversationId",
   "actorId",
   "conversationHandle",
+  "businessProfileVersion",
 ]);
 
 function parseIssueInput(input: unknown): {
   readonly businessId: string;
   readonly conversationId: string;
   readonly conversationHandle: string | null;
+  readonly businessProfileVersion: number | null;
   readonly actorId: string;
 } | null {
   if (!isPlainRecord(input)) return null;
@@ -263,10 +275,18 @@ function parseIssueInput(input: unknown): {
     conversationHandle = input.conversationHandle;
   }
 
+  let businessProfileVersion: number | null = null;
+  if (input.businessProfileVersion !== undefined) {
+    if (!Number.isInteger(input.businessProfileVersion)
+      || (input.businessProfileVersion as number) < 1) return null;
+    businessProfileVersion = input.businessProfileVersion as number;
+  }
+
   return {
     businessId: input.businessId,
     conversationId: input.conversationId,
     conversationHandle,
+    businessProfileVersion,
     actorId: input.actorId,
   };
 }
@@ -276,6 +296,7 @@ function principalFrom(record: SessionRecord): SessionPrincipal {
     businessId: record.businessId,
     conversationId: record.conversationId,
     conversationHandle: record.conversationHandle,
+    businessProfileVersion: record.businessProfileVersion,
     actorId: record.actorId,
     expiresAt: record.expiresAt,
     sessionKey: record.sessionKey,
@@ -292,6 +313,28 @@ function safeEqualHex(left: string, right: string): boolean {
   const rightBytes = Buffer.from(right, "hex");
   if (leftBytes.byteLength !== rightBytes.byteLength) return false;
   return timingSafeEqual(leftBytes, rightBytes);
+}
+
+export function createSessionToken(
+  generateBytes: (size: number) => Buffer = randomBytes,
+): string {
+  const bytes = generateBytes(32);
+  if (!Buffer.isBuffer(bytes) || bytes.byteLength < 32) {
+    throw new Error("The session token source is unavailable.");
+  }
+  return bytes.toString("base64url");
+}
+
+export function digestSessionToken(value: string): string {
+  return digest(value);
+}
+
+export function isSessionTokenShape(value: unknown): value is string {
+  return isTokenShape(value);
+}
+
+export function parseSessionIssueInput(input: unknown): ReturnType<typeof parseIssueInput> {
+  return parseIssueInput(input);
 }
 
 function isTokenShape(value: unknown): value is string {

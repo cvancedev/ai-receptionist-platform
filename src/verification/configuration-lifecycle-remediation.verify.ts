@@ -78,7 +78,8 @@ async function verifyMigrationHistory(): Promise<void> {
     { version: 5, name: "configuration_activations" },
     { version: 6, name: "configuration_lifecycle_transitions" },
     { version: 7, name: "message_evidence" },
-  ], "ordered migrations 001-007 are exact");
+    { version: 8, name: "receptionist_persistence" },
+  ], "ordered migrations 001-008 are exact");
 }
 
 async function verifyNegativeDraftBoundaries(runtime: Runtime): Promise<void> {

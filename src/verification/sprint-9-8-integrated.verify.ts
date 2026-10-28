@@ -95,8 +95,8 @@ function verifyOperationalAndReleaseBoundary(): void {
 
 async function verifyMigrationIntegrity(): Promise<void> {
   const migrations = readdirSync(join(process.cwd(), "database/migrations")).sort();
-  assert(migrations.length === 7 && migrations.every((file, index) => file.startsWith(String(index + 1).padStart(3, "0"))),
-    "migration history remains exactly 001-007");
+  assert(migrations.length >= 7 && migrations.slice(0, 7).every((file, index) => file.startsWith(String(index + 1).padStart(3, "0"))),
+    "certified migration prefix remains exactly 001-007");
   await verifyCertifiedPostgresqlMigrationSources();
 }
 

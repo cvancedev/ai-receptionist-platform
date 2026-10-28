@@ -39,9 +39,12 @@ const TOP_LEVEL_KEYS = new Set([
   "sessionTtlMs",
   "operatorCredentialDigest",
   "businesses",
+  "persistence",
 ]);
 
 const BUSINESS_KEYS = new Set(["businessId", "widgetId", "allowedOrigins"]);
+const PERSISTENCE_KEYS = new Set(["mode", "credentialReference"]);
+const CREDENTIAL_REFERENCE_PATTERN = /^[A-Z][A-Z0-9_]{2,64}$/;
 
 export type PilotRuntimeConfigurationRejection =
   | "InvalidInput"
@@ -59,7 +62,8 @@ export type PilotRuntimeConfigurationRejection =
   | "InvalidOrigin"
   | "DuplicateOrigin"
   | "InvalidSessionTtl"
-  | "InvalidOperatorCredential";
+  | "InvalidOperatorCredential"
+  | "InvalidPersistence";
 
 export interface PilotBusinessRegistration {
   readonly businessId: string;
@@ -72,6 +76,12 @@ export interface PilotBusinessRegistration {
   readonly allowedOrigins: readonly string[];
 }
 
+export interface PilotPersistenceAuthorization {
+  readonly mode: "durable";
+  /** Name of a server-side credential reference; never a credential value. */
+  readonly credentialReference: string;
+}
+
 export interface ValidatedPilotRuntimeConfiguration {
   readonly version: typeof PILOT_RUNTIME_CONFIGURATION_VERSION;
   readonly environment: typeof PILOT_ENVIRONMENT;
@@ -81,6 +91,7 @@ export interface ValidatedPilotRuntimeConfiguration {
   readonly secureCookiesRequired: true;
   readonly sessionTtlMs: number;
   readonly operatorCredentialDigest: string | null;
+  readonly persistence: PilotPersistenceAuthorization;
   readonly businesses: readonly PilotBusinessRegistration[];
   readonly provenance: {
     readonly suppliedKeys: readonly string[];
@@ -106,6 +117,7 @@ export function resolvePilotRuntimeConfiguration(
     "providerNetworkExecution",
     "sessionTtlMs",
     "businesses",
+    "persistence",
   ]) {
     if (!(required in input)) return rejected("MissingConfiguration");
   }
@@ -122,6 +134,21 @@ export function resolvePilotRuntimeConfiguration(
     MAXIMUM_SESSION_TTL_MS,
   );
   if (sessionTtlMs === null) return rejected("InvalidSessionTtl");
+
+  const rawPersistence = input.persistence;
+  if (!isPlainRecord(rawPersistence)) return rejected("InvalidPersistence");
+  if (Object.keys(rawPersistence).some((key) => !PERSISTENCE_KEYS.has(key))) {
+    return rejected("InvalidPersistence");
+  }
+  if (rawPersistence.mode !== "durable") return rejected("InvalidPersistence");
+  if (typeof rawPersistence.credentialReference !== "string"
+    || !CREDENTIAL_REFERENCE_PATTERN.test(rawPersistence.credentialReference)) {
+    return rejected("InvalidPersistence");
+  }
+  const persistence: PilotPersistenceAuthorization = Object.freeze({
+    mode: "durable" as const,
+    credentialReference: rawPersistence.credentialReference,
+  });
 
   let operatorCredentialDigest: string | null = null;
   if (input.operatorCredentialDigest !== undefined
@@ -192,6 +219,7 @@ export function resolvePilotRuntimeConfiguration(
       secureCookiesRequired: true as const,
       sessionTtlMs,
       operatorCredentialDigest,
+      persistence,
       businesses: Object.freeze(businesses),
       provenance: Object.freeze({
         suppliedKeys: Object.freeze([...keys].sort()),

@@ -43,6 +43,8 @@ npm.cmd run verify:activated-configuration-prototype
 npm.cmd run verify:business-configuration-recovery
 npm.cmd run verify:configuration-lifecycle-remediation
 npm.cmd run verify:durable-turn-restart
+npm.cmd run verify:receptionist-persistence
+npm.cmd run verify:postgresql-receptionist-persistence
 npm.cmd run verify:operational-postgresql-readiness
 npm.cmd run verify:operational-postgresql-backup-restore
 ```
@@ -62,7 +64,8 @@ The ordered migrations are:
 - [`database/migrations/004_knowledge_record_versions.sql`](../database/migrations/004_knowledge_record_versions.sql); and
 - [`database/migrations/005_configuration_activations.sql`](../database/migrations/005_configuration_activations.sql); and
 - [`database/migrations/006_configuration_lifecycle_transitions.sql`](../database/migrations/006_configuration_lifecycle_transitions.sql).
-- [`database/migrations/007_message_evidence.sql`](../database/migrations/007_message_evidence.sql).
+- [`database/migrations/007_message_evidence.sql`](../database/migrations/007_message_evidence.sql); and
+- [`database/migrations/008_receptionist_persistence.sql`](../database/migrations/008_receptionist_persistence.sql).
 
 Sprint 9.4 verifies every migration source against the certified SHA-256
 manifest before opening a connection. See [Operational PostgreSQL
@@ -81,7 +84,11 @@ They create only:
 - append-only Business Profile and Knowledge Record lifecycle transition audit
   evidence coupled to exact expected-revision envelope updates.
 - bounded append-only customer message evidence with exact conversation,
-  profile-version, activation, turn, sequence, and resulting-state provenance.
+  profile-version, activation, turn, sequence, and resulting-state provenance;
+  and
+- durable pilot receptionist conversation metadata, bounded message history,
+  and hashed session records (migration 008). Raw session tokens and raw
+  conversation handles are never stored.
 
 The migration runner applies the migration within the configured schema and a
 local database transaction. Application startup does not run migrations, and

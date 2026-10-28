@@ -581,6 +581,7 @@ async function verifyIncompatibleMigrationHistory(): Promise<void> {
       { version: 5, name: "configuration_activations" },
       { version: 6, name: "configuration_lifecycle_transitions" },
       { version: 7, name: "message_evidence" },
+      { version: 8, name: "receptionist_persistence" },
       { version: 99, name: "fictional_newer_migration" },
     ],
     "migration-history rejection performs no destructive repair",
@@ -626,6 +627,7 @@ async function verifyMigrationOrder(): Promise<void> {
       { version: 5, name: "configuration_activations" },
       { version: 6, name: "configuration_lifecycle_transitions" },
       { version: 7, name: "message_evidence" },
+      { version: 8, name: "receptionist_persistence" },
     ],
     "the complete ordered migration history is present",
   );

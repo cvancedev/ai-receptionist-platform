@@ -59,7 +59,8 @@ async function verifyMigrationHistory(): Promise<void> {
     { version: 5, name: "configuration_activations" },
     { version: 6, name: "configuration_lifecycle_transitions" },
     { version: 7, name: "message_evidence" },
-  ], "integration reuses exact additive migrations 001-007");
+    { version: 8, name: "receptionist_persistence" },
+  ], "integration reuses exact additive migrations 001-008");
 }
 
 async function verifyInitializationProgressAndRestart(): Promise<void> {

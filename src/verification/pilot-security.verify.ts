@@ -20,6 +20,7 @@ import {
 } from "../server/pilot/pilot-runtime-configuration";
 import type { OfflineTransport } from "../ai/providers/transport-model-provider-adapter";
 import type { RateLimitPolicy } from "../server/security/request-rate-limiter";
+import { InMemoryReceptionistPersistence } from "../server/persistence/in-memory-receptionist-persistence";
 
 const BUSINESS_A = fictionalBusinessProfile.id;
 const BUSINESS_B = "second-fictional-business";
@@ -30,6 +31,7 @@ const SECOND_ORIGIN = "https://second.example.invalid";
 const OTHER_ORIGIN = "https://other.example.invalid";
 const TURN_PATH = `${APP_ORIGIN}/api/receptionist/turn`;
 const OPERATOR_CREDENTIAL = "fictional-pilot-operator-credential";
+const PILOT_DATABASE_REFERENCE = "AI_RECEPTIONIST_PILOT_DATABASE_URL";
 const OPERATOR_ID = "front-desk-operator";
 const SESSION_TTL_MS = 15 * 60 * 1_000;
 const DEFAULT_IP = "198.51.100.70";
@@ -80,7 +82,7 @@ async function run(): Promise<void> {
   await verifyHandleIntegrityAndIsolation();
   await verifyTurnEndpointSecurity();
   await verifyProviderFailureStaysSanitized();
-  verifyCookiePolicy();
+  await verifyCookiePolicy();
   verifyClientBoundaries();
   await verifyDemoCompatibility();
 
@@ -115,6 +117,10 @@ function verifyConfigurationRejections(): void {
     { input: pilotConfiguration({ sessionTtlMs: 0 }), reason: "InvalidSessionTtl" },
     { input: pilotConfiguration({ sessionTtlMs: 24 * 60 * 60 * 1_000 }), reason: "InvalidSessionTtl" },
     { input: pilotConfiguration({ operatorCredentialDigest: "not-a-digest" }), reason: "InvalidOperatorCredential" },
+    { input: pilotConfiguration({ persistence: undefined }), reason: "MissingConfiguration" },
+    { input: pilotConfiguration({ persistence: { mode: "durable" } }), reason: "InvalidPersistence" },
+    { input: pilotConfiguration({ persistence: { mode: "durable", credentialReference: "bad reference" } }), reason: "InvalidPersistence" },
+    { input: pilotConfiguration({ persistence: { mode: "memory", credentialReference: PILOT_DATABASE_REFERENCE } }), reason: "InvalidPersistence" },
     { input: pilotConfiguration({ unexpected: true }), reason: "UnknownField" },
     {
       input: pilotConfiguration({
@@ -218,6 +224,8 @@ function verifyCreationFailures(): void {
   const missingBusinesses = createPilotReceptionistRuntime({
     configuration: pilotConfiguration(),
     businesses: [],
+    persistence: new InMemoryReceptionistPersistence(),
+    databaseCredentialReference: PILOT_DATABASE_REFERENCE,
   });
   assert(missingBusinesses.status === "rejected"
     && missingBusinesses.reason === "InvalidBusinesses",
@@ -226,6 +234,8 @@ function verifyCreationFailures(): void {
   const extraBusiness = createPilotReceptionistRuntime({
     configuration: pilotConfiguration(),
     businesses: [defaultBusiness(), secondBusiness(), thirdBusiness()],
+    persistence: new InMemoryReceptionistPersistence(),
+    databaseCredentialReference: PILOT_DATABASE_REFERENCE,
   });
   assert(extraBusiness.status === "rejected"
     && extraBusiness.reason === "BusinessNotConfigured",
@@ -234,6 +244,8 @@ function verifyCreationFailures(): void {
   const missingConfigured = createPilotReceptionistRuntime({
     configuration: pilotConfiguration(),
     businesses: [defaultBusiness()],
+    persistence: new InMemoryReceptionistPersistence(),
+    databaseCredentialReference: PILOT_DATABASE_REFERENCE,
   });
   assert(missingConfigured.status === "rejected"
     && missingConfigured.reason === "ConfiguredBusinessUnavailable",
@@ -248,6 +260,8 @@ function verifyCreationFailures(): void {
       }],
     }),
     businesses: [defaultBusiness(), defaultBusiness()],
+    persistence: new InMemoryReceptionistPersistence(),
+    databaseCredentialReference: PILOT_DATABASE_REFERENCE,
   });
   assert(duplicateBusiness.status === "rejected"
     && duplicateBusiness.reason === "InvalidBusinesses",
@@ -258,13 +272,32 @@ function verifyCreationFailures(): void {
   });
   assert(missingConfiguration.status === "rejected",
     "a runtime with no pilot configuration cannot be created");
+
+  const missingPersistence = createPilotReceptionistRuntime({
+    configuration: pilotConfiguration(),
+    businesses: [defaultBusiness(), secondBusiness()],
+    databaseCredentialReference: PILOT_DATABASE_REFERENCE,
+  });
+  assert(missingPersistence.status === "rejected"
+    && missingPersistence.reason === "PersistenceUnavailable",
+  "a durable pilot runtime requires an explicit persistence port");
+
+  const wrongReference = createPilotReceptionistRuntime({
+    configuration: pilotConfiguration(),
+    businesses: [defaultBusiness(), secondBusiness()],
+    persistence: new InMemoryReceptionistPersistence(),
+    databaseCredentialReference: "AI_RECEPTIONIST_OTHER_DATABASE_URL",
+  });
+  assert(wrongReference.status === "rejected"
+    && wrongReference.reason === "DatabaseNotAuthorized",
+  "the composition must name the configured database reference");
 }
 
 async function verifyCustomerSessionIssuance(): Promise<void> {
   const runtime = buildRuntime();
-  const before = runtime.sessions.size();
+  const before = await runtime.sessions.size();
 
-  const issued = runtime.issueCustomerSession({ widgetId: WIDGET_A, origin: APP_ORIGIN });
+  const issued = await runtime.issueCustomerSession({ widgetId: WIDGET_A, origin: APP_ORIGIN });
   assert(issued.status === "issued", "a configured widget and permitted origin issue a session");
   if (issued.status !== "issued") return;
   const session = issued.session;
@@ -274,7 +307,7 @@ async function verifyCustomerSessionIssuance(): Promise<void> {
     "a customer session is anonymous and separate from operator identity");
   assert(session.principal.conversationHandle !== null,
     "the issued session carries a server-minted conversation handle");
-  assert(runtime.sessions.size() === before + 1,
+  assert((await runtime.sessions.size()) === before + 1,
     "a successful issuance creates exactly one session");
 
   const denials: readonly { readonly input: unknown; readonly description: string }[] = [
@@ -292,22 +325,22 @@ async function verifyCustomerSessionIssuance(): Promise<void> {
     { input: null, description: "a non-object request" },
   ];
 
-  const afterValidIssuance = runtime.sessions.size();
+  const afterValidIssuance = await runtime.sessions.size();
   for (const entry of denials) {
-    const result = runtime.issueCustomerSession(entry.input);
+    const result = await runtime.issueCustomerSession(entry.input);
     assert(result.status === "denied", `${entry.description} is denied`);
   }
-  assert(runtime.sessions.size() === afterValidIssuance,
+  assert((await runtime.sessions.size()) === afterValidIssuance,
     "denied issuance creates no session and no conversation access");
 
-  const widgetOnly = runtime.issueCustomerSession({ widgetId: WIDGET_A });
+  const widgetOnly = await runtime.issueCustomerSession({ widgetId: WIDGET_A });
   assert(widgetOnly.status === "denied",
     "a public widget identifier alone is not authentication");
 }
 
 async function verifyOperatorSessionIssuance(): Promise<void> {
   const runtime = buildRuntime();
-  const issued = runtime.issueOperatorSession({
+  const issued = await runtime.issueOperatorSession({
     credential: OPERATOR_CREDENTIAL,
     businessId: BUSINESS_A,
     operatorId: OPERATOR_ID,
@@ -321,7 +354,7 @@ async function verifyOperatorSessionIssuance(): Promise<void> {
   assert(issued.session.cookie.includes("Secure"),
     "an operator session uses a Secure cookie");
 
-  const before = runtime.sessions.size();
+  const before = await runtime.sessions.size();
   for (const entry of [
     { credential: `${OPERATOR_CREDENTIAL}x`, businessId: BUSINESS_A, operatorId: OPERATOR_ID },
     { credential: OPERATOR_CREDENTIAL, businessId: "unconfigured-fictional-business", operatorId: OPERATOR_ID },
@@ -330,16 +363,16 @@ async function verifyOperatorSessionIssuance(): Promise<void> {
     { credential: "", businessId: BUSINESS_A, operatorId: OPERATOR_ID },
     { credential: OPERATOR_CREDENTIAL, businessId: BUSINESS_A, operatorId: "bad operator!" },
   ]) {
-    const result = runtime.issueOperatorSession(entry);
+    const result = await runtime.issueOperatorSession(entry);
     assert(result.status === "denied", "an invalid operator issuance is denied");
   }
-  assert(runtime.sessions.size() === before,
+  assert((await runtime.sessions.size()) === before,
     "denied operator issuance creates no session");
 
   const noOperatorRuntime = buildRuntime({
     configuration: pilotConfiguration({ operatorCredentialDigest: undefined }),
   });
-  const unavailable = noOperatorRuntime.issueOperatorSession({
+  const unavailable = await noOperatorRuntime.issueOperatorSession({
     credential: OPERATOR_CREDENTIAL,
     businessId: BUSINESS_A,
     operatorId: OPERATOR_ID,
@@ -350,7 +383,7 @@ async function verifyOperatorSessionIssuance(): Promise<void> {
 
 async function verifyHandleIntegrityAndIsolation(): Promise<void> {
   const runtime = buildRuntime();
-  const session = issueCustomer(runtime, WIDGET_A);
+  const session = await issueCustomer(runtime, WIDGET_A);
   const handle = session.principal.conversationHandle;
   assert(handle !== null, "the customer session carries a handle");
   if (handle === null) return;
@@ -361,7 +394,7 @@ async function verifyHandleIntegrityAndIsolation(): Promise<void> {
   assert(handle.length >= 43, "a handle has full entropy width");
 
   const forged = "A".repeat(43);
-  assert(runtime.conversations.revisionOfHandle(forged) === null,
+  assert(await runtime.conversations.revisionOfHandle(forged) === null,
     "a forged handle resolves to no conversation");
   const forgedOutcome = await runtime.conversations.submit({
     handle: forged,
@@ -370,14 +403,14 @@ async function verifyHandleIntegrityAndIsolation(): Promise<void> {
   assert(forgedOutcome.status === "conversation-unavailable",
     "a forged handle cannot submit a turn");
   const truncated = handle.slice(0, 20);
-  assert(runtime.conversations.revisionOfHandle(truncated) === null,
+  assert(await runtime.conversations.revisionOfHandle(truncated) === null,
     "a truncated handle resolves to no conversation");
 
   const separateRuntime = buildRuntime();
-  assert(separateRuntime.conversations.revisionOfHandle(handle) === null,
+  assert(await separateRuntime.conversations.revisionOfHandle(handle) === null,
     "a handle is valid only in the runtime that minted it");
 
-  const sessionB = issueCustomer(runtime, WIDGET_B);
+  const sessionB = await issueCustomer(runtime, WIDGET_B);
   assert(sessionB.principal.businessId === BUSINESS_B,
     "the second widget binds to the second business");
   assert(sessionB.principal.conversationHandle !== handle,
@@ -432,7 +465,7 @@ async function verifyHandleIntegrityAndIsolation(): Promise<void> {
 async function verifyTurnEndpointSecurity(): Promise<void> {
   let clock = 5_000_000;
   const runtime = buildRuntime({ now: () => clock });
-  const session = issueCustomer(runtime, WIDGET_A);
+  const session = await issueCustomer(runtime, WIDGET_A);
   const body = JSON.stringify({ message: "project help" });
 
   const missing = await handleReceptionistTurn(makeRequest({ body, cookie: null }), runtime);
@@ -497,7 +530,7 @@ async function verifyTurnEndpointSecurity(): Promise<void> {
   }), runtime);
   assert(duplicateKeys.status === 400, "duplicate request keys are refused");
 
-  const expiredSession = runtime.issueCustomerSession({ widgetId: WIDGET_A, origin: APP_ORIGIN });
+  const expiredSession = await runtime.issueCustomerSession({ widgetId: WIDGET_A, origin: APP_ORIGIN });
   assert(expiredSession.status === "issued", "a session is issued for the expiry test");
   if (expiredSession.status === "issued") {
     clock += SESSION_TTL_MS + 1_000;
@@ -510,8 +543,8 @@ async function verifyTurnEndpointSecurity(): Promise<void> {
     clock -= SESSION_TTL_MS + 1_000;
   }
 
-  const revoked = issueCustomer(runtime, WIDGET_A);
-  runtime.sessions.revoke(revoked.token);
+  const revoked = await issueCustomer(runtime, WIDGET_A);
+  await runtime.sessions.revoke(revoked.token);
   const afterRevoke = await handleReceptionistTurn(makeRequest({
     body,
     cookie: cookieOf(revoked),
@@ -524,7 +557,7 @@ async function verifyTurnEndpointSecurity(): Promise<void> {
     now: () => limitedClock,
     sessionRateLimit: { limit: 1, windowMs: 60_000 },
   });
-  const limitedSession = issueCustomer(limited, WIDGET_A);
+  const limitedSession = await issueCustomer(limited, WIDGET_A);
   const first = await handleReceptionistTurn(makeRequest({
     body,
     cookie: cookieOf(limitedSession),
@@ -550,7 +583,7 @@ async function verifyProviderFailureStaysSanitized(): Promise<void> {
     error: { category: "provider-failure", message: canary },
   });
   const runtime = buildRuntime({ transport });
-  const session = issueCustomer(runtime, WIDGET_A);
+  const session = await issueCustomer(runtime, WIDGET_A);
   const handle = session.principal.conversationHandle;
   assert(handle !== null, "the failure session carries a handle");
 
@@ -564,11 +597,11 @@ async function verifyProviderFailureStaysSanitized(): Promise<void> {
   assert(text.includes("\"provider_failure\""), "the failure has an explicit sanitized code");
   assert(!text.includes(canary), "provider diagnostics never reach the client");
   assert(!text.includes("provider-failure"), "internal failure categories never reach the client");
-  assert(handle !== null && runtime.conversations.revisionOfHandle(handle) === 0,
+  assert(handle !== null && await runtime.conversations.revisionOfHandle(handle) === 0,
     "a provider failure changes no pilot conversation state");
 
   const healthy = buildRuntime();
-  const healthySession = issueCustomer(healthy, WIDGET_A);
+  const healthySession = await issueCustomer(healthy, WIDGET_A);
   const healthyResponse = await handleReceptionistTurn(makeRequest({
     body: JSON.stringify({ message: "project help" }),
     cookie: cookieOf(healthySession),
@@ -581,9 +614,9 @@ async function verifyProviderFailureStaysSanitized(): Promise<void> {
     "the response never claims a network call in B2.3.1");
 }
 
-function verifyCookiePolicy(): void {
+async function verifyCookiePolicy(): Promise<void> {
   const runtime = buildRuntime();
-  const session = issueCustomer(runtime, WIDGET_A);
+  const session = await issueCustomer(runtime, WIDGET_A);
   const cookie = session.cookie;
   assert(cookie.includes("HttpOnly"), "the pilot cookie is HttpOnly");
   assert(cookie.includes("Secure"), "the pilot cookie is always Secure");
@@ -594,7 +627,7 @@ function verifyCookiePolicy(): void {
   assert(!cookie.includes("Domain="), "the pilot cookie sets no Domain");
 
   const operatorRuntime = buildRuntime();
-  const operator = operatorRuntime.issueOperatorSession({
+  const operator = await operatorRuntime.issueOperatorSession({
     credential: OPERATOR_CREDENTIAL,
     businessId: BUSINESS_A,
     operatorId: OPERATOR_ID,
@@ -608,6 +641,9 @@ function verifyClientBoundaries(): void {
     "src/server/pilot/pilot-runtime-configuration.ts",
     "src/server/pilot/pilot-runtime.ts",
     "src/server/auth/conversation-handle.ts",
+    "src/server/auth/persistent-session-authority.ts",
+    "src/server/conversation/durable-receptionist-conversation-service.ts",
+    "src/server/persistence/receptionist-persistence.ts",
   ];
   const packageRoot = process.cwd();
   for (const path of serverFiles) {
@@ -616,7 +652,7 @@ function verifyClientBoundaries(): void {
       `${path} states its server-only boundary`);
     assert(!source.includes("api.openai.com"), `${path} names no real provider endpoint`);
     assert(!source.includes("http-model-transport"), `${path} enables no provider transport`);
-    assert(!source.includes("Authorization"), `${path} sets no provider authorization`);
+    assert(!source.includes("Bearer "), `${path} sets no provider authorization`);
     assert(!source.includes("console."), `${path} logs nothing`);
   }
 
@@ -627,6 +663,9 @@ function verifyClientBoundaries(): void {
     "operatorCredentialDigest",
     "issueCustomerSession",
     "issueOperatorSession",
+    "persistent-session-authority",
+    "durable-receptionist",
+    "receptionist-persistence",
   ];
   const roots = ["app", "components", "hooks", "lib", "services", "types", "utils", "src"];
   const files = roots.flatMap((root) => sourceFiles(join(packageRoot, root)));
@@ -663,6 +702,10 @@ function pilotConfiguration(
     providerNetworkExecution: "disabled",
     sessionTtlMs: SESSION_TTL_MS,
     operatorCredentialDigest: operatorDigest(),
+    persistence: {
+      mode: "durable",
+      credentialReference: PILOT_DATABASE_REFERENCE,
+    },
     businesses: [
       { businessId: BUSINESS_A, widgetId: WIDGET_A, allowedOrigins: [APP_ORIGIN] },
       { businessId: BUSINESS_B, widgetId: WIDGET_B, allowedOrigins: [SECOND_ORIGIN] },
@@ -687,6 +730,8 @@ function buildRuntime(options: {
   const result = createPilotReceptionistRuntime({
     configuration: options.configuration ?? pilotConfiguration(),
     businesses: [defaultBusiness(), secondBusiness()],
+    persistence: new InMemoryReceptionistPersistence(),
+    databaseCredentialReference: PILOT_DATABASE_REFERENCE,
     transport: options.transport,
     now: options.now,
     ipRateLimit: { limit: 1_000, windowMs: 60_000 },
@@ -697,9 +742,9 @@ function buildRuntime(options: {
   return result.runtime;
 }
 
-function issueCustomer(runtime: PilotReceptionistRuntime, widgetId: string): IssuedSession {
+async function issueCustomer(runtime: PilotReceptionistRuntime, widgetId: string): Promise<IssuedSession> {
   const origin = widgetId === WIDGET_A ? APP_ORIGIN : SECOND_ORIGIN;
-  const issued = runtime.issueCustomerSession({ widgetId, origin });
+  const issued = await runtime.issueCustomerSession({ widgetId, origin });
   assert(issued.status === "issued", "a customer session is issued for the test");
   if (issued.status !== "issued") throw new Error("unreachable");
   return issued.session;

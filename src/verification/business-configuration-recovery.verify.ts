@@ -61,7 +61,8 @@ async function verifyMigrationHistory(): Promise<void> {
     { version: 5, name: "configuration_activations" },
     { version: 6, name: "configuration_lifecycle_transitions" },
     { version: 7, name: "message_evidence" },
-  ], "exact additive migrations 001-007 are used");
+    { version: 8, name: "receptionist_persistence" },
+  ], "exact additive migrations 001-008 are used");
 }
 
 async function verifyResolutionAndCorruptionFailures(): Promise<void> {

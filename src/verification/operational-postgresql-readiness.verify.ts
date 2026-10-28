@@ -16,8 +16,8 @@ run().then(() => {
 async function run(): Promise<void> {
   assert(
     CERTIFIED_POSTGRESQL_MIGRATIONS.map(({ version }) => version).join(",")
-      === "1,2,3,4,5,6,7",
-    "certified history remains exactly 001 through 007",
+      === "1,2,3,4,5,6,7,8",
+    "certified history remains exactly 001 through 008",
   );
   assert(
     CERTIFIED_POSTGRESQL_MIGRATIONS.every((migration, index) =>
@@ -47,7 +47,7 @@ async function verifyMissingAndChangedSourcesFailClosed(): Promise<void> {
       join(process.cwd(), "database", "migrations", "007_message_evidence.sql"),
       join(directory, "007_message_evidence.sql"),
     );
-    await writeFile(join(directory, "008_unknown.sql"), "SELECT 1;\n");
+    await writeFile(join(directory, "009_unknown.sql"), "SELECT 1;\n");
     await assertRejected(directory, "unknown migration source");
   } finally {
     await rm(directory, { recursive: true, force: true });

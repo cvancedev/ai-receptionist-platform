@@ -47,7 +47,7 @@ if (typeof window !== "undefined") {
  * origin, or an operator issuance verified against a server-held credential
  * digest. B2.3.2A still performs no provider network work.
  */
-export const PILOT_RUNTIME_VERSION = "b2.3.2a-pilot-runtime/v1" as const;
+export const PILOT_RUNTIME_VERSION = "b2.3.2b-pilot-runtime/v1" as const;
 
 const OPERATOR_ID_PATTERN = /^[A-Za-z0-9._:-]{1,64}$/;
 const WIDGET_ID_PATTERN = /^[A-Za-z0-9._-]{8,64}$/;
@@ -60,6 +60,8 @@ export type PilotSessionIssueResult =
 
 export interface PilotReceptionistRuntime extends ReceptionistTurnRuntime {
   readonly version: typeof PILOT_RUNTIME_VERSION;
+  readonly mode: "pilot";
+  readonly simulated: true;
   readonly pilotConfiguration: ValidatedPilotRuntimeConfiguration;
   readonly sessions: PersistentSessionAuthority;
   readonly conversations: DurableReceptionistConversationService;
@@ -289,6 +291,8 @@ export function createPilotReceptionistRuntime(
 
   const runtime: PilotReceptionistRuntime = Object.freeze({
     version: PILOT_RUNTIME_VERSION,
+    mode: "pilot" as const,
+    simulated: true as const,
     pilotConfiguration: configuration,
     sessions,
     limiter,

@@ -38,6 +38,7 @@
     "verify:http-model-transport": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/http-model-transport.verify.js",
     "verify:receptionist-endpoint": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/receptionist-endpoint.verify.js",
     "verify:pilot-security": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/pilot-security.verify.js",
+    "verify:pilot-http-integration": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/pilot-http-integration.verify.js",
     "verify:receptionist-persistence": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/receptionist-persistence.verify.js",
     "verify:postgresql-receptionist-persistence": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-receptionist-persistence.verify.js",
     "verify:end-to-end-failure-security-recovery": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/end-to-end-failure-security-recovery.verify.js",

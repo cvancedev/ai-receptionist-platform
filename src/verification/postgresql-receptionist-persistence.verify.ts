@@ -10,6 +10,7 @@ import {
 import { digestConversationHandle } from "../server/auth/conversation-handle";
 import type { ReceptionistBusiness } from "../server/conversation/receptionist-conversation-service";
 import { handleReceptionistTurn } from "../server/http/receptionist-turn-handler";
+import { handleReceptionistSessionIssue } from "../server/http/receptionist-session-handler";
 import {
   createPilotReceptionistRuntime,
   type PilotReceptionistRuntime,
@@ -24,6 +25,7 @@ const WIDGET_B = "widget-postgres-beta";
 const APP_ORIGIN = "https://pilot.example.invalid";
 const SECOND_ORIGIN = "https://second.example.invalid";
 const TURN_PATH = `${APP_ORIGIN}/api/receptionist/turn`;
+const SESSION_PATH = `${APP_ORIGIN}/api/receptionist/session`;
 const OPERATOR_CREDENTIAL = "fictional-postgres-operator-credential";
 const DATABASE_REFERENCE = "AI_RECEPTIONIST_PILOT_DATABASE_URL";
 const SESSION_TTL_MS = 15 * 60 * 1_000;
@@ -43,13 +45,14 @@ async function run(): Promise<void> {
       "the live schema history includes migration 008");
 
     await verifyDurableTurnAndRestart(connectionString, schema);
+    await verifyHttpIssuance(connectionString, schema);
     await verifySessionExpirationAndRevocation(connectionString, schema);
     await verifyIsolationAndConflicts(connectionString, schema);
     await verifyConcurrentCommitAtomicity(connectionString, schema);
     await verifyClosedStoreFailuresClosed(connectionString, schema);
 
     console.log(
-      "Stage B2.3.2A live PostgreSQL verification passed: durable state and messages, "
+      "Stage B2.3.2B live PostgreSQL verification passed: durable HTTP issuance and turns, "
       + "session survival across restart, expiration and revocation, business isolation, "
       + "revision conflicts, concurrent commit atomicity, and closed-store fail-closed behavior.",
     );
@@ -116,6 +119,54 @@ async function verifyDurableTurnAndRestart(
 
   await restartedPersistence.close();
   await persistence.close();
+}
+
+async function verifyHttpIssuance(
+  connectionString: string,
+  schema: string,
+): Promise<void> {
+  const persistence = new PostgresqlReceptionistPersistence({ connectionString, schema });
+  try {
+    const runtime = buildRuntime(persistence, () => 105_000_000);
+    const headers = new Headers();
+    headers.set("content-type", "application/json");
+    headers.set("origin", APP_ORIGIN);
+    headers.set("x-forwarded-for", "198.51.100.160");
+    const issue = await handleReceptionistSessionIssue(new Request(SESSION_PATH, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ widgetId: WIDGET_A }),
+    }), runtime, { requireSecureTransport: false });
+    assert(issue.status === 201, "the pilot HTTP issuance endpoint creates a durable session");
+    const cookie = issue.headers.get("set-cookie");
+    if (cookie === null) throw new Error("the issuance endpoint set no cookie");
+    const issued = JSON.parse(await issue.text()) as {
+      readonly mode?: string;
+      readonly simulated?: boolean;
+      readonly data?: { readonly csrfToken?: string; readonly expiresAt?: number };
+    };
+    assert(issued.mode === "pilot" && issued.simulated === true,
+      "durable issuance reports pilot mode and simulated responses");
+    assert(typeof issued.data?.csrfToken === "string",
+      "durable issuance returns a CSRF token");
+
+    const turnHeaders = new Headers();
+    turnHeaders.set("content-type", "application/json");
+    turnHeaders.set("cookie", cookie.split(";")[0] ?? "");
+    turnHeaders.set("x-csrf-token", issued.data?.csrfToken ?? "");
+    turnHeaders.set("x-forwarded-for", "198.51.100.160");
+    const turnResponse = await handleReceptionistTurn(new Request(TURN_PATH, {
+      method: "POST",
+      headers: turnHeaders,
+      body: JSON.stringify({ message: "project help" }),
+    }), runtime);
+    assert(turnResponse.status === 200, "a durable HTTP turn is served after issuance");
+    const body = await responseJson(turnResponse);
+    assert((body.data?.conversation.revision ?? 0) > 0,
+      "the HTTP turn commits durable state");
+  } finally {
+    await persistence.close();
+  }
 }
 
 async function verifySessionExpirationAndRevocation(

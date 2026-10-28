@@ -120,6 +120,55 @@ production-like runtime is authorized. A later explicitly authorized server
 composition milestone must invoke preflight before serving, reading, or
 mutating through a configuration-dependent capability.
 
+## Pilot HTTP Runtime (Stage B2.3.2B)
+
+The pilot is a separate, opt-in composition. Its presence is established by one
+server-side environment variable:
+
+- `AI_RECEPTIONIST_PILOT_CONFIGURATION` — a JSON document that must validate
+  against the B2.3.1 pilot configuration contract (`environment: "pilot"`,
+  `requireSecureTransport: true`, `providerNetworkExecution: "disabled"`,
+  bounded `sessionTtlMs`, configured `businesses` with exact allowed origins,
+  and a `persistence` member naming a credential reference).
+
+The credential reference is an environment variable *name*, never a value. The
+pilot composition reads that named variable for the PostgreSQL connection URL,
+for example `AI_RECEPTIONIST_PILOT_DATABASE_URL`. A missing or malformed
+configuration, a missing credential, an unavailable business profile, or a
+failed durable store produces `pilot-unavailable`; it never falls back to the
+demonstration.
+
+The pilot database must already have the ordered migrations (001–008) applied to
+its target schema before the runtime serves traffic. The application does not
+run migrations on request; a missing schema or unreachable database surfaces as
+`pilot-unavailable` or a sanitized request failure, never as demo output.
+
+Without `AI_RECEPTIONIST_PILOT_CONFIGURATION`, the application serves only the
+local simulated demonstration. Both modes report their identity truthfully:
+responses carry `mode` (`demo` or `pilot`) and `simulated: true`, the provider
+identifier `simulated-offline-model-transport/v1`, and `networkAccessed: false`.
+No real model network call is possible in either mode.
+
+HTTP surface:
+
+- `POST /api/receptionist/session` — same-origin, JSON-only issuance. A widget
+  identifier selects a configured business and is never authentication. The
+  request must pass the origin allowlist, the per-client issuance rate limit,
+  a bounded body, and (in production) HTTPS transport. The session token is set
+  only as an HttpOnly, Secure, SameSite=Strict cookie; the CSRF token is
+  returned in the response body.
+- `POST /api/receptionist/turn` — the existing turn endpoint, routed to the
+  pilot runtime when authorized. Authentication, CSRF, same-origin checks,
+  business/conversation scope, bounded input, and sanitized errors are
+  unchanged.
+
+Local verification uses a dedicated PostgreSQL role with only `LOGIN` and
+`CREATEDB`, a connection limit, and no superuser, role-creation, replication, or
+row-security-bypass privileges. Its connection string lives only in a
+git-ignored local file (`.local/`), and every verification run creates and
+drops a uniquely named disposable database. No administrator credential is kept
+in the repository or in the routine verification configuration.
+
 ## Current Exclusions
 
 There is no real secret, secret store, provider SDK, network call, production

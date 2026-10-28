@@ -1,4 +1,6 @@
 import { parseJsonWithoutDuplicateKeys } from "../../ai/providers/provider-output-schema";
+import { readBoundedBody } from "./bounded-request-body";
+import { jsonResponse } from "./json-response";
 import {
   parseSessionCookie,
   type SessionPrincipal,
@@ -67,22 +69,23 @@ export async function handleReceptionistTurn(
   request: Request,
   runtime: ReceptionistTurnRuntime = getReceptionistRuntime(),
 ): Promise<Response> {
+  const mode = runtime.mode;
   try {
     if (request.method !== "POST") {
-      return errorResponse(405, "method_not_allowed", { allow: "POST" });
+      return errorResponse(405, "method_not_allowed", mode, { allow: "POST" });
     }
 
     const contentType = (request.headers.get("content-type") ?? "").toLowerCase();
     const mediaType = contentType.split(";")[0].trim();
     if (mediaType !== "application/json") {
-      return errorResponse(415, "unsupported_media_type");
+      return errorResponse(415, "unsupported_media_type", mode);
     }
 
     const declaredLength = request.headers.get("content-length");
     if (declaredLength !== null) {
-      if (!/^\d+$/.test(declaredLength)) return errorResponse(400, "invalid_request");
+      if (!/^\d+$/.test(declaredLength)) return errorResponse(400, "invalid_request", mode);
       if (Number(declaredLength) > runtime.maximumRequestBytes) {
-        return errorResponse(413, "request_too_large");
+        return errorResponse(413, "request_too_large", mode);
       }
     }
 
@@ -90,36 +93,36 @@ export async function handleReceptionistTurn(
       `client:${clientRateLimitKey(request)}`,
       runtime.ipRateLimit,
     );
-    if (!clientLimit.allowed) return rateLimitResponse(clientLimit);
+    if (!clientLimit.allowed) return rateLimitResponse(clientLimit, mode);
 
     const authentication = await runtime.sessions.authenticate(
       parseSessionCookie(request.headers.get("cookie")),
       request.headers.get("x-csrf-token"),
     );
     if (authentication.status === "missing" || authentication.status === "invalid") {
-      return errorResponse(401, "unauthorized");
+      return errorResponse(401, "unauthorized", mode);
     }
     if (authentication.status === "csrf") {
-      return errorResponse(403, "forbidden");
+      return errorResponse(403, "forbidden", mode);
     }
 
     const originFailure = verifySameOrigin(request);
-    if (originFailure) return errorResponse(403, "forbidden");
+    if (originFailure) return errorResponse(403, "forbidden", mode);
 
     const principal = authentication.principal;
     const sessionLimit = runtime.limiter.consume(
       `session:${principal.sessionKey}`,
       runtime.sessionRateLimit,
     );
-    if (!sessionLimit.allowed) return rateLimitResponse(sessionLimit);
+    if (!sessionLimit.allowed) return rateLimitResponse(sessionLimit, mode);
 
-    const body = await readLimitedBody(request, runtime.maximumRequestBytes);
-    if (body.status === "too-large") return errorResponse(413, "request_too_large");
-    if (body.status !== "text") return errorResponse(400, "invalid_request");
+    const body = await readBoundedBody(request, runtime.maximumRequestBytes);
+    if (body.status === "too-large") return errorResponse(413, "request_too_large", mode);
+    if (body.status !== "text") return errorResponse(400, "invalid_request", mode);
 
     const strict = parseJsonWithoutDuplicateKeys(body.text);
     if (strict.status !== "parsed" || !isPlainRecord(strict.value)) {
-      return errorResponse(400, "invalid_request");
+      return errorResponse(400, "invalid_request", mode);
     }
 
     const parsed = parseRequestBody(
@@ -127,11 +130,11 @@ export async function handleReceptionistTurn(
       principal,
       runtime.maximumMessageLength,
     );
-    if (parsed.status === "forbidden") return errorResponse(403, "forbidden");
-    if (parsed.status !== "ok") return errorResponse(400, "invalid_request");
+    if (parsed.status === "forbidden") return errorResponse(403, "forbidden", mode);
+    if (parsed.status !== "ok") return errorResponse(400, "invalid_request", mode);
 
     if (!runtime.hasBusiness(principal.businessId)) {
-      return errorResponse(403, "forbidden");
+      return errorResponse(403, "forbidden", mode);
     }
     // The conversation is selected only by server-bound session state: the
     // opaque handle while it is resident, or the session's own durable scope
@@ -146,12 +149,12 @@ export async function handleReceptionistTurn(
           message: parsed.message,
         }
         : null;
-    if (submission === null) return errorResponse(403, "forbidden");
+    if (submission === null) return errorResponse(403, "forbidden", mode);
 
     const outcome = await runtime.conversations.submit(submission);
-    return turnResponse(outcome, principal, runtime.provider);
+    return turnResponse(outcome, principal, runtime);
   } catch {
-    return errorResponse(500, "internal_error");
+    return errorResponse(500, "internal_error", mode);
   }
 }
 
@@ -191,23 +194,25 @@ function parseRequestBody(
 function turnResponse(
   outcome: ReceptionistTurnOutcome,
   principal: SessionPrincipal,
-  provider: { readonly identifier: string; readonly networkAccessed: boolean },
+  runtime: ReceptionistTurnRuntime,
 ): Response {
   if (outcome.status === "provider-failure") {
-    return errorResponse(502, "provider_failure");
+    return errorResponse(502, "provider_failure", runtime.mode);
   }
   if (outcome.status === "internal-failure") {
-    return errorResponse(500, "internal_error");
+    return errorResponse(500, "internal_error", runtime.mode);
   }
   if (outcome.status === "conversation-unavailable") {
-    return errorResponse(404, "conversation_unavailable");
+    return errorResponse(404, "conversation_unavailable", runtime.mode);
   }
   if (outcome.status === "invalid-message") {
-    return errorResponse(400, "invalid_request");
+    return errorResponse(400, "invalid_request", runtime.mode);
   }
 
   return jsonResponse(200, {
     ok: true,
+    mode: runtime.mode,
+    simulated: runtime.simulated,
     data: {
       businessId: principal.businessId,
       conversationId: principal.conversationId,
@@ -229,8 +234,8 @@ function turnResponse(
         customerReleaseAuthorized: false,
         externalActionAuthorized: false,
       },
-      provider: provider.identifier,
-      networkAccessed: provider.networkAccessed,
+      provider: runtime.provider.identifier,
+      networkAccessed: runtime.provider.networkAccessed,
     },
   });
 }
@@ -256,55 +261,11 @@ function verifySameOrigin(request: Request): boolean {
   return false;
 }
 
-async function readLimitedBody(
-  request: Request,
-  maximumBytes: number,
-): Promise<
-  | { readonly status: "text"; readonly text: string }
-  | { readonly status: "too-large" }
-  | { readonly status: "empty" }
-  | { readonly status: "invalid" }
-> {
-  if (!request.body) return { status: "empty" };
-  const reader = request.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let total = 0;
-  try {
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      if (!value) continue;
-      total += value.byteLength;
-      if (total > maximumBytes) {
-        await reader.cancel().catch(() => undefined);
-        return { status: "too-large" };
-      }
-      chunks.push(value);
-    }
-  } catch {
-    await reader.cancel().catch(() => undefined);
-    return { status: "invalid" };
-  }
-  if (total === 0) return { status: "empty" };
-
-  const merged = new Uint8Array(total);
-  let offset = 0;
-  for (const chunk of chunks) {
-    merged.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  try {
-    return {
-      status: "text",
-      text: new TextDecoder("utf-8", { fatal: true }).decode(merged),
-    };
-  } catch {
-    return { status: "invalid" };
-  }
-}
-
-function rateLimitResponse(decision: RateLimitDecision): Response {
-  return errorResponse(429, "rate_limited", {
+function rateLimitResponse(
+  decision: RateLimitDecision,
+  mode: "demo" | "pilot",
+): Response {
+  return errorResponse(429, "rate_limited", mode, {
     "retry-after": String(decision.retryAfterSeconds),
   });
 }
@@ -312,33 +273,18 @@ function rateLimitResponse(decision: RateLimitDecision): Response {
 function errorResponse(
   status: number,
   code: ErrorCode,
+  mode: "demo" | "pilot" = "demo",
   extraHeaders: Readonly<Record<string, string>> = {},
 ): Response {
   return jsonResponse(status, {
     ok: false,
+    mode,
+    simulated: true,
     error: {
       code,
       message: ERROR_MESSAGES[code],
     },
   }, extraHeaders);
-}
-
-function jsonResponse(
-  status: number,
-  body: unknown,
-  extraHeaders: Readonly<Record<string, string>> = {},
-): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-      "x-content-type-options": "nosniff",
-      "referrer-policy": "no-referrer",
-      vary: "Cookie",
-      ...extraHeaders,
-    },
-  });
 }
 
 function isPlainRecord(value: unknown): value is Record<string, unknown> {

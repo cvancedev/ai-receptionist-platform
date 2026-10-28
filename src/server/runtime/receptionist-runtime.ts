@@ -61,6 +61,14 @@ export const OFFLINE_PROVIDER_DESCRIPTOR = Object.freeze({
  */
 export interface ReceptionistTurnRuntime {
   readonly version: string;
+  /**
+   * Which composition is serving this request. `demo` is the local fictional
+   * demonstration; `pilot` is the explicitly configured pilot runtime. Neither
+   * performs provider network work, so `simulated` is true for both until real
+   * provider execution is separately authorized.
+   */
+  readonly mode: "demo" | "pilot";
+  readonly simulated: true;
   readonly sessions: SessionAuthenticationSource;
   readonly limiter: FixedWindowRateLimiter;
   readonly conversations: {
@@ -161,6 +169,8 @@ export function createReceptionistRuntime(
 
   return Object.freeze({
     version: RECEPTIONIST_RUNTIME_VERSION as typeof RECEPTIONIST_RUNTIME_VERSION,
+    mode: "demo" as const,
+    simulated: true as const,
     sessions,
     limiter,
     conversations,

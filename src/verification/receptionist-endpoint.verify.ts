@@ -425,10 +425,11 @@ async function verifyBusinessAndConversationIsolation(): Promise<void> {
   assert(aData.data?.authority.customerReleaseAuthorized === false,
     "the response grants no customer-release authority");
 
-  const beforeA = runtime.conversations.revisionOf(
-    BUSINESS_A,
-    sessionA.principal.conversationId,
-  );
+  const handleA = sessionA.principal.conversationHandle;
+  const handleB = sessionB.principal.conversationHandle;
+  assert(handleA !== null && handleB !== null,
+    "each trusted session carries an opaque conversation handle");
+  const beforeA = runtime.conversations.revisionOfHandle(handleA);
   const bFirst = await handleReceptionistTurn(makeRequest({
     body: JSON.stringify({ message: "project help" }),
     cookie: cookieB,
@@ -440,10 +441,8 @@ async function verifyBusinessAndConversationIsolation(): Promise<void> {
     "business B receives its own scoped response");
   assert(bData.data?.conversationId === sessionB.principal.conversationId,
     "business B is bound to its own conversation");
-  assert(runtime.conversations.revisionOf(
-    BUSINESS_A,
-    sessionA.principal.conversationId,
-  ) === beforeA, "business B work leaves business A state unchanged");
+  assert(runtime.conversations.revisionOfHandle(handleA) === beforeA,
+    "business B work leaves business A state unchanged");
 
   const crossBusiness = await handleReceptionistTurn(makeRequest({
     body: JSON.stringify({ message: "project help", businessId: BUSINESS_B }),
@@ -508,10 +507,10 @@ async function verifyProviderFailuresAndAuthority(): Promise<void> {
   assert(failureBody.includes("\"provider_failure\""), "a provider failure has an explicit code");
   assert(!failureBody.includes(CANARY), "a provider failure does not echo provider text");
   assert(!failureBody.includes("provider-failure"), "a provider failure does not echo internal categories");
-  assert(failureRuntime.conversations.revisionOf(
-    BUSINESS_A,
-    failureSession.principal.conversationId,
-  ) === 0, "a provider failure changes no conversation state");
+  const failureHandle = failureSession.principal.conversationHandle;
+  assert(failureHandle !== null, "the failure session carries a conversation handle");
+  assert(failureRuntime.conversations.revisionOfHandle(failureHandle) === 0,
+    "a provider failure changes no conversation state");
 
   const maliciousTransport = maliciousProposalTransport();
   const maliciousRuntime = createReceptionistRuntime({ transport: maliciousTransport });
@@ -530,24 +529,27 @@ async function verifyProviderFailuresAndAuthority(): Promise<void> {
   assert(!maliciousBody.includes("\"toolCall\"") && !maliciousBody.includes("\"stateMutation\""),
     "tool and state fields are never returned");
   assert(!maliciousBody.includes("candidateIntent"), "raw proposal fields are never returned");
-  assert(maliciousRuntime.conversations.revisionOf(
-    BUSINESS_A,
-    maliciousSession.principal.conversationId,
-  ) === 0, "authority-bearing output changes no conversation state");
+  const maliciousHandle = maliciousSession.principal.conversationHandle;
+  assert(maliciousHandle !== null, "the authority session carries a conversation handle");
+  assert(maliciousRuntime.conversations.revisionOfHandle(maliciousHandle) === 0,
+    "authority-bearing output changes no conversation state");
 
   const providerService = new ReceptionistConversationService([defaultBusiness()], {
     transport: async () => ({ status: "failed", error: { category: "provider-failure" } }),
   });
-  assert(providerService.begin(BUSINESS_A, "conversation-provider-failure"),
+  const providerHandle = providerService.begin(
+    BUSINESS_A,
+    "conversation-provider-failure",
+  );
+  assert(providerHandle !== null,
     "a service conversation can begin for a failure test");
   const providerOutcome = await providerService.submit({
-    businessId: BUSINESS_A,
-    conversationId: "conversation-provider-failure",
+    handle: providerHandle,
     message: "project help",
   });
   assert(providerOutcome.status === "provider-failure",
     "the service reports a provider failure without applying state");
-  assert(providerService.revisionOf(BUSINESS_A, "conversation-provider-failure") === 0,
+  assert(providerService.revisionOfHandle(providerHandle) === 0,
     "the service leaves the revision unchanged after provider failure");
 }
 
@@ -579,19 +581,11 @@ async function verifyConcurrentTurnSerialization(): Promise<void> {
     };
   };
   const service = new ReceptionistConversationService([defaultBusiness()], { transport });
-  assert(service.begin(BUSINESS_A, "conversation-concurrent-001"),
-    "a concurrent-test conversation can begin");
+  const handle = service.begin(BUSINESS_A, "conversation-concurrent-001");
+  assert(handle !== null, "a concurrent-test conversation can begin");
   const [first, second] = await Promise.all([
-    service.submit({
-      businessId: BUSINESS_A,
-      conversationId: "conversation-concurrent-001",
-      message: "project help",
-    }),
-    service.submit({
-      businessId: BUSINESS_A,
-      conversationId: "conversation-concurrent-001",
-      message: "project help",
-    }),
+    service.submit({ handle, message: "project help" }),
+    service.submit({ handle, message: "project help" }),
   ]);
   assert(first.status === "ok" && second.status === "ok",
     "both serialized turns settle safely");

@@ -1,5 +1,10 @@
 import type { AiDemoTurnResult } from "../../ai/demo/ai-demo-turn";
 import { runAiDemoTurn } from "../../ai/demo/ai-demo-turn";
+import {
+  createConversationHandle,
+  digestConversationHandle,
+  isConversationHandle,
+} from "../auth/conversation-handle";
 import { createSimulatedModelTransport } from "../../ai/demo/simulated-model-transport";
 import type { OfflineTransport } from "../../ai/providers/transport-model-provider-adapter";
 import { ConversationStateManager } from "../../conversation/conversation-state-manager";
@@ -104,6 +109,8 @@ interface ConversationRuntime {
 export class ReceptionistConversationService {
   private readonly businesses = new Map<string, ReceptionistBusiness>();
   private readonly conversations = new Map<string, ConversationRuntime>();
+  /** Handle digest to conversation key. Handles are never stored in clear. */
+  private readonly handles = new Map<string, string>();
   private readonly queues = new Map<string, Promise<void>>();
   private readonly transport: OfflineTransport | undefined;
   private readonly maximumConversations: number;
@@ -133,13 +140,17 @@ export class ReceptionistConversationService {
     return typeof businessId === "string" && this.businesses.has(businessId);
   }
 
-  begin(businessId: unknown, conversationId: unknown): boolean {
-    if (!isIdentifier(businessId) || !isIdentifier(conversationId)) return false;
+  /**
+   * Create one conversation and return its opaque server-side handle. The
+   * caller cannot choose the handle, and the handle reveals no identity.
+   */
+  begin(businessId: unknown, conversationId: unknown): string | null {
+    if (!isIdentifier(businessId) || !isIdentifier(conversationId)) return null;
     const business = this.businesses.get(businessId);
-    if (!business || business.profile.status !== "active") return false;
+    if (!business || business.profile.status !== "active") return null;
     const key = conversationKey(businessId, conversationId);
-    if (this.conversations.has(key)) return false;
-    if (this.conversations.size >= this.maximumConversations) return false;
+    if (this.conversations.has(key)) return null;
+    if (this.conversations.size >= this.maximumConversations) return null;
 
     const manager = new ConversationStateManager();
     const initialized = manager.initialize({
@@ -149,7 +160,7 @@ export class ReceptionistConversationService {
       requiredFields: ["requested-service"],
       authorizedEscalationDestination: business.profile.escalation.destination,
     });
-    if (initialized.status === "failure") return false;
+    if (initialized.status === "failure") return null;
 
     const orchestrator = new PrototypeConversationOrchestrator(
       business.profile,
@@ -178,29 +189,40 @@ export class ReceptionistConversationService {
       "Simulated AI receptionist for a fictional business. No model provider, network, credential, or real customer data is used. What fictional service do you need?",
     );
     this.conversations.set(key, runtime);
-    return true;
+
+    // A minted handle is accepted only if its digest is not already mapped, so
+    // a defective entropy source cannot silently alias two conversations.
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      const handle = createConversationHandle();
+      const handleDigest = digestConversationHandle(handle);
+      if (this.handles.has(handleDigest)) continue;
+      this.handles.set(handleDigest, key);
+      return handle;
+    }
+    this.conversations.delete(key);
+    return null;
   }
 
-  revisionOf(businessId: unknown, conversationId: unknown): number | null {
-    if (!isIdentifier(businessId) || !isIdentifier(conversationId)) return null;
-    const runtime = this.conversations.get(conversationKey(businessId, conversationId));
+  revisionOfHandle(handle: unknown): number | null {
+    const runtime = this.resolveHandle(handle);
     if (!runtime) return null;
     const snapshot = this.managerSnapshot(runtime);
     return snapshot ? snapshot.revision : null;
   }
 
   async submit(input: unknown): Promise<ReceptionistTurnOutcome> {
-    const parsed = parseTurnInput(input);
+    const parsed = parseTurnHandleInput(input);
     if (!parsed) return Object.freeze({ status: "invalid-message" });
-    const runtime = this.conversations.get(
-      conversationKey(parsed.businessId, parsed.conversationId),
-    );
+    const runtime = this.resolveHandle(parsed.handle);
     if (!runtime) return Object.freeze({ status: "conversation-unavailable" });
     if (runtime.business.profile.status !== "active") {
       return Object.freeze({ status: "conversation-unavailable" });
     }
 
-    const key = conversationKey(parsed.businessId, parsed.conversationId);
+    const key = conversationKey(
+      runtime.business.profile.id,
+      runtime.conversationId,
+    );
     const previous = this.queues.get(key) ?? Promise.resolve();
     let release: () => void = () => undefined;
     const current = new Promise<void>((resolve) => {
@@ -576,6 +598,13 @@ export class ReceptionistConversationService {
     return message;
   }
 
+  private resolveHandle(handle: unknown): ConversationRuntime | null {
+    if (!isConversationHandle(handle)) return null;
+    const key = this.handles.get(digestConversationHandle(handle));
+    if (!key) return null;
+    return this.conversations.get(key) ?? null;
+  }
+
   private lastCustomerText(runtime: ConversationRuntime): string {
     for (let index = runtime.messages.length - 1; index >= 0; index -= 1) {
       const message = runtime.messages[index];
@@ -606,23 +635,22 @@ function normalizeBusiness(business: unknown): ReceptionistBusiness | null {
   });
 }
 
-function parseTurnInput(input: unknown): {
-  readonly businessId: string;
-  readonly conversationId: string;
+function parseTurnHandleInput(input: unknown): {
+  readonly handle: string;
   readonly message: string;
 } | null {
-  if (!isPlainRecord(input)
-    || !isIdentifier(input.businessId)
-    || !isIdentifier(input.conversationId)
-    || typeof input.message !== "string") return null;
+  if (!isPlainRecord(input)) return null;
+  const keys = Object.keys(input);
+  if (keys.length !== 2 || !keys.includes("handle") || !keys.includes("message")) {
+    return null;
+  }
+  if (!isConversationHandle(input.handle) || typeof input.message !== "string") {
+    return null;
+  }
   const message = input.message.trim();
   if (message.length === 0 || message.length > MAXIMUM_MESSAGE_LENGTH) return null;
   if (CONTROL_CHARACTERS.test(message)) return null;
-  return {
-    businessId: input.businessId,
-    conversationId: input.conversationId,
-    message,
-  };
+  return { handle: input.handle, message };
 }
 
 function conversationKey(businessId: string, conversationId: string): string {

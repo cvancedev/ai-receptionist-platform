@@ -1,4 +1,5 @@
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { isConversationHandle } from "./conversation-handle";
 
 if (typeof window !== "undefined") {
   throw new Error("The receptionist session authority is server-only.");
@@ -38,6 +39,12 @@ const MINIMUM_TOKEN_LENGTH = 32;
 export interface SessionPrincipal {
   readonly businessId: string;
   readonly conversationId: string;
+  /**
+   * Opaque, server-issued conversation reference. It is never returned to a
+   * browser; the endpoint reads it from the authenticated session only. A
+   * trusted composition that has not begun a conversation yields null.
+   */
+  readonly conversationHandle: string | null;
   readonly actorId: string;
   readonly expiresAt: number;
   /** Server-only rate-limit key; never returned to a client. */
@@ -69,6 +76,7 @@ interface SessionRecord {
   readonly csrfTokenHash: string;
   readonly businessId: string;
   readonly conversationId: string;
+  readonly conversationHandle: string | null;
   readonly actorId: string;
   readonly createdAt: number;
   readonly expiresAt: number;
@@ -118,6 +126,7 @@ export class SessionAuthority {
       csrfTokenHash: digest(csrfToken),
       businessId: fields.businessId,
       conversationId: fields.conversationId,
+      conversationHandle: fields.conversationHandle,
       actorId: fields.actorId,
       createdAt: now,
       expiresAt,
@@ -225,23 +234,39 @@ export function parseSessionCookie(cookieHeader: string | null): string | null {
   return null;
 }
 
+const ISSUE_INPUT_KEYS = new Set([
+  "businessId",
+  "conversationId",
+  "actorId",
+  "conversationHandle",
+]);
+
 function parseIssueInput(input: unknown): {
   readonly businessId: string;
   readonly conversationId: string;
+  readonly conversationHandle: string | null;
   readonly actorId: string;
 } | null {
   if (!isPlainRecord(input)) return null;
   const keys = Object.keys(input);
-  if (keys.length !== 3
-    || !keys.includes("businessId")
+  if (keys.some((key) => !ISSUE_INPUT_KEYS.has(key))) return null;
+  if (!keys.includes("businessId")
     || !keys.includes("conversationId")
     || !keys.includes("actorId")) return null;
   if (!isIdentifier(input.businessId)
     || !isIdentifier(input.conversationId)
     || !isIdentifier(input.actorId)) return null;
+
+  let conversationHandle: string | null = null;
+  if (input.conversationHandle !== undefined) {
+    if (!isConversationHandle(input.conversationHandle)) return null;
+    conversationHandle = input.conversationHandle;
+  }
+
   return {
     businessId: input.businessId,
     conversationId: input.conversationId,
+    conversationHandle,
     actorId: input.actorId,
   };
 }
@@ -250,6 +275,7 @@ function principalFrom(record: SessionRecord): SessionPrincipal {
   return Object.freeze({
     businessId: record.businessId,
     conversationId: record.conversationId,
+    conversationHandle: record.conversationHandle,
     actorId: record.actorId,
     expiresAt: record.expiresAt,
     sessionKey: record.sessionKey,

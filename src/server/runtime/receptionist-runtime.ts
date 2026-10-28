@@ -43,8 +43,22 @@ export const DEFAULT_MAXIMUM_REQUEST_BYTES = 8_192;
 export const MINIMUM_REQUEST_BYTES = 512;
 export const MAXIMUM_REQUEST_BYTES = 65_536;
 
-export interface ReceptionistRuntime {
-  readonly version: typeof RECEPTIONIST_RUNTIME_VERSION;
+/**
+ * Truthful provider description for the composed runtime. B2.3.1 still runs
+ * only the offline simulator, so the endpoint must not imply a real call.
+ */
+export const OFFLINE_PROVIDER_DESCRIPTOR = Object.freeze({
+  identifier: "simulated-offline-model-transport/v1",
+  networkAccessed: false,
+});
+
+/**
+ * Everything a turn endpoint needs, and nothing that mints identity. The pilot
+ * runtime implements this without exposing arbitrary session issuance, so a
+ * route cannot accidentally acquire a second, untrusted issuance path.
+ */
+export interface ReceptionistTurnRuntime {
+  readonly version: string;
   readonly sessions: SessionAuthority;
   readonly limiter: FixedWindowRateLimiter;
   readonly conversations: ReceptionistConversationService;
@@ -52,7 +66,13 @@ export interface ReceptionistRuntime {
   readonly sessionRateLimit: RateLimitPolicy;
   readonly maximumRequestBytes: number;
   readonly maximumMessageLength: number;
+  readonly provider: { readonly identifier: string; readonly networkAccessed: boolean };
   readonly hasBusiness: (businessId: unknown) => boolean;
+}
+
+/** Local/demo composition. `issueSession` is trusted server composition only. */
+export interface ReceptionistRuntime extends ReceptionistTurnRuntime {
+  readonly version: typeof RECEPTIONIST_RUNTIME_VERSION;
   readonly issueSession: (businessId: unknown, actorId: unknown) => IssuedSession;
 }
 
@@ -120,10 +140,16 @@ export function createReceptionistRuntime(
       throw new Error("A server-validated actor is required.");
     }
     const conversationId = conversationIdFactory(businessId);
-    if (!conversations.begin(businessId, conversationId)) {
+    const conversationHandle = conversations.begin(businessId, conversationId);
+    if (!conversationHandle) {
       throw new Error("The receptionist conversation could not be created.");
     }
-    return sessions.issue({ businessId, conversationId, actorId });
+    return sessions.issue({
+      businessId,
+      conversationId,
+      conversationHandle,
+      actorId,
+    });
   };
 
   return Object.freeze({
@@ -135,6 +161,7 @@ export function createReceptionistRuntime(
     sessionRateLimit,
     maximumRequestBytes,
     maximumMessageLength,
+    provider: OFFLINE_PROVIDER_DESCRIPTOR,
     hasBusiness: (businessId: unknown) => conversations.hasBusiness(businessId),
     issueSession,
   });

@@ -10,7 +10,7 @@ import {
 } from "../security/request-rate-limiter";
 import {
   getReceptionistRuntime,
-  type ReceptionistRuntime,
+  type ReceptionistTurnRuntime,
 } from "../runtime/receptionist-runtime";
 
 if (typeof window !== "undefined") {
@@ -65,7 +65,7 @@ const ERROR_MESSAGES: Record<ErrorCode, string> = {
 
 export async function handleReceptionistTurn(
   request: Request,
-  runtime: ReceptionistRuntime = getReceptionistRuntime(),
+  runtime: ReceptionistTurnRuntime = getReceptionistRuntime(),
 ): Promise<Response> {
   try {
     if (request.method !== "POST") {
@@ -133,13 +133,17 @@ export async function handleReceptionistTurn(
     if (!runtime.hasBusiness(principal.businessId)) {
       return errorResponse(403, "forbidden");
     }
+    // The conversation is selected only by the opaque handle the server bound
+    // to this session. No client field can name a conversation or a business.
+    if (principal.conversationHandle === null) {
+      return errorResponse(403, "forbidden");
+    }
 
     const outcome = await runtime.conversations.submit({
-      businessId: principal.businessId,
-      conversationId: principal.conversationId,
+      handle: principal.conversationHandle,
       message: parsed.message,
     });
-    return turnResponse(outcome, principal);
+    return turnResponse(outcome, principal, runtime.provider);
   } catch {
     return errorResponse(500, "internal_error");
   }
@@ -181,6 +185,7 @@ function parseRequestBody(
 function turnResponse(
   outcome: ReceptionistTurnOutcome,
   principal: SessionPrincipal,
+  provider: { readonly identifier: string; readonly networkAccessed: boolean },
 ): Response {
   if (outcome.status === "provider-failure") {
     return errorResponse(502, "provider_failure");
@@ -218,8 +223,8 @@ function turnResponse(
         customerReleaseAuthorized: false,
         externalActionAuthorized: false,
       },
-      provider: "simulated",
-      networkAccessed: false,
+      provider: provider.identifier,
+      networkAccessed: provider.networkAccessed,
     },
   });
 }

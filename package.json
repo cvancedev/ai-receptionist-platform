@@ -37,6 +37,7 @@
     "verify:ai-demo-session": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/ai-demo-session.verify.js",
     "verify:http-model-transport": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/http-model-transport.verify.js",
     "verify:receptionist-endpoint": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/receptionist-endpoint.verify.js",
+    "verify:pilot-security": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/pilot-security.verify.js",
     "verify:end-to-end-failure-security-recovery": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/end-to-end-failure-security-recovery.verify.js",
     "verify:controlled-evaluation-policy": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/controlled-evaluation-policy.verify.js",
     "verify:runtime-configuration": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/runtime-configuration.verify.js",

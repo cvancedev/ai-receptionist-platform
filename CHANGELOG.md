@@ -4,6 +4,32 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Stage B2.4B.2C - Controlled Provider Activation
+
+- Added a single server-only activation gate that can place the OpenAI Responses
+  adapter behind the pilot runtime. It returns an `OfflineTransport`, so the
+  existing durable service keeps its reservation, settlement, receipts and tenant
+  isolation; there is no second execution pathway.
+- Three states: `disabled` (the default, and the only inferred value),
+  `offline-verification` (loopback endpoints only), and `live`, which is refused
+  unconditionally because it is gated on `LIVE_PROVIDER_AUTHORIZED = false as
+  const`. No configuration or request field can select a mode.
+- The production origin is refused as an offline-verification target, so that
+  mode cannot drift into a real call. Routable and private-network hosts are
+  refused rather than treated as approximately loopback.
+- Prepared `AI_RECEPTIONIST_OPENAI_API_KEY` support through one server-side
+  accessor that no runtime calls yet. A missing or malformed credential fails
+  activation at startup instead of per turn, only the variable name is exposed,
+  and the gate cannot log.
+- Added `verify:pilot-provider-activation`, which drives the real adapter against
+  a loopback fake through the pilot runtime: a grounded hours answer, strict
+  schema refusal, provider refusal, timeout, cancellation, missing usage settling
+  the estimate, replay without a second provider call, budget refusal before any
+  request, per-business usage attribution under concurrency, and no secret in any
+  artifact.
+- Updated the B2.4B.2B static check: the activation gate is now the one permitted
+  adapter integration point, instead of asserting no integration point exists.
+
 ### Stage B2.4B.2B - Provider Readiness and Usage Settlement
 
 - Added an approved provider configuration that names the production origin

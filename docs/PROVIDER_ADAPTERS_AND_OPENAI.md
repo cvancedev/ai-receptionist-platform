@@ -237,3 +237,67 @@ production.
    time-limited.
 4. Run one authorized acceptance call and reconcile the settled charge against the
    provider dashboard.
+
+## Stage B2.4B.2C — controlled activation
+
+`src/server/pilot/pilot-provider-activation.ts` is the single server-only path
+that can place the OpenAI Responses adapter behind the pilot runtime. It returns
+an `OfflineTransport`, which the existing durable service already wraps with
+reservation, settlement, turn receipts and tenant isolation, so there is no
+second execution pathway to keep in sync.
+
+### States
+
+| State | Reachable | Behavior |
+|---|---|---|
+| `disabled` (default) | yes | Offline simulator serves turns; no transport is supplied. |
+| `offline-verification` | yes, loopback only | The real adapter runs against a loopback endpoint. No request leaves the machine. |
+| `live` | **no** | Always refused. |
+
+`live` is gated on `LIVE_PROVIDER_AUTHORIZED = false as const`. Because that is a
+literal type, reaching live requires editing that constant in a future, separately
+reviewed stage. No environment variable, configuration file or request field can
+select it, and the suite asserts the constant is in source and that no request
+handler can choose a mode.
+
+`disabled` is the only value inferred from an omitted activation. Every other
+mode must be stated explicitly by server composition, because disabled is the
+state in which no provider can be reached at all.
+
+### Loopback enforcement
+
+`offline-verification` requires an endpoint that resolves to `127.0.0.1`,
+`localhost` or `::1`, with no path, query, fragment or userinfo. The production
+origin `https://api.openai.com` is refused as an offline-verification target, so
+this mode cannot drift into a production call. A routable or private-network host
+is refused rather than "nearly loopback".
+
+### Credentials
+
+The dedicated variable is `AI_RECEPTIONIST_OPENAI_API_KEY`. It is read only by
+`serverCredentialFromEnvironment()`, which no runtime calls yet. Composition
+passes a credential supplier; a missing or malformed value fails activation at
+startup rather than per turn, so no turn begins unbilled. A multi-line pasted
+value is refused. The activation result exposes only the variable *name* and
+states `credentialValueRetained: false`; the suite asserts the credential never
+appears in the activation result, the request body, a receipt, or a log, and that
+the module cannot log at all.
+
+### Budget behavior with a priced provider
+
+Activation supplies the priced provider identity and its resolved pricing, so the
+existing durable layer reserves before the adapter runs, settles the reported
+usage, and refuses an over-cap turn before any provider work. Verified for the
+real adapter: reservation precedes the request, a budget-refused turn makes zero
+requests, a duplicate `turnId` makes exactly one request, and concurrent turns in
+two businesses settle their own reported usage rather than exchanging it.
+
+### What is still required before the first real call
+
+1. Flip `LIVE_PROVIDER_AUTHORIZED` in a reviewed change, and add the live branch
+   that composes `serverCredentialFromEnvironment()` with the production origin.
+2. Set `AI_RECEPTIONIST_OPENAI_API_KEY` outside chat and add an independent
+   provider-side project spend limit; the application cap cannot constrain
+   OpenAI's billing.
+3. Re-verify the price, then run one authorized acceptance call and reconcile the
+   settled charge against the provider dashboard.

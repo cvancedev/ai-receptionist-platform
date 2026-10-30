@@ -16,13 +16,16 @@ import {
   DEFAULT_SESSION_RATE_LIMIT,
   MAXIMUM_REQUEST_BYTES,
   MINIMUM_REQUEST_BYTES,
-  OFFLINE_PROVIDER_DESCRIPTOR,
   type ReceptionistTurnRuntime,
 } from "../runtime/receptionist-runtime";
 import {
   FixedWindowRateLimiter,
   type RateLimitPolicy,
 } from "../security/request-rate-limiter";
+import {
+  createPilotProviderActivation,
+  describeProviderActivation,
+} from "./pilot-provider-activation";
 import {
   normalizePilotOrigin,
   resolvePilotRuntimeConfiguration,
@@ -65,6 +68,12 @@ export interface PilotReceptionistRuntime extends ReceptionistTurnRuntime {
   readonly pilotConfiguration: ValidatedPilotRuntimeConfiguration;
   readonly sessions: PersistentSessionAuthority;
   readonly conversations: DurableReceptionistConversationService;
+  /** Truthful, credential-free summary of the active provider mode. */
+  readonly providerActivation: {
+    readonly mode: string;
+    readonly networkAccessed: boolean;
+    readonly credentialConfigured: boolean;
+  };
   readonly issueCustomerSession: (input: unknown) => Promise<PilotSessionIssueResult>;
   readonly issueOperatorSession: (input: unknown) => Promise<PilotSessionIssueResult>;
 }
@@ -76,7 +85,8 @@ export type PilotRuntimeCreationRejection =
   | "BusinessNotConfigured"
   | "ConfiguredBusinessUnavailable"
   | "PersistenceUnavailable"
-  | "DatabaseNotAuthorized";
+  | "DatabaseNotAuthorized"
+  | "ProviderActivationRejected";
 
 export type PilotRuntimeCreationResult =
   | { readonly status: "created"; readonly runtime: PilotReceptionistRuntime }
@@ -93,6 +103,12 @@ export interface CreatePilotReceptionistRuntimeInput {
    */
   readonly databaseCredentialReference?: string;
   readonly transport?: OfflineTransport;
+  /**
+   * Server-composition provider activation. Omitted means `disabled`, so the
+   * offline simulator serves every turn exactly as before. A client request can
+   * never reach this: it is creation input, not turn input.
+   */
+  readonly providerActivation?: unknown;
   readonly now?: () => number;
   readonly conversationIdFactory?: (businessId: string) => string;
   readonly ipRateLimit?: RateLimitPolicy;
@@ -167,19 +183,30 @@ export function createPilotReceptionistRuntime(
     monthlyBudgetMicrosByBusiness[registration.businessId] = registration.monthlyBudgetMicros;
   }
 
+  // Resolve the provider activation before building any turn path. A rejected
+  // activation produces no runtime at all, so a misconfigured deployment fails
+  // closed instead of serving unguarded turns.
+  const activation = createPilotProviderActivation(input.providerActivation);
+  if (activation.status === "rejected") return rejected("ProviderActivationRejected");
+  const activated = activation.value;
+  const transport = activated.transport
+    ?? (typeof input.transport === "function" ? (input.transport as OfflineTransport) : undefined);
+
   let conversations: DurableReceptionistConversationService;
   try {
     conversations = new DurableReceptionistConversationService(
       businesses as ReceptionistBusiness[],
       {
         persistence,
-        transport: typeof input.transport === "function"
-          ? (input.transport as OfflineTransport)
-          : undefined,
+        transport,
         maximumConversations: boundedInteger(input.maximumConversations, 1, 2_000) ?? undefined,
         now,
         monthlyBudgetMicrosByBusiness,
-        usageProviderIdentifier: OFFLINE_PROVIDER_DESCRIPTOR.identifier,
+        // The activated provider names its own priceable identity, so a priced
+        // provider always reserves before it runs; the offline simulator keeps
+        // its zero-cost identity.
+        usageProviderIdentifier: activated.usageProviderIdentifier,
+        pricing: activated.pricing,
       },
     );
   } catch {
@@ -309,7 +336,8 @@ export function createPilotReceptionistRuntime(
     sessionRateLimit,
     maximumRequestBytes,
     maximumMessageLength,
-    provider: OFFLINE_PROVIDER_DESCRIPTOR,
+    provider: activated.provider,
+    providerActivation: describeProviderActivation(activation),
     hasBusiness: (businessId: unknown) => conversations.hasBusiness(businessId),
     issueCustomerSession,
     issueOperatorSession,

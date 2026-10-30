@@ -449,9 +449,10 @@ function verifyProviderNetworkRemainsDisabled(): void {
   assert(PILOT_APPROVED_PROVIDER_ORIGINS[0] === "https://api.openai.com",
     "the approved origin is the official API origin");
 
-  // No runtime path may reach the OpenAI adapter while network execution is
-  // disabled. This is a static check, so a future wiring change that forgets the
-  // guard fails here instead of in production.
+  // Exactly one runtime module may reach the OpenAI adapter: the controlled
+  // activation gate introduced in B2.4B.2C. It is the single integration point
+  // and it cannot authorize live execution, so a second, unguarded pathway
+  // fails this check instead of reaching production.
   const reachable = ["src/server", "src/prototype-ui", "app", "components"]
     .flatMap((directory) => sourceFilesUnder(directory))
     .filter((file) => !file.endsWith(".verify.ts"))
@@ -460,8 +461,9 @@ function verifyProviderNetworkRemainsDisabled(): void {
       return text.includes("openai-responses-adapter")
         || text.includes("createOpenAiResponsesTransport");
     });
-  assert(reachable.length === 0,
-    `no runtime module references the OpenAI adapter (${reachable.join(", ")})`);
+  assert(reachable.length === 1
+    && reachable[0] === "src/server/pilot/pilot-provider-activation.ts",
+    `the controlled activation gate is the only adapter integration point (${reachable.join(", ")})`);
 
   // The provider configuration names a variable; no key is present anywhere.
   const configurationSource = readFileSync(

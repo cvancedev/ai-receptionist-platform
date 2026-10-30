@@ -7,12 +7,18 @@ import {
   isConversationPersistenceScope,
   isTurnId,
   scopeKey,
-  utcMonthStart,
   type ConversationPersistenceScope,
   type ReceptionistPersistence,
   type StoredMessage,
   type TurnReceipt,
 } from "../persistence/receptionist-persistence";
+import {
+  actualCostMicros,
+  estimateTurnCost,
+  resolveProviderPricing,
+  utcBillingMonth,
+  type ProviderModelPricing,
+} from "../billing/provider-pricing";
 import {
   INITIAL_GREETING,
   MAXIMUM_MESSAGE_LENGTH,
@@ -29,6 +35,13 @@ if (typeof window !== "undefined") {
 
 const CONTROL_CHARACTERS = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/;
 const MAXIMUM_RETURNED_HISTORY = 100;
+/** A reservation older than this is treated as abandoned by a dead request. */
+export const STALE_RESERVATION_MS = 5 * 60 * 1_000;
+/** Outcomes that provably never reached the provider, so no charge is possible. */
+const CONFIRMED_NO_PROVIDER: ReadonlySet<string> = new Set([
+  "conversation-unavailable",
+  "invalid-message",
+]);
 
 export interface DurableReceptionistConversationServiceOptions {
   readonly persistence: ReceptionistPersistence;
@@ -38,6 +51,18 @@ export interface DurableReceptionistConversationServiceOptions {
   /** Per-business monthly cap in micro-units of USD. */
   readonly monthlyBudgetMicrosByBusiness?: Readonly<Record<string, number>>;
   readonly usageProviderIdentifier?: string;
+  /**
+   * Allowlisted pricing for the active provider. It is resolved from the usage
+   * provider identifier when omitted, and an unresolvable provider fails closed
+   * rather than running without a spending estimate.
+   */
+  readonly pricing?: ProviderModelPricing | null;
+  /**
+   * Reported provider usage for the turn just executed, when the provider
+   * returns it. Settlement uses the reported cost and the commit re-checks the
+   * monthly cap; the estimate is used only when no usage is reported.
+   */
+  readonly reportedUsage?: () => { readonly inputTokens: number; readonly outputTokens: number } | null;
 }
 
 type ResolvedSubmission =
@@ -76,6 +101,11 @@ export class DurableReceptionistConversationService {
   private readonly now: () => number;
   private readonly budgets: Readonly<Record<string, number>>;
   private readonly usageProviderIdentifier: string;
+  private readonly pricing: ProviderModelPricing | null;
+  private readonly reportedUsage: (() => {
+    readonly inputTokens: number;
+    readonly outputTokens: number;
+  } | null) | null;
 
   constructor(
     businesses: readonly ReceptionistBusiness[],
@@ -90,6 +120,10 @@ export class DurableReceptionistConversationService {
     this.usageProviderIdentifier = typeof options.usageProviderIdentifier === "string"
       ? options.usageProviderIdentifier
       : "simulated-offline-model-transport/v1";
+    this.pricing = options.pricing ?? resolveProviderPricing(this.usageProviderIdentifier, null);
+    this.reportedUsage = typeof options.reportedUsage === "function"
+      ? options.reportedUsage
+      : null;
     this.service = new ReceptionistConversationService(businesses, {
       transport: options.transport,
       maximumConversations: options.maximumConversations,
@@ -243,9 +277,51 @@ export class DurableReceptionistConversationService {
     }
     if (handle === null) return Object.freeze({ status: "internal-failure" });
 
+    const pricing = this.pricing;
+    const estimate = pricing ? estimateTurnCost(pricing) : null;
+    const billingMonth = utcBillingMonth(this.now());
+    if (!pricing || !estimate || billingMonth === null) {
+      // No allowlisted price means no defensible spending estimate. Fail closed
+      // rather than call a provider outside the budget guard.
+      this.service.discard(handle);
+      return Object.freeze({ status: "internal-failure" });
+    }
+
+    // Reserve before any provider work. The offline simulator prices at zero and
+    // reserves nothing; a priced provider must obtain headroom first.
+    let reservedByThisTurn = false;
+    if (estimate.estimatedCostMicros > 0) {
+      const reserved = await this.persistence.reserveUsage({
+        scope,
+        turnId,
+        billingMonth,
+        providerIdentifier: pricing.providerIdentifier,
+        modelIdentifier: pricing.modelIdentifier,
+        inputTokens: estimate.inputTokens,
+        outputTokens: estimate.outputTokens,
+        estimatedCostMicros: estimate.estimatedCostMicros,
+        monthlyBudgetMicros: this.budgetFor(scope.businessProfileId),
+      });
+      if (reserved === "budget-exhausted") {
+        this.service.discard(handle);
+        return Object.freeze({ status: "budget-exhausted" });
+      }
+      if (reserved !== "reserved" && reserved !== "already-reserved") {
+        this.service.discard(handle);
+        return Object.freeze({ status: "internal-failure" });
+      }
+      reservedByThisTurn = reserved === "reserved";
+    }
+
     const outcome = await this.service.submit({ handle, message });
     if (outcome.status !== "ok") {
       this.service.discard(handle);
+      // Only a turn that provably never reached the provider is released. A
+      // provider failure may still be billed, so its reservation is held for
+      // bounded reconciliation instead of being discarded.
+      if (reservedByThisTurn && CONFIRMED_NO_PROVIDER.has(outcome.status)) {
+        await this.persistence.releaseReservation(scope, turnId).catch(() => undefined);
+      }
       return outcome;
     }
 
@@ -263,6 +339,17 @@ export class DurableReceptionistConversationService {
         content: entry.content,
       }));
 
+    const reported = this.reportedUsage ? this.reportedUsage() : null;
+    const reportedCost = reported
+      ? actualCostMicros(pricing, reported.inputTokens, reported.outputTokens)
+      : null;
+    const inputTokens = reported?.inputTokens ?? estimate.inputTokens;
+    const outputTokens = reported?.outputTokens ?? estimate.outputTokens;
+    // When the provider reports usage, settle that cost. An amount above the
+    // reservation is recorded honestly; the commit re-checks the monthly cap and
+    // spend already incurred cannot be recovered.
+    const costMicros = reportedCost ?? estimate.estimatedCostMicros;
+
     const committed = await this.persistence.commitTurn({
       scope,
       turnId,
@@ -272,14 +359,14 @@ export class DurableReceptionistConversationService {
       readiness: outcome.conversation.readiness,
       durationMs: Math.min(600_000, Math.max(0, Date.now() - startedAt)),
       usage: {
-        providerIdentifier: this.usageProviderIdentifier,
-        modelIdentifier: null,
-        inputTokens: 0,
-        outputTokens: 0,
-        costMicros: 0,
+        providerIdentifier: pricing.providerIdentifier,
+        modelIdentifier: pricing.modelIdentifier,
+        inputTokens,
+        outputTokens,
+        costMicros,
       },
       monthlyBudgetMicros: this.budgetFor(scope.businessProfileId),
-      monthStartMs: utcMonthStart(this.now()),
+      billingMonth,
       expectedRevision: conversation.state.revision,
       expectedTurnNumber: conversation.turnNumber,
       state: final.state,
@@ -334,6 +421,20 @@ export class DurableReceptionistConversationService {
       }),
       replayed,
     });
+  }
+
+  /**
+   * Release reservations abandoned by interrupted requests. Safe to call at
+   * startup and periodically; it never removes a settled charge.
+   */
+  async reconcileReservations(
+    options: { readonly olderThanMs?: number } = {},
+  ): Promise<number> {
+    const result = await this.persistence.reconcileStaleReservations({
+      olderThanMs: options.olderThanMs ?? STALE_RESERVATION_MS,
+      now: this.now(),
+    });
+    return result?.released ?? 0;
   }
 
   private budgetFor(businessProfileId: string): number {

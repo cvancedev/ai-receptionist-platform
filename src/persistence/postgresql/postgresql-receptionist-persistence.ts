@@ -3,6 +3,7 @@ import {
   MAXIMUM_STORED_MESSAGES,
   isConversationPersistenceScope,
   isPersistenceDigest,
+  isReserveUsageInput,
   isStoredMessage,
   isTurnId,
   isTurnUsage,
@@ -18,10 +19,16 @@ import {
   type MonthlyUsageSummary,
   type PersistedSessionRecord,
   type ReceptionistPersistence,
+  type ReconcileReservationsInput,
+  type ReconcileReservationsResult,
+  type ReleaseReservationResult,
+  type ReserveUsageInput,
+  type ReserveUsageResult,
   type ScopeLookupResult,
   type StoredMessage,
   type TurnReceipt,
 } from "../../server/persistence/receptionist-persistence";
+import { isBillingMonth } from "../../server/billing/provider-pricing";
 import { decodeConversationState } from "../../validation/conversation-state-codec";
 import { quoteIdentifier, validatedSchema } from "./migration-runner";
 
@@ -294,7 +301,7 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
     if (!boundedNonNegative(input.monthlyBudgetMicros, Number.MAX_SAFE_INTEGER)) {
       return "failure";
     }
-    if (!boundedNonNegative(input.monthStartMs, Number.MAX_SAFE_INTEGER)) return "failure";
+    if (!isBillingMonth(input.billingMonth)) return "failure";
     if (!boundedText(input.outcomeCode, 64)
       || !boundedText(input.stage, 64)
       || !boundedText(input.readiness, 64)) return "failure";
@@ -458,11 +465,11 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
       const settled = await client.query(
         `INSERT INTO ${this.usageTable} (
           business_profile_id, business_profile_version, conversation_id,
-          turn_id, state, provider_identifier, model_identifier,
+          turn_id, billing_month, state, provider_identifier, model_identifier,
           input_tokens, output_tokens, reserved_cost_micros, cost_micros,
           currency, settled_at
         ) VALUES (
-          $1, $2, $3, $4, 'settled', $5, $6, $7, $8, NULL, $9, 'USD',
+          $1, $2, $3, $4, $10, 'settled', $5, $6, $7, $8, NULL, $9, 'USD',
           CURRENT_TIMESTAMP
         )
         ON CONFLICT (
@@ -487,6 +494,7 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
           input.usage.inputTokens,
           input.usage.outputTokens,
           input.usage.costMicros,
+          input.billingMonth,
         ],
       );
       if (settled.rowCount !== 1) {
@@ -585,10 +593,10 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
 
   async monthlyUsageMicros(
     businessProfileId: string,
-    monthStartMs: number,
+    billingMonth: string | null,
   ): Promise<MonthlyUsageSummary | null> {
     if (typeof businessProfileId !== "string" || businessProfileId.length === 0) return null;
-    if (!boundedNonNegative(monthStartMs, Number.MAX_SAFE_INTEGER)) return null;
+    if (billingMonth !== null && !isBillingMonth(billingMonth)) return null;
     try {
       const result = await this.pool.query<{
         readonly settled: string;
@@ -601,14 +609,127 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
             AS reserved
         FROM ${this.usageTable}
         WHERE business_profile_id = $1
-          AND created_at >= to_timestamp($2 / 1000.0)`,
-        [businessProfileId, monthStartMs],
+          AND ($2::text IS NULL OR billing_month = $2::text)`,
+        [businessProfileId, billingMonth],
       );
       const row = result.rows[0];
       const settled = Number(row?.settled ?? "0");
       const reserved = Number(row?.reserved ?? "0");
       if (!Number.isSafeInteger(settled) || !Number.isSafeInteger(reserved)) return null;
       return Object.freeze({ settledMicros: settled, reservedMicros: reserved });
+    } catch {
+      return null;
+    }
+  }
+
+  async reserveUsage(input: ReserveUsageInput): Promise<ReserveUsageResult> {
+    if (!isReserveUsageInput(input)) return "invalid";
+    let client: PoolClient | null = null;
+    try {
+      client = await this.pool.connect();
+      await client.query("BEGIN");
+      // One budget lock per business serializes reservations and settlements,
+      // so concurrent turns cannot each observe the same remaining headroom.
+      await client.query(
+        "SELECT pg_advisory_xact_lock(hashtextextended($1, 0))",
+        [budgetLockKey(input.scope.businessProfileId)],
+      );
+
+      const existing = await client.query<{ readonly state: string }>(
+        `SELECT state FROM ${this.usageTable}
+        WHERE business_profile_id = $1
+          AND business_profile_version = $2
+          AND conversation_id = $3
+          AND turn_id = $4`,
+        [
+          input.scope.businessProfileId,
+          input.scope.businessProfileVersion,
+          input.scope.conversationId,
+          input.turnId,
+        ],
+      );
+      if (existing.rows.length > 0) {
+        await rollbackSafely(client);
+        return "already-reserved";
+      }
+
+      const spent = await this.budgetTotal(client, input);
+      if (spent === null) {
+        await rollbackSafely(client);
+        return "failure";
+      }
+      if (spent + input.estimatedCostMicros > input.monthlyBudgetMicros) {
+        await rollbackSafely(client);
+        return "budget-exhausted";
+      }
+
+      await client.query(
+        `INSERT INTO ${this.usageTable} (
+          business_profile_id, business_profile_version, conversation_id,
+          turn_id, billing_month, state, provider_identifier, model_identifier,
+          input_tokens, output_tokens, reserved_cost_micros, cost_micros,
+          currency, settled_at
+        ) VALUES (
+          $1, $2, $3, $4, $5, 'reserved', $6, $7, $8, $9, $10, NULL, 'USD', NULL
+        )`,
+        [
+          input.scope.businessProfileId,
+          input.scope.businessProfileVersion,
+          input.scope.conversationId,
+          input.turnId,
+          input.billingMonth,
+          input.providerIdentifier,
+          input.modelIdentifier,
+          input.inputTokens,
+          input.outputTokens,
+          input.estimatedCostMicros,
+        ],
+      );
+      await client.query("COMMIT");
+      return "reserved";
+    } catch (error) {
+      await rollbackSafely(client);
+      return isUniqueViolation(error) ? "already-reserved" : "failure";
+    } finally {
+      client?.release();
+    }
+  }
+
+  async releaseReservation(
+    scope: ConversationPersistenceScope,
+    turnId: string,
+  ): Promise<ReleaseReservationResult> {
+    if (!isConversationPersistenceScope(scope) || !isTurnId(turnId)) return "not-found";
+    try {
+      // Only a still-reserved row can be released. A settled row is a charge.
+      const result = await this.pool.query(
+        `DELETE FROM ${this.usageTable}
+        WHERE business_profile_id = $1
+          AND business_profile_version = $2
+          AND conversation_id = $3
+          AND turn_id = $4
+          AND state = 'reserved'`,
+        [scope.businessProfileId, scope.businessProfileVersion, scope.conversationId, turnId],
+      );
+      return result.rowCount === 1 ? "released" : "not-found";
+    } catch {
+      return "failure";
+    }
+  }
+
+  async reconcileStaleReservations(
+    input: ReconcileReservationsInput,
+  ): Promise<ReconcileReservationsResult | null> {
+    if (!boundedNonNegative(input?.olderThanMs, 24 * 60 * 60 * 1_000)) return null;
+    if (!boundedNonNegative(input.now, Number.MAX_SAFE_INTEGER)) return null;
+    try {
+      const result = await this.pool.query(
+        `DELETE FROM ${this.usageTable}
+        WHERE state = 'reserved'
+          AND created_at <= to_timestamp($1 / 1000.0)`,
+        [input.now - input.olderThanMs],
+      );
+      return Object.freeze({ released: result.rowCount ?? 0 });
     } catch {
       return null;
     }
@@ -749,13 +870,28 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
     client: PoolClient,
     input: CommitTurnInput,
   ): Promise<number | null> {
+    return this.budgetTotal(client, {
+      scope: input.scope,
+      turnId: input.turnId,
+      billingMonth: input.billingMonth,
+    });
+  }
+
+  private async budgetTotal(
+    client: PoolClient,
+    input: {
+      readonly scope: ConversationPersistenceScope;
+      readonly turnId: string;
+      readonly billingMonth: string;
+    },
+  ): Promise<number | null> {
     const result = await client.query<{ readonly total: string }>(
       `SELECT COALESCE(SUM(
           CASE WHEN state = 'settled' THEN cost_micros ELSE reserved_cost_micros END
         ), 0)::text AS total
       FROM ${this.usageTable}
       WHERE business_profile_id = $1
-        AND created_at >= to_timestamp($2 / 1000.0)
+        AND billing_month = $2
         AND NOT (
           business_profile_version = $3
           AND conversation_id = $4
@@ -763,7 +899,7 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
         )`,
       [
         input.scope.businessProfileId,
-        input.monthStartMs,
+        input.billingMonth,
         input.scope.businessProfileVersion,
         input.scope.conversationId,
         input.turnId,

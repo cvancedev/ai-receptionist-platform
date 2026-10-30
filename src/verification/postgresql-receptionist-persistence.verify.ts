@@ -45,7 +45,7 @@ async function run(): Promise<void> {
     const history = await admin.query(
       `SELECT version FROM "${schema}".app_schema_migrations ORDER BY version`,
     );
-    assert(history.rows.map((row) => row.version).join(",") === "1,2,3,4,5,6,7,8,9",
+    assert(history.rows.map((row) => row.version).join(",") === "1,2,3,4,5,6,7,8,9,10",
       "the live schema history includes migrations 008 and 009");
 
     await verifyDurableTurnAndRestart(connectionString, schema);
@@ -54,6 +54,7 @@ async function run(): Promise<void> {
     await verifySessionExpirationAndRevocation(connectionString, schema);
     await verifyIsolationAndConflicts(connectionString, schema);
     await verifyConcurrentCommitAtomicity(connectionString, schema);
+    await verifyBudgetReservationLifecycle(connectionString, schema);
     await verifyClosedStoreFailuresClosed(connectionString, schema);
 
     console.log(
@@ -203,8 +204,8 @@ async function verifyTurnReceiptsAndUsage(
     await admin.query(
       `INSERT INTO "${schema}".receptionist_usage_events (
         business_profile_id, business_profile_version, conversation_id,
-        turn_id, state, reserved_cost_micros, currency
-      ) VALUES ($1, $2, $3, $4, 'reserved', 3, 'USD')`,
+        turn_id, billing_month, state, reserved_cost_micros, currency
+      ) VALUES ($1, $2, $3, $4, '1970-01', 'reserved', 3, 'USD')`,
       [
         BUSINESS_A,
         fictionalBusinessProfile.version,
@@ -268,7 +269,7 @@ async function verifyTurnReceiptsAndUsage(
           costMicros: 5,
         },
         monthlyBudgetMicros: 0,
-        monthStartMs: 0,
+        billingMonth: "1970-01",
         expectedRevision: base.state.revision,
         expectedTurnNumber: base.turnNumber,
         state: base.state,
@@ -424,7 +425,7 @@ async function verifyIsolationAndConflicts(
         costMicros: 0,
       },
       monthlyBudgetMicros: 10_000_000,
-      monthStartMs: 0,
+      billingMonth: "1970-01",
       expectedRevision: base.state.revision,
       expectedTurnNumber: base.turnNumber,
       state: base.state,
@@ -481,7 +482,7 @@ async function verifyConcurrentCommitAtomicity(
         costMicros: 0,
       },
       monthlyBudgetMicros: 10_000_000,
-      monthStartMs: 0,
+      billingMonth: "1970-01",
       expectedRevision: base.state.revision,
       expectedTurnNumber: base.turnNumber,
       state: base.state,
@@ -512,6 +513,122 @@ async function verifyConcurrentCommitAtomicity(
       after.conversation.messages.filter((message) => message.content === "concurrent update").length === 1,
       "only the winning turn's message is durable",
     );
+  } finally {
+    await persistence.close();
+  }
+}
+
+async function verifyBudgetReservationLifecycle(
+  connectionString: string,
+  schema: string,
+): Promise<void> {
+  const persistence = new PostgresqlReceptionistPersistence({ connectionString, schema });
+  try {
+    const runtime = buildRuntime(persistence, () => 130_000_000);
+    const session = await issueCustomer(runtime, WIDGET_A);
+    const scope = {
+      businessProfileId: BUSINESS_A,
+      businessProfileVersion: fictionalBusinessProfile.version,
+      conversationId: session.principal.conversationId,
+    };
+    const billingMonth = "2026-04";
+    const base = {
+      scope,
+      billingMonth,
+      providerIdentifier: "fake-local-provider/v1",
+      modelIdentifier: "fake-local-model",
+      inputTokens: 100,
+      outputTokens: 20,
+      estimatedCostMicros: 4_000,
+      monthlyBudgetMicros: 10_000,
+    };
+
+    assert(await persistence.reserveUsage({ ...base, turnId: "turn-pg-reserve-1" }) === "reserved",
+      "a reservation is created under the budget lock");
+    assert(await persistence.reserveUsage({ ...base, turnId: "turn-pg-reserve-1" }) === "already-reserved",
+      "a duplicate identifier reuses its existing reservation");
+    assert(await persistence.reserveUsage({ ...base, turnId: "turn-pg-reserve-2" }) === "reserved",
+      "a second reservation inside the cap is granted");
+    assert(await persistence.reserveUsage({ ...base, turnId: "turn-pg-reserve-3" }) === "budget-exhausted",
+      "a reservation beyond the cap is refused before any provider work");
+
+    const reserved = await persistence.monthlyUsageMicros(BUSINESS_A, billingMonth);
+    assert(reserved !== null && reserved.reservedMicros === 8_000 && reserved.settledMicros === 0,
+      "reservations are counted against their billing month");
+    const otherMonth = await persistence.monthlyUsageMicros(BUSINESS_A, "2026-05");
+    assert(otherMonth !== null && otherMonth.reservedMicros === 0,
+      "a different billing month keeps its own headroom");
+
+    const snapshot = await persistence.loadConversation(scope);
+    assert(snapshot.status === "found", "the reserved conversation is readable");
+    if (snapshot.status !== "found") return;
+    const conversation = snapshot.conversation;
+    const settled = await persistence.commitTurn({
+      scope,
+      turnId: "turn-pg-reserve-1",
+      requestDigest: randomBytes(32).toString("hex"),
+      outcomeCode: "accepted",
+      stage: conversation.state.stage,
+      readiness: "not-ready",
+      durationMs: 2,
+      usage: {
+        providerIdentifier: "fake-local-provider/v1",
+        modelIdentifier: "fake-local-model",
+        inputTokens: 100,
+        outputTokens: 20,
+        costMicros: 4_000,
+      },
+      monthlyBudgetMicros: 10_000,
+      billingMonth,
+      expectedRevision: conversation.state.revision,
+      expectedTurnNumber: conversation.turnNumber,
+      state: conversation.state,
+      pendingFieldId: conversation.pendingFieldId,
+      handoffAvailable: conversation.handoffAvailable,
+      turnNumber: conversation.turnNumber + 1,
+      nextMessageId: conversation.nextMessageId + 1,
+      messages: [{
+        messageId: conversation.nextMessageId,
+        role: "customer",
+        content: "reservation settle probe",
+      }],
+    });
+    assert(settled === "committed", "the committed turn settles its reservation");
+    const afterSettlement = await persistence.monthlyUsageMicros(BUSINESS_A, billingMonth);
+    assert(afterSettlement !== null
+      && afterSettlement.settledMicros === 4_000
+      && afterSettlement.reservedMicros === 4_000,
+      "settlement converts exactly one reservation into a charge");
+
+    const admin = new Pool({ connectionString });
+    try {
+      const rows = await admin.query(
+        `SELECT business_profile_id, business_profile_version, conversation_id,
+          turn_id, provider_identifier, model_identifier, state, billing_month
+        FROM "${schema}".receptionist_usage_events`,
+      );
+      assert(!JSON.stringify(rows.rows).includes("reservation settle probe"),
+        "usage rows store no conversation text");
+      assert(rows.rows.every((row) => typeof row.billing_month === "string"),
+        "every usage row carries an explicit billing month");
+    } finally {
+      await admin.end();
+    }
+
+    assert(await persistence.releaseReservation(scope, "turn-pg-reserve-2") === "released",
+      "a still-reserved row can be released");
+    const afterRelease = await persistence.monthlyUsageMicros(BUSINESS_A, billingMonth);
+    assert(afterRelease !== null && afterRelease.reservedMicros === 0,
+      "release restores the reserved headroom");
+    assert(await persistence.releaseReservation(scope, "turn-pg-reserve-1") === "not-found",
+      "a settled charge is never released");
+
+    const reconciled = await persistence.reconcileStaleReservations({
+      olderThanMs: 0,
+      now: Date.now() + 1,
+    });
+    assert(reconciled !== null && reconciled.released === 0,
+      "reconciliation leaves no stale reservation behind");
   } finally {
     await persistence.close();
   }

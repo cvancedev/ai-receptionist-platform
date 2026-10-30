@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Stage B2.4A - Provider Foundation and Spending Protection
+
+- Added pre-call spending reservations with atomic settlement in the turn
+  transaction: a turn reserves its worst-case cost under a per-business advisory
+  lock, settles in the commit, and is refused before provider work when the cap
+  would be exceeded.
+- Added migration 010 with an explicit UTC `billing_month` on usage rows so
+  reservations and settlements share one accounting month.
+- Added an allowlisted provider price table with integer micro-unit arithmetic
+  and a conservative 25% margin, plus fail-closed behavior for an unpriceable
+  provider. Prices are provisional and must be re-verified before activation.
+- Added release for confirmed failures and bounded reconciliation for
+  reservations abandoned by interrupted requests. An unknown provider outcome
+  keeps its reservation rather than understating spend.
+- Added a deterministic local fake provider and `verify:pilot-budget-reservations`
+  coverage. Provider execution, telephony, and paid services remain disabled;
+  the application cap is explicitly not a provider-side spending limit.
+
 ### Stage B2.3.3 - Pilot Turn Durability and Usage Accounting
 
 - Added client-generated, business- and conversation-scoped turn identifiers.

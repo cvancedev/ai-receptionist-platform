@@ -116,6 +116,10 @@ async function finishCreation(
       await persistence.close().catch(() => undefined);
       return rejected("SchemaOutdated");
     }
+    // Release reservations abandoned by a process that died mid-turn. A
+    // failure here must not prevent the runtime from serving; it is retried on
+    // the next composition.
+    await result.runtime.conversations.reconcileReservations().catch(() => 0);
     return Object.freeze({ status: "created", runtime: result.runtime });
   }
   if (persistence) await persistence.close().catch(() => undefined);
@@ -138,6 +142,9 @@ const unusablePersistence: ReceptionistPersistence = Object.freeze({
   commitTurn: async () => "failure" as const,
   loadTurnReceipt: async () => ({ status: "failure" } as const),
   monthlyUsageMicros: async () => null,
+  reserveUsage: async () => "failure" as const,
+  releaseReservation: async () => "failure" as const,
+  reconcileStaleReservations: async () => null,
   readSchemaVersion: async () => null,
   createSession: async () => "failure" as const,
   findSession: async () => ({ status: "failure" } as const),

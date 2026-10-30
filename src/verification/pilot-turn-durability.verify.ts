@@ -116,7 +116,7 @@ async function verifyIdenticalRetryReplays(): Promise<void> {
   const receipt = await harness.persistence.loadTurnReceipt(harness.scope, turnId);
   assert(receipt.status === "found" && receipt.receipt.turnNumber === 1,
     "the receipt is durable and business scoped");
-  assert(await harness.persistence.monthlyUsageMicros(BUSINESS_A, 0) !== null,
+  assert(await harness.persistence.monthlyUsageMicros(BUSINESS_A, null) !== null,
     "usage accounting is available for the business");
 }
 
@@ -247,7 +247,7 @@ async function verifyTransactionRollback(): Promise<void> {
   const receipt = await inner.loadTurnReceipt(scope, turnId);
   assert(receipt.status === "not-found",
     "a failed transaction leaves no receipt");
-  const usage = await inner.monthlyUsageMicros(BUSINESS_A, 0);
+  const usage = await inner.monthlyUsageMicros(BUSINESS_A, null);
   assert(usage !== null && usage.settledMicros === 0 && usage.reservedMicros === 0,
     "a failed transaction leaves no usage charge");
   const loaded = await inner.loadConversation(scope);
@@ -318,7 +318,7 @@ async function verifyAtomicUsageAndBudget(): Promise<void> {
   assert(await persistence.commitTurn({ ...input, requestDigest: input.requestDigest }) === "replayed",
     "retrying the cost-bearing turn replays instead of charging again");
 
-  const usage = await persistence.monthlyUsageMicros(BUSINESS_A, 0);
+  const usage = await persistence.monthlyUsageMicros(BUSINESS_A, null);
   assert(usage !== null && usage.settledMicros === 5,
     "usage is recorded exactly once for the committed turn");
 
@@ -334,7 +334,7 @@ async function verifyAtomicUsageAndBudget(): Promise<void> {
   assert(afterExhaustion.status === "found"
     && afterExhaustion.conversation.turnNumber === afterFirst.conversation.turnNumber,
   "a budget refusal writes no state change");
-  const usageAfter = await persistence.monthlyUsageMicros(BUSINESS_A, 0);
+  const usageAfter = await persistence.monthlyUsageMicros(BUSINESS_A, null);
   assert(usageAfter !== null && usageAfter.settledMicros === 5,
     "a budget refusal writes no usage charge");
 }
@@ -547,7 +547,7 @@ function commitInput(
       costMicros,
     },
     monthlyBudgetMicros: budgetMicros,
-    monthStartMs: 0,
+    billingMonth: "1970-01",
     expectedRevision: conversation.state.revision,
     expectedTurnNumber: conversation.turnNumber,
     state: conversation.state,

@@ -84,8 +84,8 @@ async function run(): Promise<void> {
 
 async function verifyMigrationRegistration(): Promise<void> {
   const last = CERTIFIED_POSTGRESQL_MIGRATIONS.at(-1);
-  assert(last?.version === 9 && last.name === "receptionist_turn_receipts",
-    "migration 009 is registered in the certified manifest");
+  assert(last?.version === 10 && last.name === "receptionist_billing_month",
+    "migration 010 is registered in the certified manifest");
   assert(CERTIFIED_POSTGRESQL_MIGRATIONS.slice(0, 7).every((migration, index) =>
     migration.version === index + 1),
   "the certified 001-007 prefix is unchanged");
@@ -484,7 +484,7 @@ function commitFrom(
       costMicros: 0,
     },
     monthlyBudgetMicros: DEFAULT_MONTHLY_BUDGET_MICROS,
-    monthStartMs: 0,
+    billingMonth: "1970-01",
     expectedRevision: conversation.state.revision,
     expectedTurnNumber: conversation.turnNumber,
     state: conversation.state,

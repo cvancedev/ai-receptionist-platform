@@ -41,6 +41,7 @@
     "verify:pilot-security": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/pilot-security.verify.js",
     "verify:pilot-http-integration": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/pilot-http-integration.verify.js",
     "verify:pilot-turn-durability": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/pilot-turn-durability.verify.js",
+    "verify:pilot-budget-reservations": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/pilot-budget-reservations.verify.js",
     "verify:receptionist-persistence": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/receptionist-persistence.verify.js",
     "verify:postgresql-receptionist-persistence": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/postgresql-receptionist-persistence.verify.js",
     "verify:end-to-end-failure-security-recovery": "tsc -p tsconfig.prototype.json && node .prototype-build/verification/end-to-end-failure-security-recovery.verify.js",

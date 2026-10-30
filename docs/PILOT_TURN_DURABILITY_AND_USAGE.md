@@ -115,7 +115,7 @@ bound, not a guaranteed provider spending limit.
 ## Schema readiness and migration procedure
 
 Pilot composition reads the schema's highest applied migration. Missing,
-unreadable, or older-than-9 schemas produce `pilot-unavailable`; the runtime is
+unreadable, or older-than-10 schemas produce `pilot-unavailable`; the runtime is
 not created and is never migrated during a request.
 
 Apply migrations explicitly, with a least-privileged migration credential:

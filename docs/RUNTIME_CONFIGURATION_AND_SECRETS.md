@@ -138,7 +138,7 @@ configuration, a missing credential, an unavailable business profile, or a
 failed durable store produces `pilot-unavailable`; it never falls back to the
 demonstration.
 
-The pilot database must already have the ordered migrations (001–009) applied to
+The pilot database must already have the ordered migrations (001–010) applied to
 its target schema before the runtime serves traffic. Apply them explicitly with
 `npm run migrate:pilot` (see
 [Pilot Turn Durability and Usage](PILOT_TURN_DURABILITY_AND_USAGE.md)). The

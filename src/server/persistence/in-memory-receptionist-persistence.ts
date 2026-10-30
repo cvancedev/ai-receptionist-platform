@@ -5,6 +5,7 @@ import {
   RECEPTIONIST_SCHEMA_VERSION,
   isConversationPersistenceScope,
   isPersistenceDigest,
+  isReserveUsageInput,
   isStoredMessage,
   isTurnId,
   isTurnUsage,
@@ -21,10 +22,16 @@ import {
   type MonthlyUsageSummary,
   type PersistedSessionRecord,
   type ReceptionistPersistence,
+  type ReconcileReservationsInput,
+  type ReconcileReservationsResult,
+  type ReleaseReservationResult,
+  type ReserveUsageInput,
+  type ReserveUsageResult,
   type ScopeLookupResult,
   type StoredMessage,
   type TurnReceipt,
 } from "./receptionist-persistence";
+import { isBillingMonth } from "../billing/provider-pricing";
 
 if (typeof window !== "undefined") {
   throw new Error("Receptionist persistence is server-only.");
@@ -63,10 +70,13 @@ interface StoredTurnReceipt {
 
 interface UsageRecord {
   readonly businessProfileId: string;
+  /** UTC month shared by the reservation and its settlement. */
+  readonly billingMonth: string;
   readonly state: "reserved" | "settled";
   readonly reservedMicros: number;
   readonly costMicros: number;
   readonly createdAt: number;
+  readonly settledAt: number | null;
 }
 
 /**
@@ -160,7 +170,7 @@ export class InMemoryReceptionistPersistence implements ReceptionistPersistence 
     if (!isBoundedInteger(input.monthlyBudgetMicros, 0, Number.MAX_SAFE_INTEGER)) {
       return "failure";
     }
-    if (!isBoundedInteger(input.monthStartMs, 0, Number.MAX_SAFE_INTEGER)) return "failure";
+    if (!isBillingMonth(input.billingMonth)) return "failure";
     if (typeof input.outcomeCode !== "string"
       || input.outcomeCode.length === 0
       || input.outcomeCode.length > 64) return "failure";
@@ -204,7 +214,7 @@ export class InMemoryReceptionistPersistence implements ReceptionistPersistence 
       existingIds.add(message.messageId);
     }
 
-    const spent = this.usageTotal(input.scope.businessProfileId, input.monthStartMs, receiptKey);
+    const spent = this.usageTotal(input.scope.businessProfileId, input.billingMonth, receiptKey);
     if (spent + input.usage.costMicros > input.monthlyBudgetMicros) {
       return "budget-exhausted";
     }
@@ -246,10 +256,12 @@ export class InMemoryReceptionistPersistence implements ReceptionistPersistence 
     }));
     this.usage.set(receiptKey, Object.freeze({
       businessProfileId: input.scope.businessProfileId,
+      billingMonth: input.billingMonth,
       state: "settled" as const,
       reservedMicros: 0,
       costMicros: input.usage.costMicros,
       createdAt,
+      settledAt: createdAt,
     }));
     return "committed";
   }
@@ -272,20 +284,81 @@ export class InMemoryReceptionistPersistence implements ReceptionistPersistence 
 
   async monthlyUsageMicros(
     businessProfileId: string,
-    monthStartMs: number,
+    billingMonth: string | null,
   ): Promise<MonthlyUsageSummary | null> {
     if (this.closed) return null;
     if (typeof businessProfileId !== "string" || businessProfileId.length === 0) return null;
-    if (!isBoundedInteger(monthStartMs, 0, Number.MAX_SAFE_INTEGER)) return null;
+    if (billingMonth !== null && !isBillingMonth(billingMonth)) return null;
     let settledMicros = 0;
     let reservedMicros = 0;
     for (const usage of this.usage.values()) {
       if (usage.businessProfileId !== businessProfileId) continue;
-      if (usage.createdAt < monthStartMs) continue;
+      if (billingMonth !== null && usage.billingMonth !== billingMonth) continue;
       if (usage.state === "settled") settledMicros += usage.costMicros;
       else reservedMicros += usage.reservedMicros;
     }
     return Object.freeze({ settledMicros, reservedMicros });
+  }
+
+  async reserveUsage(input: ReserveUsageInput): Promise<ReserveUsageResult> {
+    if (this.closed) return "failure";
+    if (!isReserveUsageInput(input)) return "invalid";
+    const key = `${scopeKey(input.scope)}|${input.turnId}`;
+    // A repeated identifier never reserves a second time; the turn commit
+    // settles the single row that was reserved before provider execution.
+    if (this.usage.has(key)) return "already-reserved";
+
+    const spent = this.usageTotal(
+      input.scope.businessProfileId,
+      input.billingMonth,
+      key,
+    );
+    if (spent + input.estimatedCostMicros > input.monthlyBudgetMicros) {
+      return "budget-exhausted";
+    }
+
+    const createdAt = Date.now();
+    this.usage.set(key, Object.freeze({
+      businessProfileId: input.scope.businessProfileId,
+      billingMonth: input.billingMonth,
+      state: "reserved" as const,
+      reservedMicros: input.estimatedCostMicros,
+      costMicros: 0,
+      createdAt,
+      settledAt: null,
+    }));
+    return "reserved";
+  }
+
+  async releaseReservation(
+    scope: ConversationPersistenceScope,
+    turnId: string,
+  ): Promise<ReleaseReservationResult> {
+    if (this.closed) return "failure";
+    if (!isConversationPersistenceScope(scope) || !isTurnId(turnId)) return "not-found";
+    const key = `${scopeKey(scope)}|${turnId}`;
+    const usage = this.usage.get(key);
+    // A settled row is a real charge and is never released.
+    if (!usage || usage.state !== "reserved") return "not-found";
+    this.usage.delete(key);
+    return "released";
+  }
+
+  async reconcileStaleReservations(
+    input: ReconcileReservationsInput,
+  ): Promise<ReconcileReservationsResult | null> {
+    if (this.closed) return null;
+    if (!isBoundedInteger(input?.olderThanMs, 0, 24 * 60 * 60 * 1_000)) return null;
+    if (!isBoundedInteger(input.now, 0, Number.MAX_SAFE_INTEGER)) return null;
+    const cutoff = input.now - input.olderThanMs;
+    let released = 0;
+    for (const [key, usage] of this.usage) {
+      if (usage.state !== "reserved") continue;
+      if (usage.createdAt > cutoff) continue;
+      this.usage.delete(key);
+      released += 1;
+    }
+    return Object.freeze({ released });
   }
 
   async readSchemaVersion(): Promise<number | null> {
@@ -326,14 +399,14 @@ export class InMemoryReceptionistPersistence implements ReceptionistPersistence 
 
   private usageTotal(
     businessProfileId: string,
-    monthStartMs: number,
+    billingMonth: string,
     excludedKey: string,
   ): number {
     let total = 0;
     for (const [key, usage] of this.usage) {
       if (key === excludedKey) continue;
       if (usage.businessProfileId !== businessProfileId) continue;
-      if (usage.createdAt < monthStartMs) continue;
+      if (usage.billingMonth !== billingMonth) continue;
       total += usage.state === "settled" ? usage.costMicros : usage.reservedMicros;
     }
     return total;

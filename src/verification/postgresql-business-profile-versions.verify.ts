@@ -28,7 +28,7 @@ async function verifyMigration() {
   await applyPostgresqlMigrations({ connectionString, schema });
   await applyPostgresqlMigrations({ connectionString, schema });
   const history = await admin.query(`SELECT version,name FROM "${schema}".app_schema_migrations ORDER BY version`);
-  assert(JSON.stringify(history.rows) === JSON.stringify([{ version: 1, name: "conversation_states" }, { version: 2, name: "execution_journal" }, { version: 3, name: "business_profile_versions" }, { version: 4, name: "knowledge_record_versions" }, { version: 5, name: "configuration_activations" }, { version: 6, name: "configuration_lifecycle_transitions" }, { version: 7, name: "message_evidence" }, { version: 8, name: "receptionist_persistence" }, { version: 9, name: "receptionist_turn_receipts" }]), "ordered migrations 001-009 are compatible and idempotent");
+  assert(JSON.stringify(history.rows) === JSON.stringify([{ version: 1, name: "conversation_states" }, { version: 2, name: "execution_journal" }, { version: 3, name: "business_profile_versions" }, { version: 4, name: "knowledge_record_versions" }, { version: 5, name: "configuration_activations" }, { version: 6, name: "configuration_lifecycle_transitions" }, { version: 7, name: "message_evidence" }, { version: 8, name: "receptionist_persistence" }, { version: 9, name: "receptionist_turn_receipts" }, { version: 10, name: "receptionist_billing_month" }]), "ordered migrations 001-010 are compatible and idempotent");
 }
 
 async function verifyCreateReadRestart() {

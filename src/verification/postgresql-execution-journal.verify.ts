@@ -71,6 +71,7 @@ async function verifyMigration() {
       { version: 7, name: "message_evidence" },
       { version: 8, name: "receptionist_persistence" },
       { version: 9, name: "receptionist_turn_receipts" },
+      { version: 10, name: "receptionist_billing_month" },
     ],
     "ordered migrations are recorded exactly once",
   );

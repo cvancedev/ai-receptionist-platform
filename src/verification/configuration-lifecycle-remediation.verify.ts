@@ -80,7 +80,8 @@ async function verifyMigrationHistory(): Promise<void> {
     { version: 7, name: "message_evidence" },
     { version: 8, name: "receptionist_persistence" },
     { version: 9, name: "receptionist_turn_receipts" },
-  ], "ordered migrations 001-009 are exact");
+    { version: 10, name: "receptionist_billing_month" },
+  ], "ordered migrations 001-010 are exact");
 }
 
 async function verifyNegativeDraftBoundaries(runtime: Runtime): Promise<void> {

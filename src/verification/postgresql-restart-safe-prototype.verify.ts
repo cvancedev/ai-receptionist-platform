@@ -266,7 +266,7 @@ async function verifyMigrationBoundary(): Promise<void> {
   );
   assertEquivalent(
     migrations.rows.map(({ version }) => version),
-    [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     "restart-safe integration uses the current additive migration history",
   );
 }

@@ -1,4 +1,5 @@
 import type { ConversationState } from "../../domain/conversation-state";
+import { isBillingMonth } from "../billing/provider-pricing";
 
 if (typeof window !== "undefined") {
   throw new Error("Receptionist persistence is server-only.");
@@ -62,8 +63,8 @@ export type ScopeLookupResult =
   | { readonly status: "not-found" }
   | { readonly status: "failure" };
 
-/** Current required pilot schema version, including turn receipts and usage. */
-export const RECEPTIONIST_SCHEMA_VERSION = 9;
+/** Current required pilot schema version, including billing-month accounting. */
+export const RECEPTIONIST_SCHEMA_VERSION = 10;
 export const MICROS_PER_USD = 1_000_000;
 export const DEFAULT_MONTHLY_BUDGET_MICROS = 10 * MICROS_PER_USD;
 export const MAXIMUM_MONTHLY_BUDGET_MICROS = 1_000 * MICROS_PER_USD;
@@ -118,6 +119,48 @@ export interface MonthlyUsageSummary {
   readonly reservedMicros: number;
 }
 
+/**
+ * A pre-call spending reservation for one scoped turn.
+ *
+ * The reservation is keyed by the same tuple as the turn receipt, so a repeated
+ * `turnId` can never reserve twice and a committed turn settles the row that was
+ * reserved before the provider call.
+ */
+export interface ReserveUsageInput {
+  readonly scope: ConversationPersistenceScope;
+  readonly turnId: string;
+  /** UTC billing month in `YYYY-MM` form; reservations and settlements share it. */
+  readonly billingMonth: string;
+  readonly providerIdentifier: string | null;
+  readonly modelIdentifier: string | null;
+  readonly inputTokens: number;
+  readonly outputTokens: number;
+  /** Conservative micro-unit estimate reserved before provider execution. */
+  readonly estimatedCostMicros: number;
+  /** Monthly cap in micro-units of USD, re-checked inside the transaction. */
+  readonly monthlyBudgetMicros: number;
+}
+
+export type ReserveUsageResult =
+  | "reserved"
+  | "already-reserved"
+  | "budget-exhausted"
+  | "invalid"
+  | "failure";
+
+export type ReleaseReservationResult = "released" | "not-found" | "failure";
+
+export interface ReconcileReservationsInput {
+  /** Reservations older than this are considered abandoned. */
+  readonly olderThanMs: number;
+  /** Trusted server time in epoch milliseconds. */
+  readonly now: number;
+}
+
+export interface ReconcileReservationsResult {
+  readonly released: number;
+}
+
 export interface CommitTurnInput {
   readonly scope: ConversationPersistenceScope;
   /** Client-generated, opaque, bounded identifier for this utterance. */
@@ -132,8 +175,8 @@ export interface CommitTurnInput {
   readonly usage: TurnUsage;
   /** Monthly spend cap in micro-units of USD, checked inside the transaction. */
   readonly monthlyBudgetMicros: number;
-  /** Inclusive start of the accounting month in epoch milliseconds (UTC). */
-  readonly monthStartMs: number;
+  /** UTC billing month in `YYYY-MM` form, shared with the reservation. */
+  readonly billingMonth: string;
   /** Revision of the snapshot this turn started from. */
   readonly expectedRevision: number;
   /**
@@ -193,8 +236,22 @@ export interface ReceptionistPersistence {
   ): Promise<LoadTurnReceiptResult>;
   monthlyUsageMicros(
     businessProfileId: string,
-    monthStartMs: number,
+    billingMonth: string | null,
   ): Promise<MonthlyUsageSummary | null>;
+  /** Reserve estimated spending for one scoped turn before provider execution. */
+  reserveUsage(input: ReserveUsageInput): Promise<ReserveUsageResult>;
+  /** Release a reservation that provably incurred no provider charge. */
+  releaseReservation(
+    scope: ConversationPersistenceScope,
+    turnId: string,
+  ): Promise<ReleaseReservationResult>;
+  /**
+   * Release reservations abandoned longer than the bounded window. Used for
+   * interrupted requests whose provider outcome is unknown.
+   */
+  reconcileStaleReservations(
+    input: ReconcileReservationsInput,
+  ): Promise<ReconcileReservationsResult | null>;
   /** Required schema version present in the store, or null when unavailable. */
   readSchemaVersion(): Promise<number | null>;
   createSession(record: PersistedSessionRecord): Promise<"created" | "failure">;
@@ -230,6 +287,28 @@ export function isStoredMessage(value: unknown): value is StoredMessage {
     && typeof value.content === "string"
     && value.content.length > 0
     && value.content.length <= MAXIMUM_STORED_MESSAGE_LENGTH;
+}
+
+export function isReserveUsageInput(value: unknown): value is ReserveUsageInput {
+  if (!isPlainRecord(value)) return false;
+  if (!isConversationPersistenceScope(value.scope)) return false;
+  if (!isTurnId(value.turnId)) return false;
+  if (!isBillingMonth(value.billingMonth)) return false;
+  if (value.providerIdentifier !== null
+    && (typeof value.providerIdentifier !== "string"
+      || value.providerIdentifier.length === 0
+      || value.providerIdentifier.length > 128)) return false;
+  if (value.modelIdentifier !== null
+    && (typeof value.modelIdentifier !== "string"
+      || value.modelIdentifier.length === 0
+      || value.modelIdentifier.length > 128)) return false;
+  for (const field of ["inputTokens", "outputTokens", "estimatedCostMicros", "monthlyBudgetMicros"] as const) {
+    const candidate = value[field];
+    if (typeof candidate !== "number" || !Number.isInteger(candidate) || candidate < 0) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export function isPersistenceDigest(value: unknown): value is string {

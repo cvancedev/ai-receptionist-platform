@@ -27,7 +27,9 @@ import type {
   ConversationPersistenceScope,
   ConversationSeed,
   PersistedSessionRecord,
+  ReconcileReservationsInput,
   ReceptionistPersistence,
+  ReserveUsageInput,
 } from "../server/persistence/receptionist-persistence";
 import { InMemoryReceptionistPersistence } from "../server/persistence/in-memory-receptionist-persistence";
 import {
@@ -813,8 +815,15 @@ function failingPersistence(
     loadTurnReceipt: (scope: ConversationPersistenceScope, turnId: string) => (
       base.loadTurnReceipt(scope, turnId)
     ),
-    monthlyUsageMicros: (businessId: string, monthStartMs: number) => (
-      base.monthlyUsageMicros(businessId, monthStartMs)
+    monthlyUsageMicros: (businessId: string, billingMonth: string | null) => (
+      base.monthlyUsageMicros(businessId, billingMonth)
+    ),
+    reserveUsage: (input: ReserveUsageInput) => base.reserveUsage(input),
+    releaseReservation: (scope: ConversationPersistenceScope, turnId: string) => (
+      base.releaseReservation(scope, turnId)
+    ),
+    reconcileStaleReservations: (input: ReconcileReservationsInput) => (
+      base.reconcileStaleReservations(input)
     ),
     readSchemaVersion: () => base.readSchemaVersion(),
     createSession: (record: PersistedSessionRecord) => base.createSession(record),

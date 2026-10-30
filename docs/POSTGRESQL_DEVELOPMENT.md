@@ -65,7 +65,9 @@ The ordered migrations are:
 - [`database/migrations/005_configuration_activations.sql`](../database/migrations/005_configuration_activations.sql); and
 - [`database/migrations/006_configuration_lifecycle_transitions.sql`](../database/migrations/006_configuration_lifecycle_transitions.sql).
 - [`database/migrations/007_message_evidence.sql`](../database/migrations/007_message_evidence.sql); and
-- [`database/migrations/008_receptionist_persistence.sql`](../database/migrations/008_receptionist_persistence.sql).
+- [`database/migrations/008_receptionist_persistence.sql`](../database/migrations/008_receptionist_persistence.sql);
+- [`database/migrations/009_receptionist_turn_receipts.sql`](../database/migrations/009_receptionist_turn_receipts.sql); and
+- [`database/migrations/010_receptionist_billing_month.sql`](../database/migrations/010_receptionist_billing_month.sql).
 
 Sprint 9.4 verifies every migration source against the certified SHA-256
 manifest before opening a connection. See [Operational PostgreSQL

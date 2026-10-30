@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Stage B2.4B.2A - Offline OpenAI Responses Adapter
+
+- Added a server-only adapter that translates the provider envelope into the
+  OpenAI Responses API and back, including strict JSON-schema output
+  (`text.format`), a bounded `max_output_tokens`, `store: false`, reported-usage
+  mapping, refusals, truncation, and tolerate-missing-usage behavior.
+- Added fail-closed response parsing: duplicate member names, unknown or
+  non-terminal statuses, action-shaped output items, ambiguous text, and
+  provider-reported failures are refused, and the extracted text is validated
+  by the certified output-schema checker before it can become a proposal.
+- Reused the certified bounded body reader from the provider HTTP transport
+  rather than introducing a second implementation.
+- Added `verify:openai-responses-adapter`, which proves envelope translation,
+  schema formatting, a grounded hours answer through the durable turn, token
+  accounting, estimate fallback, invalid JSON, refusal, truncation, timeout,
+  cancellation, duplicate suppression, budget refusal before transport,
+  cross-business isolation, credential confinement, response-shape refusal,
+  endpoint-configuration refusal, and that no runtime references the adapter.
+  Everything runs against a loopback fake; provider execution stays disabled.
+- Fixed a B2.4B.1 defect: the durable layer's replay allowlist did not include
+  the new `answered` decision, so a replayed business answer failed closed.
+  Replayed answers now return their receipted result.
+
 ### Stage B2.4B.1 - Business Knowledge Integration
 
 - Added deterministic approved-knowledge selection: business scope, active

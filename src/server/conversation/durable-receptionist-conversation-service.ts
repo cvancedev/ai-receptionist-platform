@@ -75,6 +75,9 @@ type ResolvedSubmission =
 
 const DECISIONS: ReadonlySet<string> = new Set([
   "accepted",
+  // A business-information answer changes no state, but it is still a
+  // first-class outcome that must replay from its receipt.
+  "answered",
   "clarification",
   "confirmation",
   "escalation",

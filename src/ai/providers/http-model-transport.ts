@@ -107,7 +107,7 @@ const SAFE_ERROR_MESSAGES = {
   "provider-failure": "The provider returned a response the application could not accept.",
 } as const;
 
-type SafeErrorCategory = keyof typeof SAFE_ERROR_MESSAGES;
+export type SafeErrorCategory = keyof typeof SAFE_ERROR_MESSAGES;
 
 const SAFE_FINISH_REASONS = new Set(["stop", "length", "content-filter", "refusal"]);
 const MAXIMUM_USAGE_UNITS = 1_000_000_000;
@@ -122,7 +122,8 @@ interface ResolvedOptions {
   readonly timeoutMs: number;
 }
 
-interface BoundedBody {
+/** Outcome of reading a response body under a byte ceiling. */
+export interface BoundedBody {
   readonly status: "text" | "too-large" | "empty" | "unreadable";
   readonly text?: string;
 }
@@ -372,7 +373,13 @@ function readCredential(
   return { status: "ok", token };
 }
 
-async function readBoundedBody(
+/**
+ * Reads a response body without ever buffering more than `maxBytes`, and
+ * rejects a body that is not valid UTF-8. Exported so another provider
+ * transport reuses this single bounded reader instead of growing a second
+ * implementation that could drift.
+ */
+export async function readBoundedBody(
   response: Response,
   maxBytes: number,
 ): Promise<BoundedBody> {
@@ -415,11 +422,12 @@ async function readBoundedBody(
   }
 }
 
-async function discardBody(response: Response): Promise<void> {
+/** Releases a response body that will not be read. */
+export async function discardBody(response: Response): Promise<void> {
   await response.body?.cancel().catch(() => undefined);
 }
 
-function failure(category: SafeErrorCategory): OfflineTransportResponse {
+export function failure(category: SafeErrorCategory): OfflineTransportResponse {
   return {
     status: "failed",
     usage: ZERO_USAGE,
@@ -428,7 +436,7 @@ function failure(category: SafeErrorCategory): OfflineTransportResponse {
   };
 }
 
-function cancelled(): OfflineTransportResponse {
+export function cancelled(): OfflineTransportResponse {
   return {
     status: "cancelled",
     usage: ZERO_USAGE,
@@ -437,7 +445,7 @@ function cancelled(): OfflineTransportResponse {
   };
 }
 
-function categoryForStatus(status: number): SafeErrorCategory {
+export function categoryForStatus(status: number): SafeErrorCategory {
   if (status === 401 || status === 403) return "authentication";
   if (status === 408) return "timeout";
   if (status === 429) return "rate-limit";

@@ -1,7 +1,8 @@
 import { execFile } from "node:child_process";
+import { existsSync } from "node:fs";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { delimiter, join } from "node:path";
 import { isDeepStrictEqual, promisify } from "node:util";
 import { Pool } from "pg";
 import { initializedConversationState } from "../fixtures/conversation";
@@ -224,8 +225,20 @@ function requiredUrl(): string {
 
 function requiredBinDirectory(): string {
   const value = process.env.POSTGRESQL_BIN_DIRECTORY?.trim();
-  if (!value) throw new Error("POSTGRESQL_BIN_DIRECTORY is required for backup verification.");
-  return value;
+  if (value) return value;
+  // Fall back to PostgreSQL client tools already on PATH so the variable is an
+  // override rather than a mandatory machine-specific setting. No installation
+  // path is recorded here.
+  const executable = `pg_dump${process.platform === "win32" ? ".exe" : ""}`;
+  for (const entry of (process.env.PATH ?? "").split(delimiter)) {
+    const directory = entry.trim();
+    if (directory === "") continue;
+    if (existsSync(join(directory, executable))) return directory;
+  }
+  throw new Error(
+    "POSTGRESQL_BIN_DIRECTORY is required for backup verification: set it to the directory "
+      + "containing pg_dump and pg_restore, or add that directory to PATH.",
+  );
 }
 
 function quoteIdentifier(value: string): string {

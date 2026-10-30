@@ -63,7 +63,9 @@ These are verification targets, not a production SLA:
 ## Credential Boundary and Required Evidence
 
 `TEST_DATABASE_URL` must identify an approved isolated local test database.
-`POSTGRESQL_BIN_DIRECTORY` identifies local PostgreSQL client tools. The
+`POSTGRESQL_BIN_DIRECTORY` identifies local PostgreSQL client tools; when it is
+unset the backup verifier uses the first `pg_dump` found on `PATH` and reports
+that instruction when no client tools are available. The
 verifier removes passwords from arguments and supplies them only in the child
 environment. Neither value is logged, persisted, or committed. Credential
 presence grants no application capability. The test role needs create/drop

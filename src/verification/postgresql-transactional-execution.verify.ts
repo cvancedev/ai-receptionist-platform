@@ -299,7 +299,7 @@ async function verifyNoSchemaChange(): Promise<void> {
   );
   assertEquivalent(
     migrations.rows.map(({ version }) => version),
-    [1, 2, 3, 4, 5, 6, 7, 8],
+    [1, 2, 3, 4, 5, 6, 7, 8, 9],
     "transaction coordination uses the current additive migration history",
   );
 }

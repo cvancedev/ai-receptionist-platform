@@ -2,9 +2,12 @@ import { decodeConversationState } from "../../validation/conversation-state-cod
 import type { ConversationState } from "../../domain/conversation-state";
 import {
   MAXIMUM_STORED_MESSAGES,
+  RECEPTIONIST_SCHEMA_VERSION,
   isConversationPersistenceScope,
   isPersistenceDigest,
   isStoredMessage,
+  isTurnId,
+  isTurnUsage,
   sameScope,
   scopeKey,
   type CommitTurnInput,
@@ -14,9 +17,13 @@ import {
   type CreateConversationResult,
   type FindSessionResult,
   type LoadConversationResult,
+  type LoadTurnReceiptResult,
+  type MonthlyUsageSummary,
   type PersistedSessionRecord,
   type ReceptionistPersistence,
   type ScopeLookupResult,
+  type StoredMessage,
+  type TurnReceipt,
 } from "./receptionist-persistence";
 
 if (typeof window !== "undefined") {
@@ -34,6 +41,34 @@ interface ConversationRecord {
   nextMessageId: number;
 }
 
+interface StoredTurnReceipt {
+  readonly scope: ConversationPersistenceScope;
+  readonly turnId: string;
+  readonly requestDigest: string;
+  readonly turnNumber: number;
+  readonly expectedRevision: number;
+  readonly resultingRevision: number;
+  readonly outcomeCode: string;
+  readonly stage: string;
+  readonly readiness: string;
+  readonly pendingFieldId: string | null;
+  readonly handoffAvailable: boolean;
+  readonly providerIdentifier: string | null;
+  readonly modelIdentifier: string | null;
+  readonly durationMs: number;
+  readonly firstMessageId: number;
+  readonly lastMessageId: number;
+  readonly createdAt: number;
+}
+
+interface UsageRecord {
+  readonly businessProfileId: string;
+  readonly state: "reserved" | "settled";
+  readonly reservedMicros: number;
+  readonly costMicros: number;
+  readonly createdAt: number;
+}
+
 /**
  * Deterministic, process-local implementation of the durable persistence port.
  *
@@ -46,6 +81,8 @@ export class InMemoryReceptionistPersistence implements ReceptionistPersistence 
   readonly kind = "in-memory" as const;
   private readonly conversations = new Map<string, ConversationRecord>();
   private readonly sessions = new Map<string, PersistedSessionRecord>();
+  private readonly receipts = new Map<string, StoredTurnReceipt>();
+  private readonly usage = new Map<string, UsageRecord>();
   private closed = false;
 
   async createConversation(seed: ConversationSeed): Promise<CreateConversationResult> {
@@ -116,6 +153,23 @@ export class InMemoryReceptionistPersistence implements ReceptionistPersistence 
   async commitTurn(input: CommitTurnInput): Promise<CommitTurnResult> {
     if (this.closed) return "failure";
     if (!isConversationPersistenceScope(input?.scope)) return "failure";
+    if (!isTurnId(input.turnId)) return "failure";
+    if (!isPersistenceDigest(input.requestDigest)) return "failure";
+    if (!isTurnUsage(input.usage)) return "failure";
+    if (!isBoundedInteger(input.durationMs, 0, 600_000)) return "failure";
+    if (!isBoundedInteger(input.monthlyBudgetMicros, 0, Number.MAX_SAFE_INTEGER)) {
+      return "failure";
+    }
+    if (!isBoundedInteger(input.monthStartMs, 0, Number.MAX_SAFE_INTEGER)) return "failure";
+    if (typeof input.outcomeCode !== "string"
+      || input.outcomeCode.length === 0
+      || input.outcomeCode.length > 64) return "failure";
+    if (typeof input.stage !== "string" || input.stage.length === 0 || input.stage.length > 64) {
+      return "failure";
+    }
+    if (typeof input.readiness !== "string"
+      || input.readiness.length === 0
+      || input.readiness.length > 64) return "failure";
     if (!Number.isInteger(input.expectedRevision) || input.expectedRevision < 0) {
       return "failure";
     }
@@ -123,10 +177,19 @@ export class InMemoryReceptionistPersistence implements ReceptionistPersistence 
       return "failure";
     }
     if (input.messages.length > MAXIMUM_STORED_MESSAGES) return "failure";
+    if (input.messages.length === 0) return "failure";
     if (input.messages.some((message) => !isStoredMessage(message))) return "failure";
 
     const record = this.conversations.get(scopeKey(input.scope));
     if (!record) return "not-found";
+
+    const receiptKey = `${scopeKey(input.scope)}|${input.turnId}`;
+    const existingReceipt = this.receipts.get(receiptKey);
+    if (existingReceipt) {
+      if (existingReceipt.requestDigest !== input.requestDigest) return "turn-mismatch";
+      return this.replayReceipt(record, existingReceipt) === null ? "failure" : "replayed";
+    }
+
     if (record.state.revision !== input.expectedRevision) return "conflict";
     if (record.turnNumber !== input.expectedTurnNumber) return "conflict";
     if (!sameScope(input.state, input.scope)) return "failure";
@@ -141,6 +204,16 @@ export class InMemoryReceptionistPersistence implements ReceptionistPersistence 
       existingIds.add(message.messageId);
     }
 
+    const spent = this.usageTotal(input.scope.businessProfileId, input.monthStartMs, receiptKey);
+    if (spent + input.usage.costMicros > input.monthlyBudgetMicros) {
+      return "budget-exhausted";
+    }
+
+    const ordered = [...input.messages].sort((left, right) => left.messageId - right.messageId);
+    const first = ordered[0];
+    const last = ordered[ordered.length - 1];
+    if (!first || !last) return "failure";
+
     record.state = cloneState(decoded.state);
     record.pendingFieldId = input.pendingFieldId;
     record.handoffAvailable = input.handoffAvailable;
@@ -150,7 +223,120 @@ export class InMemoryReceptionistPersistence implements ReceptionistPersistence 
     if (record.messages.length > MAXIMUM_STORED_MESSAGES) {
       record.messages.splice(0, record.messages.length - MAXIMUM_STORED_MESSAGES);
     }
+
+    const createdAt = Date.now();
+    this.receipts.set(receiptKey, Object.freeze({
+      scope: { ...input.scope },
+      turnId: input.turnId,
+      requestDigest: input.requestDigest,
+      turnNumber: input.turnNumber,
+      expectedRevision: input.expectedRevision,
+      resultingRevision: decoded.state.revision,
+      outcomeCode: input.outcomeCode,
+      stage: input.stage,
+      readiness: input.readiness,
+      pendingFieldId: input.pendingFieldId,
+      handoffAvailable: input.handoffAvailable,
+      providerIdentifier: input.usage.providerIdentifier,
+      modelIdentifier: input.usage.modelIdentifier,
+      durationMs: input.durationMs,
+      firstMessageId: first.messageId,
+      lastMessageId: last.messageId,
+      createdAt,
+    }));
+    this.usage.set(receiptKey, Object.freeze({
+      businessProfileId: input.scope.businessProfileId,
+      state: "settled" as const,
+      reservedMicros: 0,
+      costMicros: input.usage.costMicros,
+      createdAt,
+    }));
     return "committed";
+  }
+
+  async loadTurnReceipt(
+    scope: ConversationPersistenceScope,
+    turnId: string,
+  ): Promise<LoadTurnReceiptResult> {
+    if (this.closed) return { status: "failure" };
+    if (!isConversationPersistenceScope(scope) || !isTurnId(turnId)) {
+      return { status: "not-found" };
+    }
+    const receipt = this.receipts.get(`${scopeKey(scope)}|${turnId}`);
+    if (!receipt) return { status: "not-found" };
+    const record = this.conversations.get(scopeKey(scope));
+    if (!record) return { status: "failure" };
+    const resolved = this.replayReceipt(record, receipt);
+    return resolved ? { status: "found", receipt: resolved } : { status: "failure" };
+  }
+
+  async monthlyUsageMicros(
+    businessProfileId: string,
+    monthStartMs: number,
+  ): Promise<MonthlyUsageSummary | null> {
+    if (this.closed) return null;
+    if (typeof businessProfileId !== "string" || businessProfileId.length === 0) return null;
+    if (!isBoundedInteger(monthStartMs, 0, Number.MAX_SAFE_INTEGER)) return null;
+    let settledMicros = 0;
+    let reservedMicros = 0;
+    for (const usage of this.usage.values()) {
+      if (usage.businessProfileId !== businessProfileId) continue;
+      if (usage.createdAt < monthStartMs) continue;
+      if (usage.state === "settled") settledMicros += usage.costMicros;
+      else reservedMicros += usage.reservedMicros;
+    }
+    return Object.freeze({ settledMicros, reservedMicros });
+  }
+
+  async readSchemaVersion(): Promise<number | null> {
+    return this.closed ? null : RECEPTIONIST_SCHEMA_VERSION;
+  }
+
+  private replayReceipt(
+    record: ConversationRecord,
+    receipt: StoredTurnReceipt,
+  ): TurnReceipt | null {
+    const messages: StoredMessage[] = [];
+    for (let id = receipt.firstMessageId; id <= receipt.lastMessageId; id += 1) {
+      const message = record.messages.find((entry) => entry.messageId === id);
+      // A trimmed history cannot reproduce the recorded turn. Fail closed rather
+      // than return a partial or fabricated result.
+      if (!message) return null;
+      messages.push(Object.freeze({ ...message }));
+    }
+    return Object.freeze({
+      scope: { ...receipt.scope },
+      turnId: receipt.turnId,
+      requestDigest: receipt.requestDigest,
+      turnNumber: receipt.turnNumber,
+      expectedRevision: receipt.expectedRevision,
+      resultingRevision: receipt.resultingRevision,
+      outcomeCode: receipt.outcomeCode,
+      stage: receipt.stage,
+      readiness: receipt.readiness,
+      pendingFieldId: receipt.pendingFieldId,
+      handoffAvailable: receipt.handoffAvailable,
+      providerIdentifier: receipt.providerIdentifier,
+      modelIdentifier: receipt.modelIdentifier,
+      durationMs: receipt.durationMs,
+      createdAt: receipt.createdAt,
+      messages: Object.freeze(messages),
+    });
+  }
+
+  private usageTotal(
+    businessProfileId: string,
+    monthStartMs: number,
+    excludedKey: string,
+  ): number {
+    let total = 0;
+    for (const [key, usage] of this.usage) {
+      if (key === excludedKey) continue;
+      if (usage.businessProfileId !== businessProfileId) continue;
+      if (usage.createdAt < monthStartMs) continue;
+      total += usage.state === "settled" ? usage.costMicros : usage.reservedMicros;
+    }
+    return total;
   }
 
   async createSession(record: PersistedSessionRecord): Promise<"created" | "failure"> {
@@ -205,7 +391,16 @@ export class InMemoryReceptionistPersistence implements ReceptionistPersistence 
     this.closed = true;
     this.conversations.clear();
     this.sessions.clear();
+    this.receipts.clear();
+    this.usage.clear();
   }
+}
+
+function isBoundedInteger(value: unknown, minimum: number, maximum: number): value is number {
+  return typeof value === "number"
+    && Number.isInteger(value)
+    && value >= minimum
+    && value <= maximum;
 }
 
 function cloneState(state: ConversationState): ConversationState {

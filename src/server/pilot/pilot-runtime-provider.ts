@@ -1,6 +1,7 @@
 import { parseJsonWithoutDuplicateKeys } from "../../ai/providers/provider-output-schema";
 import { fictionalBusinessProfile } from "../../fixtures/business-profile";
 import { fictionalKnowledgeRecords } from "../../fixtures/knowledge";
+import { RECEPTIONIST_SCHEMA_VERSION } from "../persistence/receptionist-persistence";
 import { PostgresqlReceptionistPersistence } from "../../persistence/postgresql/postgresql-receptionist-persistence";
 import type { ReceptionistBusiness } from "../conversation/receptionist-conversation-service";
 import type { ReceptionistPersistence } from "../persistence/receptionist-persistence";
@@ -37,7 +38,8 @@ export type PilotRuntimeCompositionRejection =
   | PilotRuntimeCreationRejection
   | "InvalidConfigurationJson"
   | "DuplicateConfigurationKey"
-  | "MissingDatabaseCredential";
+  | "MissingDatabaseCredential"
+  | "SchemaOutdated";
 
 export type PilotRuntimeComposition =
   | { readonly status: "created"; readonly runtime: PilotReceptionistRuntime }
@@ -104,7 +106,18 @@ async function finishCreation(
   result: ReturnType<typeof createPilotReceptionistRuntime>,
   persistence: ReceptionistPersistence | null,
 ): Promise<PilotRuntimeComposition> {
-  if (result.status === "created") return Object.freeze({ status: "created", runtime: result.runtime });
+  if (result.status === "created") {
+    if (!persistence) return rejected("PersistenceUnavailable");
+    // The pilot never serves against a database that predates the current
+    // receipt and usage schema. A stale or unreadable schema fails closed and
+    // is never migrated implicitly during a request.
+    const schemaVersion = await persistence.readSchemaVersion();
+    if (schemaVersion === null || schemaVersion < RECEPTIONIST_SCHEMA_VERSION) {
+      await persistence.close().catch(() => undefined);
+      return rejected("SchemaOutdated");
+    }
+    return Object.freeze({ status: "created", runtime: result.runtime });
+  }
   if (persistence) await persistence.close().catch(() => undefined);
   return rejected(result.reason);
 }
@@ -123,6 +136,9 @@ const unusablePersistence: ReceptionistPersistence = Object.freeze({
   loadConversation: async () => ({ status: "failure" } as const),
   findScopeByHandleHash: async () => ({ status: "failure" } as const),
   commitTurn: async () => "failure" as const,
+  loadTurnReceipt: async () => ({ status: "failure" } as const),
+  monthlyUsageMicros: async () => null,
+  readSchemaVersion: async () => null,
   createSession: async () => "failure" as const,
   findSession: async () => ({ status: "failure" } as const),
   revokeSession: async () => "failure" as const,
@@ -148,8 +164,14 @@ type ProviderGlobal = typeof globalThis & {
  * - Pilot configuration present but unusable: `pilot-unavailable`, never a
  *   silent fallback to the demonstration.
  */
+export interface ReceptionistHttpRuntimeOptions {
+  /** Composition seam for verification; production uses PostgreSQL. */
+  readonly persistenceFactory?: (connectionString: string) => ReceptionistPersistence;
+}
+
 export async function resolveReceptionistHttpRuntime(
   environment: Readonly<Record<string, string | undefined>> = process.env,
+  options: ReceptionistHttpRuntimeOptions = {},
 ): Promise<ReceptionistHttpRuntimeResolution> {
   const raw = environment[PILOT_CONFIGURATION_ENV];
   if (raw === undefined || raw.trim() === "") {
@@ -171,6 +193,7 @@ export async function resolveReceptionistHttpRuntime(
     configuration: parsed.value,
     businesses: PILOT_BUSINESSES,
     environment,
+    persistenceFactory: options.persistenceFactory,
   });
   if (composition.status !== "created") {
     return Object.freeze({ status: "pilot-unavailable" as const });

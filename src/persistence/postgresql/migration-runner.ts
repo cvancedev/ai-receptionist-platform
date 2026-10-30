@@ -57,6 +57,12 @@ const POSTGRESQL_MIGRATIONS = [
     fileName: "008_receptionist_persistence.sql",
     sha256: "ad46de268daf810c7f151dbbe9cbb78e8f11e0731024598a8ead36834e9591ad",
   },
+  {
+    version: 9,
+    name: "receptionist_turn_receipts",
+    fileName: "009_receptionist_turn_receipts.sql",
+    sha256: "1718b88bfa547d66167a9d66f6f1fd7f8c1388ea14d9eba0cf03c279af3627e2",
+  },
 ] as const;
 
 export async function applyPostgresqlMigrations(

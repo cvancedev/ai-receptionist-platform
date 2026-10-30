@@ -12,6 +12,11 @@
  * must be the literal `"disabled"`, so a configuration can never authorize a
  * network model call by accident or by flipping a boolean.
  */
+import {
+  DEFAULT_MONTHLY_BUDGET_MICROS,
+  MAXIMUM_MONTHLY_BUDGET_MICROS,
+} from "../persistence/receptionist-persistence";
+
 if (typeof window !== "undefined") {
   throw new Error("Pilot runtime configuration is server-only.");
 }
@@ -42,7 +47,12 @@ const TOP_LEVEL_KEYS = new Set([
   "persistence",
 ]);
 
-const BUSINESS_KEYS = new Set(["businessId", "widgetId", "allowedOrigins"]);
+const BUSINESS_KEYS = new Set([
+  "businessId",
+  "widgetId",
+  "allowedOrigins",
+  "monthlyBudgetMicros",
+]);
 const PERSISTENCE_KEYS = new Set(["mode", "credentialReference"]);
 const CREDENTIAL_REFERENCE_PATTERN = /^[A-Z][A-Z0-9_]{2,64}$/;
 
@@ -63,6 +73,7 @@ export type PilotRuntimeConfigurationRejection =
   | "DuplicateOrigin"
   | "InvalidSessionTtl"
   | "InvalidOperatorCredential"
+  | "InvalidBudget"
   | "InvalidPersistence";
 
 export interface PilotBusinessRegistration {
@@ -74,6 +85,12 @@ export interface PilotBusinessRegistration {
    * allowlist is anti-abuse and brand protection, not authentication.
    */
   readonly allowedOrigins: readonly string[];
+  /**
+   * Monthly spend cap in integer micro-units of USD. It bounds the accounting
+   * this deployment may commit; it is not a provider-side hard limit until the
+   * B2.4 reservation flow is authorized.
+   */
+  readonly monthlyBudgetMicros: number;
 }
 
 export interface PilotPersistenceAuthorization {
@@ -199,12 +216,18 @@ export function resolvePilotRuntimeConfiguration(
       origins.push(normalized);
     }
 
+    const monthlyBudgetMicros = raw.monthlyBudgetMicros === undefined
+      ? DEFAULT_MONTHLY_BUDGET_MICROS
+      : boundedInteger(raw.monthlyBudgetMicros, 0, MAXIMUM_MONTHLY_BUDGET_MICROS);
+    if (monthlyBudgetMicros === null) return rejected("InvalidBudget");
+
     businessIds.add(raw.businessId);
     widgetIds.add(raw.widgetId);
     businesses.push(Object.freeze({
       businessId: raw.businessId,
       widgetId: raw.widgetId,
       allowedOrigins: Object.freeze(origins),
+      monthlyBudgetMicros,
     }));
   }
 

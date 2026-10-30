@@ -30,6 +30,10 @@ const OPERATOR_CREDENTIAL = "fictional-postgres-operator-credential";
 const DATABASE_REFERENCE = "AI_RECEPTIONIST_PILOT_DATABASE_URL";
 const SESSION_TTL_MS = 15 * 60 * 1_000;
 
+function nextTurnId(): string {
+  return `turn-${randomBytes(12).toString("hex")}`;
+}
+
 async function run(): Promise<void> {
   const connectionString = requiredUrl();
   const schema = `b232a_${randomBytes(6).toString("hex")}`;
@@ -41,10 +45,11 @@ async function run(): Promise<void> {
     const history = await admin.query(
       `SELECT version FROM "${schema}".app_schema_migrations ORDER BY version`,
     );
-    assert(history.rows.map((row) => row.version).join(",") === "1,2,3,4,5,6,7,8",
-      "the live schema history includes migration 008");
+    assert(history.rows.map((row) => row.version).join(",") === "1,2,3,4,5,6,7,8,9",
+      "the live schema history includes migrations 008 and 009");
 
     await verifyDurableTurnAndRestart(connectionString, schema);
+    await verifyTurnReceiptsAndUsage(connectionString, schema);
     await verifyHttpIssuance(connectionString, schema);
     await verifySessionExpirationAndRevocation(connectionString, schema);
     await verifyIsolationAndConflicts(connectionString, schema);
@@ -52,9 +57,10 @@ async function run(): Promise<void> {
     await verifyClosedStoreFailuresClosed(connectionString, schema);
 
     console.log(
-      "Stage B2.3.2B live PostgreSQL verification passed: durable HTTP issuance and turns, "
-      + "session survival across restart, expiration and revocation, business isolation, "
-      + "revision conflicts, concurrent commit atomicity, and closed-store fail-closed behavior.",
+      "Stage B2.3.3 live PostgreSQL verification passed: durable HTTP issuance and turns, "
+      + "turn receipts, settled usage accounting, replay across restart, expiration and "
+      + "revocation, business isolation, revision conflicts, budget refusal, concurrent "
+      + "commit atomicity, and closed-store fail-closed behavior.",
     );
   } finally {
     await admin.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`).catch(() => undefined);
@@ -121,6 +127,176 @@ async function verifyDurableTurnAndRestart(
   await persistence.close();
 }
 
+async function verifyTurnReceiptsAndUsage(
+  connectionString: string,
+  schema: string,
+): Promise<void> {
+  const persistence = new PostgresqlReceptionistPersistence({ connectionString, schema });
+  const admin = new Pool({ connectionString });
+  try {
+    const runtime = buildRuntime(persistence, () => 107_000_000);
+    const session = await issueCustomer(runtime, WIDGET_A);
+    const turnId = `turn-${randomBytes(12).toString("hex")}`;
+
+    const first = await turn(runtime, session, "project help", turnId);
+    assert(first.status === 200, "the receipt-bearing turn is served");
+    const firstBody = await responseJson(first);
+    const receiptRows = await admin.query<{ readonly count: number }>(
+      `SELECT COUNT(*)::int AS count FROM "${schema}".receptionist_turn_receipts
+      WHERE conversation_id = $1`,
+      [session.principal.conversationId],
+    );
+    assert(receiptRows.rows[0]?.count === 1,
+      `one receipt is durable for the turn (count ${String(receiptRows.rows[0]?.count)})`);
+
+    const usageRows = await admin.query<{
+      readonly state: string;
+      readonly cost_micros: string;
+      readonly input_tokens: number;
+    }>(
+      `SELECT state, cost_micros::text, input_tokens
+      FROM "${schema}".receptionist_usage_events
+      WHERE conversation_id = $1`,
+      [session.principal.conversationId],
+    );
+    assert(usageRows.rows.length === 1
+      && usageRows.rows[0]?.state === "settled"
+      && usageRows.rows[0]?.cost_micros === "0"
+      && usageRows.rows[0]?.input_tokens === 0,
+    "one settled zero-cost usage row is durable for the disabled provider");
+
+    const columns = await admin.query<{ readonly column_name: string }>(
+      `SELECT column_name FROM information_schema.columns
+      WHERE table_schema = $1 AND table_name = 'receptionist_turn_receipts'`,
+      [schema],
+    );
+    const names = columns.rows.map((row) => row.column_name);
+    assert(names.length > 0
+      && !names.includes("content")
+      && !names.includes("prompt")
+      && !names.some((name) => /token|credential|handle/.test(name)),
+    "receipts contain no conversation text, prompt, credential, token, or handle column");
+
+    const retry = await turn(runtime, session, "project help", turnId);
+    const retryBody = await responseJson(retry);
+    assert(retry.status === 200 && retryBody.data?.replayed === true,
+      "a duplicate turn identifier replays the durable receipt");
+    assert((retryBody.data?.conversation.revision ?? -1)
+      === (firstBody.data?.conversation.revision ?? -2),
+    "the replay reports the recorded revision");
+    const afterRetry = await admin.query<{ readonly count: number }>(
+      `SELECT COUNT(*)::int AS count FROM "${schema}".receptionist_turn_receipts
+      WHERE conversation_id = $1`,
+      [session.principal.conversationId],
+    );
+    const usageAfterRetry = await admin.query<{ readonly count: number }>(
+      `SELECT COUNT(*)::int AS count FROM "${schema}".receptionist_usage_events
+      WHERE conversation_id = $1`,
+      [session.principal.conversationId],
+    );
+    assert(afterRetry.rows[0]?.count === 1 && usageAfterRetry.rows[0]?.count === 1,
+      "a replay adds no receipt and no usage charge");
+
+    // B2.4 will reserve budget before a paid provider call. The commit settles
+    // that reservation in place instead of inserting a second charge.
+    const reservedTurnId = `turn-${randomBytes(12).toString("hex")}`;
+    await admin.query(
+      `INSERT INTO "${schema}".receptionist_usage_events (
+        business_profile_id, business_profile_version, conversation_id,
+        turn_id, state, reserved_cost_micros, currency
+      ) VALUES ($1, $2, $3, $4, 'reserved', 3, 'USD')`,
+      [
+        BUSINESS_A,
+        fictionalBusinessProfile.version,
+        session.principal.conversationId,
+        reservedTurnId,
+      ],
+    );
+    const settledTurn = await turn(runtime, session, "what does it cost?", reservedTurnId);
+    assert(settledTurn.status === 200, "a turn settles its pre-call reservation");
+    const settledRow = await admin.query<{
+      readonly state: string;
+      readonly cost_micros: string;
+      readonly reserved_cost_micros: string | null;
+    }>(
+      `SELECT state, cost_micros::text, reserved_cost_micros::text
+      FROM "${schema}".receptionist_usage_events
+      WHERE conversation_id = $1 AND turn_id = $2`,
+      [session.principal.conversationId, reservedTurnId],
+    );
+    assert(settledRow.rows[0]?.state === "settled"
+      && settledRow.rows[0]?.cost_micros === "0"
+      && settledRow.rows[0]?.reserved_cost_micros === null,
+    "the reservation is settled exactly once with the reported cost");
+
+    const restarted = new PostgresqlReceptionistPersistence({ connectionString, schema });
+    try {
+      const restartedRuntime = buildRuntime(restarted, () => 107_000_000);
+      const authenticated = await restartedRuntime.sessions.authenticate(
+        session.token,
+        session.csrfToken,
+      );
+      assert(authenticated.status === "authenticated",
+        "the session survives the receipt restart");
+      const restartReplay = await turn(restartedRuntime, session, "project help", turnId);
+      const restartBody = await responseJson(restartReplay);
+      assert(restartReplay.status === 200 && restartBody.data?.replayed === true,
+        "the receipt replays after a full persistent adapter restart");
+
+      const scope = {
+        businessProfileId: BUSINESS_A,
+        businessProfileVersion: fictionalBusinessProfile.version,
+        conversationId: session.principal.conversationId,
+      };
+      const snapshot = await restarted.loadConversation(scope);
+      assert(snapshot.status === "found", "a snapshot is available for the budget test");
+      if (snapshot.status !== "found") return;
+      const base = snapshot.conversation;
+      const exhausted = await restarted.commitTurn({
+        scope,
+        turnId: `turn-${randomBytes(12).toString("hex")}`,
+        requestDigest: randomBytes(32).toString("hex"),
+        outcomeCode: "accepted",
+        stage: base.state.stage,
+        readiness: "not-ready",
+        durationMs: 1,
+        usage: {
+          providerIdentifier: "simulated-offline-model-transport/v1",
+          modelIdentifier: null,
+          inputTokens: 0,
+          outputTokens: 0,
+          costMicros: 5,
+        },
+        monthlyBudgetMicros: 0,
+        monthStartMs: 0,
+        expectedRevision: base.state.revision,
+        expectedTurnNumber: base.turnNumber,
+        state: base.state,
+        pendingFieldId: base.pendingFieldId,
+        handoffAvailable: base.handoffAvailable,
+        turnNumber: base.turnNumber + 1,
+        nextMessageId: base.nextMessageId + 1,
+        messages: [{
+          messageId: base.nextMessageId,
+          role: "customer",
+          content: "budget probe",
+        }],
+      });
+      assert(exhausted === "budget-exhausted",
+        "the live budget check refuses a charge above the cap");
+      const afterRefusal = await restarted.loadConversation(scope);
+      assert(afterRefusal.status === "found"
+        && afterRefusal.conversation.turnNumber === base.turnNumber,
+      "a live budget refusal writes no state change");
+    } finally {
+      await restarted.close();
+    }
+  } finally {
+    await persistence.close();
+    await admin.end();
+  }
+}
+
 async function verifyHttpIssuance(
   connectionString: string,
   schema: string,
@@ -158,7 +334,7 @@ async function verifyHttpIssuance(
     const turnResponse = await handleReceptionistTurn(new Request(TURN_PATH, {
       method: "POST",
       headers: turnHeaders,
-      body: JSON.stringify({ message: "project help" }),
+      body: JSON.stringify({ message: "project help", turnId: nextTurnId() }),
     }), runtime);
     assert(turnResponse.status === 200, "a durable HTTP turn is served after issuance");
     const body = await responseJson(turnResponse);
@@ -217,6 +393,7 @@ async function verifyIsolationAndConflicts(
       conversationId: sessionB.principal.conversationId,
       businessProfileVersion: fictionalBusinessProfile.version,
       message: "project help",
+      turnId: nextTurnId(),
     });
     assert(crossTurn.status === "conversation-unavailable",
       "another business scope cannot start a turn");
@@ -230,28 +407,39 @@ async function verifyIsolationAndConflicts(
     assert(snapshot.status === "found", "a snapshot is available for the conflict test");
     if (snapshot.status !== "found") return;
 
-    const first = await persistence.commitTurn({
+    const base = snapshot.conversation;
+    const attempt = () => persistence.commitTurn({
       scope,
-      expectedRevision: snapshot.conversation.state.revision,
-      expectedTurnNumber: snapshot.conversation.turnNumber,
-      state: snapshot.conversation.state,
-      pendingFieldId: snapshot.conversation.pendingFieldId,
-      handoffAvailable: snapshot.conversation.handoffAvailable,
-      turnNumber: snapshot.conversation.turnNumber + 1,
-      nextMessageId: snapshot.conversation.nextMessageId,
-      messages: [],
+      turnId: nextTurnId(),
+      requestDigest: randomBytes(32).toString("hex"),
+      outcomeCode: "accepted",
+      stage: base.state.stage,
+      readiness: "not-ready",
+      durationMs: 1,
+      usage: {
+        providerIdentifier: "simulated-offline-model-transport/v1",
+        modelIdentifier: null,
+        inputTokens: 0,
+        outputTokens: 0,
+        costMicros: 0,
+      },
+      monthlyBudgetMicros: 10_000_000,
+      monthStartMs: 0,
+      expectedRevision: base.state.revision,
+      expectedTurnNumber: base.turnNumber,
+      state: base.state,
+      pendingFieldId: base.pendingFieldId,
+      handoffAvailable: base.handoffAvailable,
+      turnNumber: base.turnNumber + 1,
+      nextMessageId: base.nextMessageId + 1,
+      messages: [{
+        messageId: base.nextMessageId,
+        role: "customer",
+        content: "conflict probe",
+      }],
     });
-    const second = await persistence.commitTurn({
-      scope,
-      expectedRevision: snapshot.conversation.state.revision,
-      expectedTurnNumber: snapshot.conversation.turnNumber,
-      state: snapshot.conversation.state,
-      pendingFieldId: snapshot.conversation.pendingFieldId,
-      handoffAvailable: snapshot.conversation.handoffAvailable,
-      turnNumber: snapshot.conversation.turnNumber + 1,
-      nextMessageId: snapshot.conversation.nextMessageId,
-      messages: [],
-    });
+    const first = await attempt();
+    const second = await attempt();
     assert(first === "committed", "the first revision-scoped commit succeeds");
     assert(second === "conflict", "a stale revision is refused");
   } finally {
@@ -279,6 +467,21 @@ async function verifyConcurrentCommitAtomicity(
 
     const attempt = () => persistence.commitTurn({
       scope,
+      turnId: nextTurnId(),
+      requestDigest: randomBytes(32).toString("hex"),
+      outcomeCode: "accepted",
+      stage: base.state.stage,
+      readiness: "not-ready",
+      durationMs: 1,
+      usage: {
+        providerIdentifier: "simulated-offline-model-transport/v1",
+        modelIdentifier: null,
+        inputTokens: 0,
+        outputTokens: 0,
+        costMicros: 0,
+      },
+      monthlyBudgetMicros: 10_000_000,
+      monthStartMs: 0,
       expectedRevision: base.state.revision,
       expectedTurnNumber: base.turnNumber,
       state: base.state,
@@ -376,6 +579,7 @@ async function turn(
   runtime: PilotReceptionistRuntime,
   session: IssuedSession,
   message: string,
+  turnId: string = nextTurnId(),
 ): Promise<Response> {
   const headers = new Headers();
   headers.set("content-type", "application/json");
@@ -385,19 +589,21 @@ async function turn(
   return handleReceptionistTurn(new Request(TURN_PATH, {
     method: "POST",
     headers,
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ message, turnId }),
   }), runtime);
 }
 
 async function responseJson(response: Response): Promise<{
   readonly data?: {
     readonly turn: number;
+    readonly replayed?: boolean;
     readonly conversation: { readonly revision: number };
   };
 }> {
   return JSON.parse(await response.text()) as {
     readonly data?: {
       readonly turn: number;
+      readonly replayed?: boolean;
       readonly conversation: { readonly revision: number };
     };
   };
@@ -440,7 +646,7 @@ function secondBusiness(): ReceptionistBusiness {
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
-    throw new Error(`Stage B2.3.2A PostgreSQL verification failed: ${message}.`);
+    throw new Error(`Stage B2.3.3 PostgreSQL verification failed: ${message}.`);
   }
 }
 

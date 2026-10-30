@@ -62,8 +62,78 @@ export type ScopeLookupResult =
   | { readonly status: "not-found" }
   | { readonly status: "failure" };
 
+/** Current required pilot schema version, including turn receipts and usage. */
+export const RECEPTIONIST_SCHEMA_VERSION = 9;
+export const MICROS_PER_USD = 1_000_000;
+export const DEFAULT_MONTHLY_BUDGET_MICROS = 10 * MICROS_PER_USD;
+export const MAXIMUM_MONTHLY_BUDGET_MICROS = 1_000 * MICROS_PER_USD;
+export const TURN_ID_PATTERN = /^[A-Za-z0-9_-]{8,64}$/;
+
+/**
+ * Provider-reported or estimated usage for one committed turn.
+ *
+ * Money is an integer number of micro-units of USD (1 USD = 1,000,000). Integer
+ * accounting avoids floating-point drift in budget comparisons. B2.3.3 records
+ * zero-valued usage because provider execution remains disabled.
+ */
+export interface TurnUsage {
+  readonly providerIdentifier: string | null;
+  readonly modelIdentifier: string | null;
+  readonly inputTokens: number;
+  readonly outputTokens: number;
+  readonly costMicros: number;
+}
+
+/**
+ * Durable operational metadata for one committed turn. It intentionally holds
+ * no conversation text, prompt, credential, session token, handle, or raw error.
+ */
+export interface TurnReceipt {
+  readonly scope: ConversationPersistenceScope;
+  readonly turnId: string;
+  readonly requestDigest: string;
+  readonly turnNumber: number;
+  readonly expectedRevision: number;
+  readonly resultingRevision: number;
+  readonly outcomeCode: string;
+  readonly stage: string;
+  readonly readiness: string;
+  readonly pendingFieldId: string | null;
+  readonly handoffAvailable: boolean;
+  readonly providerIdentifier: string | null;
+  readonly modelIdentifier: string | null;
+  readonly durationMs: number;
+  readonly createdAt: number;
+  /** Messages appended by the recorded turn, used to replay the same result. */
+  readonly messages: readonly StoredMessage[];
+}
+
+export type LoadTurnReceiptResult =
+  | { readonly status: "found"; readonly receipt: TurnReceipt }
+  | { readonly status: "not-found" }
+  | { readonly status: "failure" };
+
+export interface MonthlyUsageSummary {
+  readonly settledMicros: number;
+  readonly reservedMicros: number;
+}
+
 export interface CommitTurnInput {
   readonly scope: ConversationPersistenceScope;
+  /** Client-generated, opaque, bounded identifier for this utterance. */
+  readonly turnId: string;
+  /** SHA-256 of the scoped request, used to detect identifier reuse. */
+  readonly requestDigest: string;
+  /** Deterministic outcome code recorded with the receipt. */
+  readonly outcomeCode: string;
+  readonly stage: string;
+  readonly readiness: string;
+  readonly durationMs: number;
+  readonly usage: TurnUsage;
+  /** Monthly spend cap in micro-units of USD, checked inside the transaction. */
+  readonly monthlyBudgetMicros: number;
+  /** Inclusive start of the accounting month in epoch milliseconds (UTC). */
+  readonly monthStartMs: number;
   /** Revision of the snapshot this turn started from. */
   readonly expectedRevision: number;
   /**
@@ -83,7 +153,10 @@ export interface CommitTurnInput {
 
 export type CommitTurnResult =
   | "committed"
+  | "replayed"
   | "conflict"
+  | "turn-mismatch"
+  | "budget-exhausted"
   | "not-found"
   | "failure";
 
@@ -114,6 +187,16 @@ export interface ReceptionistPersistence {
   ): Promise<LoadConversationResult>;
   findScopeByHandleHash(handleHash: string): Promise<ScopeLookupResult>;
   commitTurn(input: CommitTurnInput): Promise<CommitTurnResult>;
+  loadTurnReceipt(
+    scope: ConversationPersistenceScope,
+    turnId: string,
+  ): Promise<LoadTurnReceiptResult>;
+  monthlyUsageMicros(
+    businessProfileId: string,
+    monthStartMs: number,
+  ): Promise<MonthlyUsageSummary | null>;
+  /** Required schema version present in the store, or null when unavailable. */
+  readSchemaVersion(): Promise<number | null>;
   createSession(record: PersistedSessionRecord): Promise<"created" | "failure">;
   findSession(tokenHash: string): Promise<FindSessionResult>;
   revokeSession(tokenHash: string, revokedAt: number): Promise<"revoked" | "not-found" | "failure">;
@@ -151,6 +234,34 @@ export function isStoredMessage(value: unknown): value is StoredMessage {
 
 export function isPersistenceDigest(value: unknown): value is string {
   return typeof value === "string" && /^[0-9a-f]{64}$/.test(value);
+}
+
+export function isTurnId(value: unknown): value is string {
+  return typeof value === "string" && TURN_ID_PATTERN.test(value);
+}
+
+export function isTurnUsage(value: unknown): value is TurnUsage {
+  if (!isPlainRecord(value)) return false;
+  if (value.providerIdentifier !== null
+    && (typeof value.providerIdentifier !== "string"
+      || value.providerIdentifier.length === 0
+      || value.providerIdentifier.length > 128)) return false;
+  if (value.modelIdentifier !== null
+    && (typeof value.modelIdentifier !== "string"
+      || value.modelIdentifier.length === 0
+      || value.modelIdentifier.length > 128)) return false;
+  for (const field of ["inputTokens", "outputTokens", "costMicros"] as const) {
+    const candidate = value[field];
+    if (typeof candidate !== "number" || !Number.isInteger(candidate) || candidate < 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function utcMonthStart(epochMs: number): number {
+  const date = new Date(epochMs);
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1, 0, 0, 0, 0);
 }
 
 export function sameScope(

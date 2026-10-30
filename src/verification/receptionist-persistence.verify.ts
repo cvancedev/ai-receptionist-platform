@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { fictionalBusinessProfile } from "../fixtures/business-profile";
 import { createAiDemoChatSession } from "../prototype-ui/ai-demo-chat-session";
 import type { BusinessProfile } from "../domain/business-profile";
@@ -16,9 +16,10 @@ import {
 } from "../server/pilot/pilot-runtime";
 import { CERTIFIED_POSTGRESQL_MIGRATIONS, verifyCertifiedPostgresqlMigrationSources } from "../persistence/postgresql/migration-runner";
 import { InMemoryReceptionistPersistence } from "../server/persistence/in-memory-receptionist-persistence";
-import type {
-  CommitTurnInput,
-  ReceptionistPersistence,
+import {
+  DEFAULT_MONTHLY_BUDGET_MICROS,
+  type CommitTurnInput,
+  type ReceptionistPersistence,
 } from "../server/persistence/receptionist-persistence";
 
 const BUSINESS_A = fictionalBusinessProfile.id;
@@ -32,6 +33,10 @@ const OPERATOR_CREDENTIAL = "fictional-pilot-operator-credential";
 const DATABASE_REFERENCE = "AI_RECEPTIONIST_PILOT_DATABASE_URL";
 const SESSION_TTL_MS = 15 * 60 * 1_000;
 const DEFAULT_IP = "198.51.100.130";
+
+function nextTurnId(): string {
+  return `turn-${randomBytes(12).toString("hex")}`;
+}
 
 interface ApiBody {
   readonly ok: boolean;
@@ -79,8 +84,8 @@ async function run(): Promise<void> {
 
 async function verifyMigrationRegistration(): Promise<void> {
   const last = CERTIFIED_POSTGRESQL_MIGRATIONS.at(-1);
-  assert(last?.version === 8 && last.name === "receptionist_persistence",
-    "migration 008 is registered in the certified manifest");
+  assert(last?.version === 9 && last.name === "receptionist_turn_receipts",
+    "migration 009 is registered in the certified manifest");
   assert(CERTIFIED_POSTGRESQL_MIGRATIONS.slice(0, 7).every((migration, index) =>
     migration.version === index + 1),
   "the certified 001-007 prefix is unchanged");
@@ -236,12 +241,17 @@ async function verifyCrossBusinessIsolation(): Promise<void> {
     conversationId: sessionB.principal.conversationId,
     businessProfileVersion: fictionalBusinessProfile.version,
     message: "project help",
+    turnId: nextTurnId(),
   });
   assert(crossTurn.status === "conversation-unavailable",
     "a mismatched business and conversation cannot start a turn");
 
   const bodyMismatch = await handleReceptionistTurn(makeRequest({
-    body: JSON.stringify({ message: "project help", businessId: BUSINESS_B }),
+    body: JSON.stringify({
+      message: "project help",
+      turnId: nextTurnId(),
+      businessId: BUSINESS_B,
+    }),
     cookie: cookieOf(sessionA),
     csrf: sessionA.csrfToken,
   }), runtime);
@@ -420,7 +430,7 @@ async function turn(
   message: string,
 ): Promise<Response> {
   return handleReceptionistTurn(makeRequest({
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ message, turnId: nextTurnId() }),
     cookie: cookieOf(session),
     csrf: session.csrfToken,
   }), runtime);
@@ -460,14 +470,35 @@ function commitFrom(
 ): CommitTurnInput {
   return {
     scope: conversation.scope,
+    turnId: nextTurnId(),
+    requestDigest: randomBytes(32).toString("hex"),
+    outcomeCode: "accepted",
+    stage: conversation.state.stage,
+    readiness: "not-ready",
+    durationMs: 1,
+    usage: {
+      providerIdentifier: "simulated-offline-model-transport/v1",
+      modelIdentifier: null,
+      inputTokens: 0,
+      outputTokens: 0,
+      costMicros: 0,
+    },
+    monthlyBudgetMicros: DEFAULT_MONTHLY_BUDGET_MICROS,
+    monthStartMs: 0,
     expectedRevision: conversation.state.revision,
     expectedTurnNumber: conversation.turnNumber,
     state: conversation.state,
     pendingFieldId: conversation.pendingFieldId,
     handoffAvailable: conversation.handoffAvailable,
     turnNumber: conversation.turnNumber + 1,
-    nextMessageId: conversation.nextMessageId,
-    messages,
+    nextMessageId: conversation.nextMessageId + (messages.length === 0 ? 1 : 0),
+    messages: messages.length === 0
+      ? [{
+        messageId: conversation.nextMessageId,
+        role: "customer" as const,
+        content: "concurrent update",
+      }]
+      : messages,
   };
 }
 

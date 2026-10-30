@@ -106,7 +106,11 @@ export type ReceptionistTurnOutcome =
       readonly decision: ReceptionistDecision;
       readonly messages: readonly SanitizedMessage[];
       readonly conversation: SanitizedConversation;
+      /** True when a duplicate turn identifier was answered from its receipt. */
+      readonly replayed?: boolean;
     }
+  | { readonly status: "conflict"; readonly reason: "stale" | "turn-mismatch" }
+  | { readonly status: "budget-exhausted" }
   | { readonly status: "provider-failure" }
   | { readonly status: "conversation-unavailable" }
   | { readonly status: "invalid-message" }
@@ -806,9 +810,16 @@ function parseTurnHandleInput(input: unknown): {
 } | null {
   if (!isPlainRecord(input)) return null;
   const keys = Object.keys(input);
-  if (keys.length !== 2 || !keys.includes("handle") || !keys.includes("message")) {
+  const hasOptionalTurnId = keys.includes("turnId");
+  if ((keys.length !== 2 && keys.length !== 3)
+    || !keys.includes("handle")
+    || !keys.includes("message")
+    || keys.some((key) => key !== "handle" && key !== "message" && key !== "turnId")) {
     return null;
   }
+  // The local demonstration is ephemeral, so a turn identifier is accepted for
+  // request-shape compatibility but never used for durable replay.
+  if (hasOptionalTurnId && !isPersistedTurnId(input.turnId)) return null;
   if (!isConversationHandle(input.handle) || typeof input.message !== "string") {
     return null;
   }
@@ -849,4 +860,8 @@ function boundedInteger(value: unknown, minimum: number, maximum: number): numbe
 
 function isPlainRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isPersistedTurnId(value: unknown): value is string {
+  return typeof value === "string" && /^[A-Za-z0-9_-]{8,64}$/.test(value);
 }

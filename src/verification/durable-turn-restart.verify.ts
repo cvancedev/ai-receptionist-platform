@@ -49,7 +49,8 @@ async function verifyOrderedMigration(): Promise<void> {
     [3, "business_profile_versions"], [4, "knowledge_record_versions"],
     [5, "configuration_activations"], [6, "configuration_lifecycle_transitions"],
     [7, "message_evidence"], [8, "receptionist_persistence"],
-  ], "migrations 001-008 are ordered and migrations 001-007 remain compatible");
+    [9, "receptionist_turn_receipts"],
+  ], "migrations 001-009 are ordered and migrations 001-007 remain compatible");
 }
 
 async function verifyAtomicCommitAndRestart(trusted: StateExecutionResult): Promise<void> {

@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { readdirSync, readFileSync, type Dirent } from "node:fs";
 import { join, relative, sep } from "node:path";
 import type { BusinessProfile } from "../domain/business-profile";
@@ -35,6 +35,10 @@ const PILOT_DATABASE_REFERENCE = "AI_RECEPTIONIST_PILOT_DATABASE_URL";
 const OPERATOR_ID = "front-desk-operator";
 const SESSION_TTL_MS = 15 * 60 * 1_000;
 const DEFAULT_IP = "198.51.100.70";
+
+function nextTurnId(): string {
+  return `turn-${randomBytes(12).toString("hex")}`;
+}
 
 interface ApiBody {
   readonly ok: boolean;
@@ -399,6 +403,7 @@ async function verifyHandleIntegrityAndIsolation(): Promise<void> {
   const forgedOutcome = await runtime.conversations.submit({
     handle: forged,
     message: "project help",
+    turnId: nextTurnId(),
   });
   assert(forgedOutcome.status === "conversation-unavailable",
     "a forged handle cannot submit a turn");
@@ -419,6 +424,7 @@ async function verifyHandleIntegrityAndIsolation(): Promise<void> {
   const stolen = await handleReceptionistTurn(makeRequest({
     body: JSON.stringify({
       message: "project help",
+      turnId: nextTurnId(),
       conversationId: sessionB.principal.conversationId,
     }),
     cookie: cookieOf(session),
@@ -428,7 +434,11 @@ async function verifyHandleIntegrityAndIsolation(): Promise<void> {
     "a session cannot select another conversation by identifier");
 
   const stolenBusiness = await handleReceptionistTurn(makeRequest({
-    body: JSON.stringify({ message: "project help", businessId: BUSINESS_B }),
+    body: JSON.stringify({
+      message: "project help",
+      turnId: nextTurnId(),
+      businessId: BUSINESS_B,
+    }),
     cookie: cookieOf(session),
     csrf: session.csrfToken,
   }), runtime);
@@ -436,7 +446,7 @@ async function verifyHandleIntegrityAndIsolation(): Promise<void> {
     "a session cannot select another business by identifier");
 
   const clientHandle = await handleReceptionistTurn(makeRequest({
-    body: JSON.stringify({ message: "project help", handle }),
+    body: JSON.stringify({ message: "project help", turnId: nextTurnId(), handle }),
     cookie: cookieOf(session),
     csrf: session.csrfToken,
   }), runtime);
@@ -444,7 +454,7 @@ async function verifyHandleIntegrityAndIsolation(): Promise<void> {
     "a client may not supply a conversation handle at all");
 
   const ownTurn = await handleReceptionistTurn(makeRequest({
-    body: JSON.stringify({ message: "project help" }),
+    body: JSON.stringify({ message: "project help", turnId: nextTurnId() }),
     cookie: cookieOf(session),
     csrf: session.csrfToken,
   }), runtime);
@@ -466,7 +476,7 @@ async function verifyTurnEndpointSecurity(): Promise<void> {
   let clock = 5_000_000;
   const runtime = buildRuntime({ now: () => clock });
   const session = await issueCustomer(runtime, WIDGET_A);
-  const body = JSON.stringify({ message: "project help" });
+  const body = JSON.stringify({ message: "project help", turnId: nextTurnId() });
 
   const missing = await handleReceptionistTurn(makeRequest({ body, cookie: null }), runtime);
   assert(missing.status === 401, "a missing session is unauthorized");
@@ -588,7 +598,7 @@ async function verifyProviderFailureStaysSanitized(): Promise<void> {
   assert(handle !== null, "the failure session carries a handle");
 
   const response = await handleReceptionistTurn(makeRequest({
-    body: JSON.stringify({ message: "project help" }),
+    body: JSON.stringify({ message: "project help", turnId: nextTurnId() }),
     cookie: cookieOf(session),
     csrf: session.csrfToken,
   }), runtime);
@@ -603,7 +613,7 @@ async function verifyProviderFailureStaysSanitized(): Promise<void> {
   const healthy = buildRuntime();
   const healthySession = await issueCustomer(healthy, WIDGET_A);
   const healthyResponse = await handleReceptionistTurn(makeRequest({
-    body: JSON.stringify({ message: "project help" }),
+    body: JSON.stringify({ message: "project help", turnId: nextTurnId() }),
     cookie: cookieOf(healthySession),
     csrf: healthySession.csrfToken,
   }), healthy);

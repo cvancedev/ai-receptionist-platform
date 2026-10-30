@@ -1,11 +1,17 @@
+import { createHash } from "node:crypto";
 import type { OfflineTransport } from "../../ai/providers/transport-model-provider-adapter";
 import { digestConversationHandle, isConversationHandle } from "../auth/conversation-handle";
 import {
+  DEFAULT_MONTHLY_BUDGET_MICROS,
+  MAXIMUM_MONTHLY_BUDGET_MICROS,
   isConversationPersistenceScope,
+  isTurnId,
   scopeKey,
+  utcMonthStart,
   type ConversationPersistenceScope,
   type ReceptionistPersistence,
   type StoredMessage,
+  type TurnReceipt,
 } from "../persistence/receptionist-persistence";
 import {
   INITIAL_GREETING,
@@ -13,6 +19,7 @@ import {
   ReceptionistConversationService,
   createInitialConversationState,
   type ReceptionistBusiness,
+  type ReceptionistDecision,
   type ReceptionistTurnOutcome,
 } from "./receptionist-conversation-service";
 
@@ -27,14 +34,29 @@ export interface DurableReceptionistConversationServiceOptions {
   readonly persistence: ReceptionistPersistence;
   readonly transport?: OfflineTransport;
   readonly maximumConversations?: number;
+  readonly now?: () => number;
+  /** Per-business monthly cap in micro-units of USD. */
+  readonly monthlyBudgetMicrosByBusiness?: Readonly<Record<string, number>>;
+  readonly usageProviderIdentifier?: string;
 }
 
 type ResolvedSubmission =
   | {
       readonly message: string;
       readonly scope: ConversationPersistenceScope;
+      readonly turnId: string;
     }
   | { readonly failure: "unavailable" | "persistence" };
+
+const DECISIONS: ReadonlySet<string> = new Set([
+  "accepted",
+  "clarification",
+  "confirmation",
+  "escalation",
+  "handoff",
+  "not-performed",
+  "rejected",
+]);
 
 /**
  * Durable conversation service for the pilot.
@@ -51,6 +73,9 @@ export class DurableReceptionistConversationService {
   private readonly persistence: ReceptionistPersistence;
   private readonly businesses = new Map<string, ReceptionistBusiness>();
   private readonly queues = new Map<string, Promise<void>>();
+  private readonly now: () => number;
+  private readonly budgets: Readonly<Record<string, number>>;
+  private readonly usageProviderIdentifier: string;
 
   constructor(
     businesses: readonly ReceptionistBusiness[],
@@ -60,6 +85,11 @@ export class DurableReceptionistConversationService {
       throw new Error("Conversation persistence is required.");
     }
     this.persistence = options.persistence;
+    this.now = typeof options.now === "function" ? options.now : Date.now;
+    this.budgets = options.monthlyBudgetMicrosByBusiness ?? {};
+    this.usageProviderIdentifier = typeof options.usageProviderIdentifier === "string"
+      ? options.usageProviderIdentifier
+      : "simulated-offline-model-transport/v1";
     this.service = new ReceptionistConversationService(businesses, {
       transport: options.transport,
       maximumConversations: options.maximumConversations,
@@ -135,7 +165,7 @@ export class DurableReceptionistConversationService {
     this.queues.set(key, current);
     await previous;
     try {
-      return await this.process(submission.scope, submission.message);
+      return await this.process(submission.scope, submission.message, submission.turnId);
     } finally {
       release();
       if (this.queues.get(key) === current) this.queues.delete(key);
@@ -157,7 +187,24 @@ export class DurableReceptionistConversationService {
   private async process(
     scope: ConversationPersistenceScope,
     message: string,
+    turnId: string,
   ): Promise<ReceptionistTurnOutcome> {
+    const startedAt = Date.now();
+    const digest = requestDigest(scope, turnId, message);
+
+    // Answer a duplicate before any engine or provider work. The check is
+    // advisory; the commit re-checks it inside the storage transaction.
+    const existing = await this.persistence.loadTurnReceipt(scope, turnId);
+    if (existing.status === "failure") {
+      return Object.freeze({ status: "internal-failure" });
+    }
+    if (existing.status === "found") {
+      if (existing.receipt.requestDigest !== digest) {
+        return Object.freeze({ status: "conflict", reason: "turn-mismatch" as const });
+      }
+      return this.outcomeFromReceipt(existing.receipt, true);
+    }
+
     const loaded = await this.persistence.loadConversation(scope);
     if (loaded.status === "not-found") {
       return Object.freeze({ status: "conversation-unavailable" });
@@ -218,6 +265,21 @@ export class DurableReceptionistConversationService {
 
     const committed = await this.persistence.commitTurn({
       scope,
+      turnId,
+      requestDigest: digest,
+      outcomeCode: outcome.decision,
+      stage: outcome.conversation.stage,
+      readiness: outcome.conversation.readiness,
+      durationMs: Math.min(600_000, Math.max(0, Date.now() - startedAt)),
+      usage: {
+        providerIdentifier: this.usageProviderIdentifier,
+        modelIdentifier: null,
+        inputTokens: 0,
+        outputTokens: 0,
+        costMicros: 0,
+      },
+      monthlyBudgetMicros: this.budgetFor(scope.businessProfileId),
+      monthStartMs: utcMonthStart(this.now()),
       expectedRevision: conversation.state.revision,
       expectedTurnNumber: conversation.turnNumber,
       state: final.state,
@@ -227,24 +289,80 @@ export class DurableReceptionistConversationService {
       nextMessageId: final.nextMessageId,
       messages: appended,
     });
-    if (committed !== "committed") {
-      this.service.discard(handle);
+    if (committed === "committed") return outcome;
+
+    this.service.discard(handle);
+    if (committed === "replayed") {
+      const receipt = await this.persistence.loadTurnReceipt(scope, turnId);
+      return receipt.status === "found"
+        ? this.outcomeFromReceipt(receipt.receipt, true)
+        : Object.freeze({ status: "internal-failure" });
+    }
+    if (committed === "turn-mismatch") {
+      return Object.freeze({ status: "conflict", reason: "turn-mismatch" as const });
+    }
+    if (committed === "conflict") {
+      return Object.freeze({ status: "conflict", reason: "stale" as const });
+    }
+    if (committed === "budget-exhausted") {
+      return Object.freeze({ status: "budget-exhausted" });
+    }
+    return Object.freeze({ status: "internal-failure" });
+  }
+
+  private outcomeFromReceipt(
+    receipt: TurnReceipt,
+    replayed: boolean,
+  ): ReceptionistTurnOutcome {
+    if (!DECISIONS.has(receipt.outcomeCode)) {
       return Object.freeze({ status: "internal-failure" });
     }
-    return outcome;
+    return Object.freeze({
+      status: "ok" as const,
+      turn: receipt.turnNumber,
+      decision: receipt.outcomeCode as ReceptionistDecision,
+      messages: Object.freeze(receipt.messages.map((message) => Object.freeze({
+        role: message.role,
+        text: message.content,
+      }))),
+      conversation: Object.freeze({
+        stage: receipt.stage,
+        revision: receipt.resultingRevision,
+        pendingFieldId: receipt.pendingFieldId,
+        readiness: receipt.readiness,
+        handoffAvailable: receipt.handoffAvailable,
+      }),
+      replayed,
+    });
+  }
+
+  private budgetFor(businessProfileId: string): number {
+    const configured = this.budgets[businessProfileId];
+    if (typeof configured === "number"
+      && Number.isInteger(configured)
+      && configured >= 0
+      && configured <= MAXIMUM_MONTHLY_BUDGET_MICROS) {
+      return configured;
+    }
+    return DEFAULT_MONTHLY_BUDGET_MICROS;
   }
 
   private async resolveSubmission(input: unknown): Promise<ResolvedSubmission> {
     if (!isPlainRecord(input)) return { failure: "unavailable" };
     const keys = Object.keys(input);
     if (typeof input.message !== "string") return { failure: "unavailable" };
+    if (!isTurnId(input.turnId)) return { failure: "unavailable" };
+    const turnId = input.turnId;
     const message = input.message.trim();
     if (message.length === 0 || message.length > MAXIMUM_MESSAGE_LENGTH) {
       return { failure: "unavailable" };
     }
     if (CONTROL_CHARACTERS.test(message)) return { failure: "unavailable" };
 
-    if (keys.length === 2 && keys.includes("handle") && keys.includes("message")) {
+    if (keys.length === 3
+      && keys.includes("handle")
+      && keys.includes("message")
+      && keys.includes("turnId")) {
       if (!isConversationHandle(input.handle)) return { failure: "unavailable" };
       const snapshot = this.service.exportForPersistence(input.handle);
       if (snapshot) {
@@ -252,21 +370,22 @@ export class DurableReceptionistConversationService {
           businessProfileId: snapshot.state.businessProfileId,
           businessProfileVersion: snapshot.state.businessProfileVersion,
           conversationId: snapshot.state.conversationId,
-        }, message);
+        }, message, turnId);
       }
       const scope = await this.persistence.findScopeByHandleHash(
         digestConversationHandle(input.handle),
       );
       if (scope.status === "not-found") return { failure: "unavailable" };
       if (scope.status === "failure") return { failure: "persistence" };
-      return this.withBusinessScope(scope.scope, message);
+      return this.withBusinessScope(scope.scope, message, turnId);
     }
 
-    if (keys.length === 4
+    if (keys.length === 5
       && keys.includes("businessId")
       && keys.includes("conversationId")
       && keys.includes("businessProfileVersion")
-      && keys.includes("message")) {
+      && keys.includes("message")
+      && keys.includes("turnId")) {
       if (!isConversationPersistenceScope({
         businessProfileId: input.businessId,
         businessProfileVersion: input.businessProfileVersion,
@@ -276,7 +395,7 @@ export class DurableReceptionistConversationService {
         businessProfileId: input.businessId as string,
         businessProfileVersion: input.businessProfileVersion as number,
         conversationId: input.conversationId as string,
-      }, message);
+      }, message, turnId);
     }
 
     return { failure: "unavailable" };
@@ -285,6 +404,7 @@ export class DurableReceptionistConversationService {
   private withBusinessScope(
     scope: ConversationPersistenceScope,
     message: string,
+    turnId: string,
   ): ResolvedSubmission {
     const business = this.businesses.get(scope.businessProfileId);
     if (!business || business.profile.status !== "active") {
@@ -293,11 +413,25 @@ export class DurableReceptionistConversationService {
     if (business.profile.version !== scope.businessProfileVersion) {
       return { failure: "unavailable" };
     }
-    return { message, scope };
+    return { message, scope, turnId };
   }
 }
 
 
 function isPlainRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function requestDigest(
+  scope: ConversationPersistenceScope,
+  turnId: string,
+  message: string,
+): string {
+  return createHash("sha256").update(JSON.stringify([
+    scope.businessProfileId,
+    scope.businessProfileVersion,
+    scope.conversationId,
+    turnId,
+    message,
+  ]), "utf8").digest("hex");
 }

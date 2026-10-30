@@ -162,6 +162,11 @@ export function createPilotReceptionistRuntime(
   });
   const limiter = new FixedWindowRateLimiter({ now });
 
+  const monthlyBudgetMicrosByBusiness: Record<string, number> = {};
+  for (const registration of configuration.businesses) {
+    monthlyBudgetMicrosByBusiness[registration.businessId] = registration.monthlyBudgetMicros;
+  }
+
   let conversations: DurableReceptionistConversationService;
   try {
     conversations = new DurableReceptionistConversationService(
@@ -172,6 +177,9 @@ export function createPilotReceptionistRuntime(
           ? (input.transport as OfflineTransport)
           : undefined,
         maximumConversations: boundedInteger(input.maximumConversations, 1, 2_000) ?? undefined,
+        now,
+        monthlyBudgetMicrosByBusiness,
+        usageProviderIdentifier: OFFLINE_PROVIDER_DESCRIPTOR.identifier,
       },
     );
   } catch {
@@ -318,6 +326,9 @@ function isPersistencePort(value: unknown): value is ReceptionistPersistence {
     "loadConversation",
     "findScopeByHandleHash",
     "commitTurn",
+    "loadTurnReceipt",
+    "monthlyUsageMicros",
+    "readSchemaVersion",
     "createSession",
     "findSession",
     "revokeSession",

@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Stage B2.3.3 - Pilot Turn Durability and Usage Accounting
+
+- Added client-generated, business- and conversation-scoped turn identifiers.
+  Identical retries replay the recorded result without new messages, turns, or
+  usage; identifier reuse with different content and stale revisions return
+  sanitized conflicts instead of server failures.
+- Added migration 009 with immutable per-turn receipts and per-business usage
+  events. Receipts store operational metadata only, never conversation text,
+  prompts, credentials, tokens, or handles; receipts, usage, state, and messages
+  commit in one transaction.
+- Added integer micro-unit USD accounting, a configurable per-business monthly
+  cap (default $10), and an atomic budget check. Provider execution remains
+  disabled, so committed costs are zero; the pre-call reservation-and-settlement
+  design required for a real provider cap is documented for B2.4.
+- Added explicit `npm run migrate:pilot` migration procedure and fail-closed
+  schema readiness at pilot composition. Requests never migrate a database.
+- Added focused `verify:pilot-turn-durability` coverage and live PostgreSQL
+  receipt, usage, replay, and budget verification. No provider, telephony,
+  streaming, operator UI, or billing work was added.
+
 ### Sprint 10.2 Entry - Bounded Dependency Remediation
 
 - Resolved the reported Critical/High dependency blocker with minimum patched

@@ -138,10 +138,13 @@ configuration, a missing credential, an unavailable business profile, or a
 failed durable store produces `pilot-unavailable`; it never falls back to the
 demonstration.
 
-The pilot database must already have the ordered migrations (001–008) applied to
-its target schema before the runtime serves traffic. The application does not
-run migrations on request; a missing schema or unreachable database surfaces as
-`pilot-unavailable` or a sanitized request failure, never as demo output.
+The pilot database must already have the ordered migrations (001–009) applied to
+its target schema before the runtime serves traffic. Apply them explicitly with
+`npm run migrate:pilot` (see
+[Pilot Turn Durability and Usage](PILOT_TURN_DURABILITY_AND_USAGE.md)). The
+application does not run migrations on request; a missing, unreadable, or older
+schema surfaces as `pilot-unavailable` or a sanitized request failure, never as
+demo output.
 
 Without `AI_RECEPTIONIST_PILOT_CONFIGURATION`, the application serves only the
 local simulated demonstration. Both modes report their identity truthfully:
@@ -169,6 +172,24 @@ git-ignored local file (`.local/`), and every verification run creates and
 drops a uniquely named disposable database. No administrator credential is kept
 in the repository or in the routine verification configuration.
 
+## Pilot Turn Identity and Usage (Stage B2.3.3)
+
+Pilot turns require a client-generated `turnId` (opaque, 8–64 characters). The
+same identifier with the same message replays the recorded result without new
+messages, turns, or usage; the same identifier with a different message, or a
+stale revision, returns a sanitized `409`; a monthly cap rejection returns
+`402 budget_exhausted`. The identifier is always scoped by the authenticated
+session's business, profile version, and conversation.
+
+Turn receipts and usage events are written in the same transaction as state,
+metadata, and messages. Receipts hold operational metadata only, never
+conversation text, prompts, tokens, handles, or raw errors. Costs are integer
+micro-units of USD, and each business has a default $10 monthly accounting cap.
+Provider execution is still disabled, so committed costs are zero and no hard
+provider spending cap is claimed. The reservation-and-settlement design needed
+for a real cap is specified in
+[Pilot Turn Durability and Usage](PILOT_TURN_DURABILITY_AND_USAGE.md).
+
 ## Current Exclusions
 
 There is no real secret, secret store, provider SDK, network call, production
@@ -181,6 +202,7 @@ grant scope, or authorize protected data.
 
 Related documents:
 
+- [Pilot Turn Durability and Usage](PILOT_TURN_DURABILITY_AND_USAGE.md)
 - [Controlled-Evaluation Boundary](CONTROLLED_EVALUATION_BOUNDARY.md)
 - [Data Classification](DATA_CLASSIFICATION.md)
 - [Identity, Authorization, and Protected-Data Gate](IDENTITY_AUTHORIZATION_AND_PROTECTED_DATA.md)

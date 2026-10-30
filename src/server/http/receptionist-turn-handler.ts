@@ -1,4 +1,6 @@
+import { randomBytes } from "node:crypto";
 import { parseJsonWithoutDuplicateKeys } from "../../ai/providers/provider-output-schema";
+import { isTurnId } from "../persistence/receptionist-persistence";
 import { readBoundedBody } from "./bounded-request-body";
 import { jsonResponse } from "./json-response";
 import {
@@ -49,6 +51,9 @@ type ErrorCode =
   | "forbidden"
   | "rate_limited"
   | "conversation_unavailable"
+  | "conversation_conflict"
+  | "turn_conflict"
+  | "budget_exhausted"
   | "provider_failure"
   | "internal_error";
 
@@ -61,6 +66,9 @@ const ERROR_MESSAGES: Record<ErrorCode, string> = {
   forbidden: "The request is not authorized.",
   rate_limited: "Too many requests. Try again shortly.",
   conversation_unavailable: "The conversation is unavailable.",
+  conversation_conflict: "The conversation changed while this message was being processed. Retry with the current state.",
+  turn_conflict: "That turn identifier was already used for a different message.",
+  budget_exhausted: "The conversation is temporarily unavailable due to usage limits.",
   provider_failure: "The receptionist is temporarily unavailable.",
   internal_error: "The request could not be completed.",
 };
@@ -136,23 +144,32 @@ export async function handleReceptionistTurn(
     if (!runtime.hasBusiness(principal.businessId)) {
       return errorResponse(403, "forbidden", mode);
     }
+
+    // The pilot requires a client-generated identifier so a retried utterance is
+    // deduplicated. The ephemeral demonstration generates one for compatibility
+    // and never claims durable idempotency.
+    const turnId = parsed.turnId ?? (mode === "pilot"
+      ? null
+      : `auto-${randomBytes(16).toString("hex")}`);
+    if (turnId === null) return errorResponse(400, "invalid_request", mode);
     // The conversation is selected only by server-bound session state: the
     // opaque handle while it is resident, or the session's own durable scope
     // after a restart. No client field can name a conversation or a business.
     const submission = principal.conversationHandle !== null
-      ? { handle: principal.conversationHandle, message: parsed.message }
+      ? { handle: principal.conversationHandle, message: parsed.message, turnId }
       : principal.businessProfileVersion !== null
         ? {
           businessId: principal.businessId,
           conversationId: principal.conversationId,
           businessProfileVersion: principal.businessProfileVersion,
           message: parsed.message,
+          turnId,
         }
         : null;
     if (submission === null) return errorResponse(403, "forbidden", mode);
 
     const outcome = await runtime.conversations.submit(submission);
-    return turnResponse(outcome, principal, runtime);
+    return turnResponse(outcome, principal, runtime, turnId);
   } catch {
     return errorResponse(500, "internal_error", mode);
   }
@@ -163,14 +180,15 @@ function parseRequestBody(
   principal: SessionPrincipal,
   maximumMessageLength: number,
 ):
-  | { readonly status: "ok"; readonly message: string }
+  | { readonly status: "ok"; readonly message: string; readonly turnId: string | null }
   | { readonly status: "forbidden" }
   | { readonly status: "invalid" } {
-  const allowed = new Set(["message", "businessId", "conversationId"]);
+  const allowed = new Set(["message", "businessId", "conversationId", "turnId"]);
   if (Object.keys(body).some((key) => !allowed.has(key))) {
     return { status: "invalid" };
   }
   if (typeof body.message !== "string") return { status: "invalid" };
+  if (body.turnId !== undefined && !isTurnId(body.turnId)) return { status: "invalid" };
   const message = body.message.trim();
   if (message.length === 0 || message.length > maximumMessageLength) {
     return { status: "invalid" };
@@ -188,14 +206,25 @@ function parseRequestBody(
     if (body.conversationId !== principal.conversationId) return { status: "forbidden" };
   }
 
-  return { status: "ok", message };
+  return { status: "ok", message, turnId: body.turnId === undefined ? null : body.turnId };
 }
 
 function turnResponse(
   outcome: ReceptionistTurnOutcome,
   principal: SessionPrincipal,
   runtime: ReceptionistTurnRuntime,
+  turnId: string,
 ): Response {
+  if (outcome.status === "conflict") {
+    return errorResponse(
+      409,
+      outcome.reason === "stale" ? "conversation_conflict" : "turn_conflict",
+      runtime.mode,
+    );
+  }
+  if (outcome.status === "budget-exhausted") {
+    return errorResponse(402, "budget_exhausted", runtime.mode);
+  }
   if (outcome.status === "provider-failure") {
     return errorResponse(502, "provider_failure", runtime.mode);
   }
@@ -216,6 +245,8 @@ function turnResponse(
     data: {
       businessId: principal.businessId,
       conversationId: principal.conversationId,
+      turnId,
+      replayed: outcome.replayed === true,
       turn: outcome.turn,
       decision: outcome.decision,
       messages: outcome.messages.map((message) => ({

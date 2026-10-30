@@ -4,6 +4,8 @@ import {
   isConversationPersistenceScope,
   isPersistenceDigest,
   isStoredMessage,
+  isTurnId,
+  isTurnUsage,
   sameScope,
   type CommitTurnInput,
   type CommitTurnResult,
@@ -12,10 +14,13 @@ import {
   type CreateConversationResult,
   type FindSessionResult,
   type LoadConversationResult,
+  type LoadTurnReceiptResult,
+  type MonthlyUsageSummary,
   type PersistedSessionRecord,
   type ReceptionistPersistence,
   type ScopeLookupResult,
   type StoredMessage,
+  type TurnReceipt,
 } from "../../server/persistence/receptionist-persistence";
 import { decodeConversationState } from "../../validation/conversation-state-codec";
 import { quoteIdentifier, validatedSchema } from "./migration-runner";
@@ -44,6 +49,25 @@ interface MessageRow {
   readonly message_id: number;
   readonly role: string;
   readonly content: string;
+}
+
+interface ReceiptRow {
+  readonly turn_id: string;
+  readonly request_digest: string;
+  readonly turn_number: number;
+  readonly expected_revision: number;
+  readonly resulting_revision: number;
+  readonly outcome_code: string;
+  readonly provider_identifier: string | null;
+  readonly model_identifier: string | null;
+  readonly stage: string;
+  readonly readiness: string;
+  readonly pending_field_id: string | null;
+  readonly handoff_available: boolean;
+  readonly first_message_id: number;
+  readonly last_message_id: number;
+  readonly duration_ms: number;
+  readonly created_at: Date;
 }
 
 interface SessionRow {
@@ -76,6 +100,9 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
   private readonly conversationTable: string;
   private readonly messageTable: string;
   private readonly sessionTable: string;
+  private readonly receiptTable: string;
+  private readonly usageTable: string;
+  private readonly migrationTable: string;
 
   constructor(options: Readonly<PostgresqlReceptionistPersistenceOptions>) {
     if (!options.connectionString.trim()) {
@@ -87,6 +114,9 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
     this.conversationTable = `${quoteIdentifier(schema)}.receptionist_conversations`;
     this.messageTable = `${quoteIdentifier(schema)}.receptionist_messages`;
     this.sessionTable = `${quoteIdentifier(schema)}.receptionist_sessions`;
+    this.receiptTable = `${quoteIdentifier(schema)}.receptionist_turn_receipts`;
+    this.usageTable = `${quoteIdentifier(schema)}.receptionist_usage_events`;
+    this.migrationTable = `${quoteIdentifier(schema)}.app_schema_migrations`;
   }
 
   async createConversation(seed: ConversationSeed): Promise<CreateConversationResult> {
@@ -257,6 +287,17 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
 
   async commitTurn(input: CommitTurnInput): Promise<CommitTurnResult> {
     if (!isConversationPersistenceScope(input?.scope)) return "failure";
+    if (!isTurnId(input.turnId)) return "failure";
+    if (!isPersistenceDigest(input.requestDigest)) return "failure";
+    if (!isTurnUsage(input.usage)) return "failure";
+    if (!boundedNonNegative(input.durationMs, 600_000)) return "failure";
+    if (!boundedNonNegative(input.monthlyBudgetMicros, Number.MAX_SAFE_INTEGER)) {
+      return "failure";
+    }
+    if (!boundedNonNegative(input.monthStartMs, Number.MAX_SAFE_INTEGER)) return "failure";
+    if (!boundedText(input.outcomeCode, 64)
+      || !boundedText(input.stage, 64)
+      || !boundedText(input.readiness, 64)) return "failure";
     if (!Number.isInteger(input.expectedRevision) || input.expectedRevision < 0) {
       return "failure";
     }
@@ -264,16 +305,65 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
       return "failure";
     }
     if (input.messages.length > MAXIMUM_STORED_MESSAGES) return "failure";
+    if (input.messages.length === 0) return "failure";
     if (input.messages.some((message) => !isStoredMessage(message))) return "failure";
     if (!sameScope(input.state, input.scope)) return "failure";
     if (input.state.revision < input.expectedRevision) return "failure";
     const decoded = decodeConversationState(input.state, input.scope);
     if (decoded.status === "failure") return "failure";
 
+    const orderedMessages = [...input.messages].sort(
+      (left, right) => left.messageId - right.messageId,
+    );
+    const firstMessage = orderedMessages[0];
+    const lastMessage = orderedMessages[orderedMessages.length - 1];
+    if (!firstMessage || !lastMessage) return "failure";
+
     let client: PoolClient | null = null;
     try {
       client = await this.pool.connect();
       await client.query("BEGIN");
+      // Serialize duplicate turn identifiers, then budget accounting for the
+      // business. The second lock is always acquired after the first, so two
+      // different turns cannot deadlock on the pair.
+      await client.query(
+        "SELECT pg_advisory_xact_lock(hashtextextended($1, 0))",
+        [turnLockKey(input.scope, input.turnId)],
+      );
+      await client.query(
+        "SELECT pg_advisory_xact_lock(hashtextextended($1, 0))",
+        [budgetLockKey(input.scope.businessProfileId)],
+      );
+
+      const existing = await client.query<{ readonly request_digest: string }>(
+        `SELECT request_digest FROM ${this.receiptTable}
+        WHERE business_profile_id = $1
+          AND business_profile_version = $2
+          AND conversation_id = $3
+          AND turn_id = $4`,
+        [
+          input.scope.businessProfileId,
+          input.scope.businessProfileVersion,
+          input.scope.conversationId,
+          input.turnId,
+        ],
+      );
+      const prior = existing.rows[0];
+      if (prior) {
+        await rollbackSafely(client);
+        return prior.request_digest === input.requestDigest ? "replayed" : "turn-mismatch";
+      }
+
+      const spent = await this.usageTotal(client, input);
+      if (spent === null) {
+        await rollbackSafely(client);
+        return "failure";
+      }
+      if (spent + input.usage.costMicros > input.monthlyBudgetMicros) {
+        await rollbackSafely(client);
+        return "budget-exhausted";
+      }
+
       const updated = await client.query(
         `UPDATE ${this.stateTable}
         SET revision = $4,
@@ -326,7 +416,84 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
         return this.classifyMissingCommit(input.scope);
       }
 
-      await this.insertMessages(client, input.scope, input.messages);
+      await this.insertMessages(client, input.scope, orderedMessages);
+
+      await client.query(
+        `INSERT INTO ${this.receiptTable} (
+          business_profile_id, business_profile_version, conversation_id,
+          turn_id, request_digest, turn_number, expected_revision,
+          resulting_revision, outcome_code, execution_mode,
+          provider_identifier, model_identifier, stage, readiness,
+          pending_field_id, handoff_available, first_message_id,
+          last_message_id, duration_ms
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, 'pilot',
+          $10, $11, $12, $13, $14, $15, $16, $17, $18
+        )`,
+        [
+          input.scope.businessProfileId,
+          input.scope.businessProfileVersion,
+          input.scope.conversationId,
+          input.turnId,
+          input.requestDigest,
+          input.turnNumber,
+          input.expectedRevision,
+          decoded.state.revision,
+          input.outcomeCode,
+          input.usage.providerIdentifier,
+          input.usage.modelIdentifier,
+          input.stage,
+          input.readiness,
+          input.pendingFieldId,
+          input.handoffAvailable,
+          firstMessage.messageId,
+          lastMessage.messageId,
+          input.durationMs,
+        ],
+      );
+
+      // Settle a reservation placed before a paid provider call, or record a
+      // settled zero-cost row for the disabled provider. A pre-existing settled
+      // row for this turn is impossible here because the receipt was absent.
+      const settled = await client.query(
+        `INSERT INTO ${this.usageTable} (
+          business_profile_id, business_profile_version, conversation_id,
+          turn_id, state, provider_identifier, model_identifier,
+          input_tokens, output_tokens, reserved_cost_micros, cost_micros,
+          currency, settled_at
+        ) VALUES (
+          $1, $2, $3, $4, 'settled', $5, $6, $7, $8, NULL, $9, 'USD',
+          CURRENT_TIMESTAMP
+        )
+        ON CONFLICT (
+          business_profile_id, business_profile_version, conversation_id, turn_id
+        ) DO UPDATE SET
+          state = 'settled',
+          provider_identifier = EXCLUDED.provider_identifier,
+          model_identifier = EXCLUDED.model_identifier,
+          input_tokens = EXCLUDED.input_tokens,
+          output_tokens = EXCLUDED.output_tokens,
+          reserved_cost_micros = NULL,
+          cost_micros = EXCLUDED.cost_micros,
+          settled_at = CURRENT_TIMESTAMP
+        WHERE receptionist_usage_events.state = 'reserved'`,
+        [
+          input.scope.businessProfileId,
+          input.scope.businessProfileVersion,
+          input.scope.conversationId,
+          input.turnId,
+          input.usage.providerIdentifier,
+          input.usage.modelIdentifier,
+          input.usage.inputTokens,
+          input.usage.outputTokens,
+          input.usage.costMicros,
+        ],
+      );
+      if (settled.rowCount !== 1) {
+        await rollbackSafely(client);
+        return "failure";
+      }
+
       await client.query("COMMIT");
       return "committed";
     } catch (error) {
@@ -334,6 +501,128 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
       return isUniqueViolation(error) ? "conflict" : "failure";
     } finally {
       client?.release();
+    }
+  }
+
+  async loadTurnReceipt(
+    scope: ConversationPersistenceScope,
+    turnId: string,
+  ): Promise<LoadTurnReceiptResult> {
+    if (!isConversationPersistenceScope(scope) || !isTurnId(turnId)) {
+      return { status: "not-found" };
+    }
+    try {
+      const result = await this.pool.query<ReceiptRow>(
+        `SELECT turn_id, request_digest, turn_number, expected_revision,
+          resulting_revision, outcome_code, provider_identifier, model_identifier,
+          stage, readiness, pending_field_id, handoff_available,
+          first_message_id, last_message_id, duration_ms, created_at
+        FROM ${this.receiptTable}
+        WHERE business_profile_id = $1
+          AND business_profile_version = $2
+          AND conversation_id = $3
+          AND turn_id = $4`,
+        [scope.businessProfileId, scope.businessProfileVersion, scope.conversationId, turnId],
+      );
+      const row = result.rows[0];
+      if (!row) return { status: "not-found" };
+
+      const messages = await this.pool.query<MessageRow>(
+        `SELECT message_id, role, content
+        FROM ${this.messageTable}
+        WHERE business_profile_id = $1
+          AND business_profile_version = $2
+          AND conversation_id = $3
+          AND message_id BETWEEN $4 AND $5
+        ORDER BY message_id`,
+        [
+          scope.businessProfileId,
+          scope.businessProfileVersion,
+          scope.conversationId,
+          row.first_message_id,
+          row.last_message_id,
+        ],
+      );
+      if (messages.rows.length !== row.last_message_id - row.first_message_id + 1) {
+        return { status: "failure" };
+      }
+      const ordered: StoredMessage[] = messages.rows.map((message) => {
+        if ((message.role !== "customer" && message.role !== "assistant")
+          || typeof message.content !== "string"
+          || !Number.isInteger(message.message_id)) {
+          throw new Error("stored message is invalid");
+        }
+        return Object.freeze({
+          messageId: message.message_id,
+          role: message.role as "customer" | "assistant",
+          content: message.content,
+        });
+      });
+
+      const receipt: TurnReceipt = Object.freeze({
+        scope: { ...scope },
+        turnId: row.turn_id,
+        requestDigest: row.request_digest,
+        turnNumber: row.turn_number,
+        expectedRevision: row.expected_revision,
+        resultingRevision: row.resulting_revision,
+        outcomeCode: row.outcome_code,
+        stage: row.stage,
+        readiness: row.readiness,
+        pendingFieldId: row.pending_field_id,
+        handoffAvailable: row.handoff_available,
+        providerIdentifier: row.provider_identifier,
+        modelIdentifier: row.model_identifier,
+        durationMs: row.duration_ms,
+        createdAt: row.created_at.getTime(),
+        messages: Object.freeze(ordered),
+      });
+      return { status: "found", receipt };
+    } catch {
+      return { status: "failure" };
+    }
+  }
+
+  async monthlyUsageMicros(
+    businessProfileId: string,
+    monthStartMs: number,
+  ): Promise<MonthlyUsageSummary | null> {
+    if (typeof businessProfileId !== "string" || businessProfileId.length === 0) return null;
+    if (!boundedNonNegative(monthStartMs, Number.MAX_SAFE_INTEGER)) return null;
+    try {
+      const result = await this.pool.query<{
+        readonly settled: string;
+        readonly reserved: string;
+      }>(
+        `SELECT
+          COALESCE(SUM(CASE WHEN state = 'settled' THEN cost_micros ELSE 0 END), 0)::text
+            AS settled,
+          COALESCE(SUM(CASE WHEN state = 'reserved' THEN reserved_cost_micros ELSE 0 END), 0)::text
+            AS reserved
+        FROM ${this.usageTable}
+        WHERE business_profile_id = $1
+          AND created_at >= to_timestamp($2 / 1000.0)`,
+        [businessProfileId, monthStartMs],
+      );
+      const row = result.rows[0];
+      const settled = Number(row?.settled ?? "0");
+      const reserved = Number(row?.reserved ?? "0");
+      if (!Number.isSafeInteger(settled) || !Number.isSafeInteger(reserved)) return null;
+      return Object.freeze({ settledMicros: settled, reservedMicros: reserved });
+    } catch {
+      return null;
+    }
+  }
+
+  async readSchemaVersion(): Promise<number | null> {
+    try {
+      const result = await this.pool.query<{ readonly version: number | null }>(
+        `SELECT MAX(version)::int AS version FROM ${this.migrationTable}`,
+      );
+      const version = result.rows[0]?.version;
+      return typeof version === "number" && Number.isInteger(version) ? version : null;
+    } catch {
+      return null;
     }
   }
 
@@ -456,6 +745,34 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
     await this.pool.end();
   }
 
+  private async usageTotal(
+    client: PoolClient,
+    input: CommitTurnInput,
+  ): Promise<number | null> {
+    const result = await client.query<{ readonly total: string }>(
+      `SELECT COALESCE(SUM(
+          CASE WHEN state = 'settled' THEN cost_micros ELSE reserved_cost_micros END
+        ), 0)::text AS total
+      FROM ${this.usageTable}
+      WHERE business_profile_id = $1
+        AND created_at >= to_timestamp($2 / 1000.0)
+        AND NOT (
+          business_profile_version = $3
+          AND conversation_id = $4
+          AND turn_id = $5
+        )`,
+      [
+        input.scope.businessProfileId,
+        input.monthStartMs,
+        input.scope.businessProfileVersion,
+        input.scope.conversationId,
+        input.turnId,
+      ],
+    );
+    const total = Number(result.rows[0]?.total ?? "0");
+    return Number.isSafeInteger(total) ? total : null;
+  }
+
   private async classifyMissingCommit(
     scope: ConversationPersistenceScope,
   ): Promise<"conflict" | "not-found"> {
@@ -495,6 +812,26 @@ export class PostgresqlReceptionistPersistence implements ReceptionistPersistenc
       );
     }
   }
+}
+
+function turnLockKey(scope: ConversationPersistenceScope, turnId: string): string {
+  return `receptionist-turn:${scope.businessProfileId}:${scope.businessProfileVersion}:`
+    + `${scope.conversationId}:${turnId}`;
+}
+
+function budgetLockKey(businessProfileId: string): string {
+  return `receptionist-budget:${businessProfileId}`;
+}
+
+function boundedNonNegative(value: unknown, maximum: number): value is number {
+  return typeof value === "number"
+    && Number.isInteger(value)
+    && value >= 0
+    && value <= maximum;
+}
+
+function boundedText(value: unknown, maximum: number): value is string {
+  return typeof value === "string" && value.length > 0 && value.length <= maximum;
 }
 
 function isUniqueViolation(error: unknown): boolean {

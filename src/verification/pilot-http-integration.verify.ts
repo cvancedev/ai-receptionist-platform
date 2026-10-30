@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { readdirSync, readFileSync, type Dirent } from "node:fs";
 import { join, relative, sep } from "node:path";
 import type { BusinessProfile } from "../domain/business-profile";
@@ -17,7 +17,6 @@ import {
   type PilotReceptionistRuntime,
 } from "../server/pilot/pilot-runtime";
 import {
-  PILOT_BUSINESSES,
   PILOT_CONFIGURATION_ENV,
   composePilotRuntime,
   resetPilotRuntimeCache,
@@ -50,6 +49,10 @@ const PILOT_DATABASE_REFERENCE = "AI_RECEPTIONIST_PILOT_DATABASE_URL";
 const OPERATOR_CREDENTIAL = "fictional-http-operator-credential";
 const SESSION_TTL_MS = 60_000;
 const DEFAULT_IP = "203.0.113.40";
+
+function nextTurnId(): string {
+  return `turn-${randomBytes(12).toString("hex")}`;
+}
 
 interface SessionApiBody {
   readonly ok: boolean;
@@ -175,10 +178,29 @@ async function verifyProviderResolution(): Promise<void> {
       ],
     })),
     [PILOT_DATABASE_REFERENCE]: "postgresql://example.invalid/pilot",
-  });
-  // Default composition uses PostgreSQL, which is not contacted until a query.
+  }, { persistenceFactory: () => new InMemoryReceptionistPersistence() });
   assert(withCredential.status === "pilot",
-    "an authorized environment resolves the pilot runtime");
+    "an authorized environment with a current schema resolves the pilot runtime");
+  resetPilotRuntimeCache();
+
+  const staleSchema = await resolveReceptionistHttpRuntime({
+    [PILOT_CONFIGURATION_ENV]: JSON.stringify(pilotConfiguration({
+      businesses: [
+        { businessId: BUSINESS_A, widgetId: WIDGET_A, allowedOrigins: [APP_ORIGIN] },
+      ],
+    })),
+    [PILOT_DATABASE_REFERENCE]: "postgresql://example.invalid/pilot",
+  }, {
+    persistenceFactory: () => new Proxy(new InMemoryReceptionistPersistence(), {
+      get(target, property) {
+        if (property === "readSchemaVersion") return async () => 8;
+        const value = Reflect.get(target, property) as unknown;
+        return typeof value === "function" ? value.bind(target) : value;
+      },
+    }),
+  });
+  assert(staleSchema.status === "pilot-unavailable",
+    "an outdated pilot schema is refused instead of falling back to the demo");
   resetPilotRuntimeCache();
 }
 
@@ -332,7 +354,11 @@ async function verifyCrossBusinessIsolation(): Promise<void> {
   const sessionB = await issueCustomerDirect(runtime, WIDGET_B);
 
   const businessSelection = await turnViaHttp(runtime, issuedA, "project help", {
-    body: JSON.stringify({ message: "project help", businessId: BUSINESS_B }),
+    body: JSON.stringify({
+      message: "project help",
+      turnId: nextTurnId(),
+      businessId: BUSINESS_B,
+    }),
   });
   assert(businessSelection.response.status === 403,
     "a session cannot select another business");
@@ -340,6 +366,7 @@ async function verifyCrossBusinessIsolation(): Promise<void> {
   const conversationSelection = await turnViaHttp(runtime, issuedA, "project help", {
     body: JSON.stringify({
       message: "project help",
+      turnId: nextTurnId(),
       conversationId: sessionB.principal.conversationId,
     }),
   });
@@ -478,7 +505,7 @@ async function verifyModeReporting(): Promise<void> {
   const demo = createDemoRuntime();
   const demoSession = demo.issueSession(BUSINESS_A, "customer:demo");
   const demoTurn = await handleReceptionistTurn(makeTurnRequest({
-    body: JSON.stringify({ message: "project help" }),
+    body: JSON.stringify({ message: "project help", turnId: nextTurnId() }),
     cookie: cookieOf(demoSession),
     csrf: demoSession.csrfToken,
   }), demo);
@@ -654,7 +681,7 @@ async function turnViaHttp(
   overrides: { readonly body?: string; readonly csrf?: string | null } = {},
 ): Promise<{ readonly response: Response; readonly body: TurnApiBody }> {
   const response = await handleReceptionistTurn(makeTurnRequest({
-    body: overrides.body ?? JSON.stringify({ message }),
+    body: overrides.body ?? JSON.stringify({ message, turnId: nextTurnId() }),
     cookie: issued.setCookie?.split(";")[0] ?? null,
     csrf: overrides.csrf === undefined ? issued.body.data?.csrfToken ?? null : overrides.csrf,
   }), runtime);
@@ -783,6 +810,13 @@ function failingPersistence(
     loadConversation: (scope: ConversationPersistenceScope) => base.loadConversation(scope),
     findScopeByHandleHash: (hash: string) => base.findScopeByHandleHash(hash),
     commitTurn: (input: CommitTurnInput) => base.commitTurn(input),
+    loadTurnReceipt: (scope: ConversationPersistenceScope, turnId: string) => (
+      base.loadTurnReceipt(scope, turnId)
+    ),
+    monthlyUsageMicros: (businessId: string, monthStartMs: number) => (
+      base.monthlyUsageMicros(businessId, monthStartMs)
+    ),
+    readSchemaVersion: () => base.readSchemaVersion(),
     createSession: (record: PersistedSessionRecord) => base.createSession(record),
     findSession: (hash: string) => base.findSession(hash),
     revokeSession: (hash: string, at: number) => base.revokeSession(hash, at),

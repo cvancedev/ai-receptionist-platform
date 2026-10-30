@@ -78,6 +78,12 @@ export interface AiDemoGroundedAnswer {
   readonly sourceReferences: readonly string[];
 }
 
+/** Provider-reported token counts for one turn, when the provider reports them. */
+export interface AiDemoTurnUsage {
+  readonly inputTokens: number;
+  readonly outputTokens: number;
+}
+
 export interface AiDemoTurnResult {
   readonly performed: boolean;
   readonly taskIdentifier: ModelTaskIdentifier | null;
@@ -89,6 +95,12 @@ export interface AiDemoTurnResult {
   readonly proposal: Readonly<Record<string, unknown>> | null;
   readonly groundedAnswer: AiDemoGroundedAnswer | null;
   readonly failureReason: string | null;
+  /**
+   * Reported usage, or null when the provider reported none. Settlement bills a
+   * reported usage and otherwise falls back to the application's conservative
+   * estimate; it never substitutes zero for an unreported amount.
+   */
+  readonly usage: AiDemoTurnUsage | null;
 }
 
 export async function runAiDemoTurn(
@@ -190,11 +202,23 @@ export async function runAiDemoTurn(
   });
   const normalized = new ProviderResultNormalizer().normalize(adapterResult);
 
+  // The transport collapses an absent usage record to zero units, and every real
+  // request consumes at least one input token, so zero input units means "not
+  // reported". Passing that through as a zero charge would under-bill a priced
+  // provider, so it is reported as absent and the caller settles its estimate.
+  const usage: AiDemoTurnUsage | null = normalized.usage.inputUnits > 0
+    ? {
+        inputTokens: normalized.usage.inputUnits,
+        outputTokens: normalized.usage.outputUnits,
+      }
+    : null;
+
   if (normalized.status !== "completed") {
     return settled({
       performed: true,
       taskIdentifier,
       failureReason: normalized.error?.category ?? PROVIDER_RESULT_REASONS[normalized.status],
+      usage,
     });
   }
 
@@ -204,6 +228,7 @@ export async function runAiDemoTurn(
       performed: true,
       taskIdentifier,
       failureReason: parseResult.failures[0],
+      usage,
     });
   }
 
@@ -260,6 +285,7 @@ export async function runAiDemoTurn(
     failureReason: accepted
       ? released ? null : (grounding?.failures[0] ?? "KnowledgeGroundingFailure")
       : (validation.failures[0] ?? validation.status),
+    usage,
   });
 }
 
@@ -274,6 +300,7 @@ interface PartialResult {
   readonly proposal?: Readonly<Record<string, unknown>> | null;
   readonly groundedAnswer?: AiDemoGroundedAnswer | null;
   readonly failureReason?: string | null;
+  readonly usage?: AiDemoTurnUsage | null;
 }
 
 function settled(result: PartialResult): AiDemoTurnResult {
@@ -288,5 +315,6 @@ function settled(result: PartialResult): AiDemoTurnResult {
     proposal: result.proposal ?? null,
     groundedAnswer: result.groundedAnswer ?? null,
     failureReason: result.failureReason ?? null,
+    usage: result.usage ?? null,
   });
 }

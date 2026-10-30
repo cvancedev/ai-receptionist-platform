@@ -160,10 +160,14 @@ async function verifyTurnReceiptsAndUsage(
       WHERE conversation_id = $1`,
       [session.principal.conversationId],
     );
+    // The offline provider prices at zero, so the settled cost is zero however
+    // many tokens are reported. Since B2.4B.2B settlement records the usage the
+    // provider actually reported rather than the zero-token estimate, the row
+    // carries those counts.
     assert(usageRows.rows.length === 1
       && usageRows.rows[0]?.state === "settled"
       && usageRows.rows[0]?.cost_micros === "0"
-      && usageRows.rows[0]?.input_tokens === 0,
+      && usageRows.rows[0]?.input_tokens > 0,
     "one settled zero-cost usage row is durable for the disabled provider");
 
     const columns = await admin.query<{ readonly column_name: string }>(

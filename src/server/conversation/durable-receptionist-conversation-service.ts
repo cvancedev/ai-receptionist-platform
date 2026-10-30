@@ -342,7 +342,12 @@ export class DurableReceptionistConversationService {
         content: entry.content,
       }));
 
-    const reported = this.reportedUsage ? this.reportedUsage() : null;
+    // The service reports what the provider billed for this turn, held on the
+    // conversation so a concurrent turn elsewhere cannot be attributed here.
+    // The injected callback remains an explicit override for rehearsals and
+    // tests that drive a transport directly.
+    const reported = this.service.takeReportedUsage(handle)
+      ?? (this.reportedUsage ? this.reportedUsage() : null);
     const reportedCost = reported
       ? actualCostMicros(pricing, reported.inputTokens, reported.outputTokens)
       : null;

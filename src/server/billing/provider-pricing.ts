@@ -63,6 +63,8 @@ const PRICING: readonly ProviderModelPricing[] = Object.freeze([
     priceSource: "Offline simulated transport: no provider and no charge.",
     verifiedOn: "2026-10-30",
   }),
+  // Recommended for the pilot: $0.10 input / $0.50 output per million tokens.
+  // Structured outputs and the Responses API are both listed as supported.
   Object.freeze({
     providerIdentifier: "openai",
     modelIdentifier: "gpt-6-luna",
@@ -71,7 +73,19 @@ const PRICING: readonly ProviderModelPricing[] = Object.freeze([
     inputTokenBudget: 4_000,
     outputTokenBudget: 512,
     provisional: true,
-    priceSource: "https://developers.openai.com/api/docs/pricing",
+    priceSource: "https://developers.openai.com/api/docs/models/gpt-6-luna",
+    verifiedOn: "2026-10-30",
+  }),
+  // Same-generation cost tier alternative: $0.20 input / $1.20 output.
+  Object.freeze({
+    providerIdentifier: "openai",
+    modelIdentifier: "gpt-5.6-luna",
+    inputMicrosPerMillionTokens: 200_000,
+    outputMicrosPerMillionTokens: 1_200_000,
+    inputTokenBudget: 4_000,
+    outputTokenBudget: 512,
+    provisional: true,
+    priceSource: "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
     verifiedOn: "2026-10-30",
   }),
   Object.freeze({

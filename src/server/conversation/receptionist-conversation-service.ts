@@ -1,4 +1,4 @@
-import type { AiDemoTurnResult } from "../../ai/demo/ai-demo-turn";
+import type { AiDemoTurnResult, AiDemoTurnUsage } from "../../ai/demo/ai-demo-turn";
 import { runAiDemoTurn } from "../../ai/demo/ai-demo-turn";
 import {
   createConversationHandle,
@@ -141,6 +141,13 @@ interface ConversationRuntime {
   handoffAvailable: boolean;
   turn: number;
   nextMessageId: number;
+  /**
+   * Usage the provider reported for this conversation's most recent turn, or
+   * null when none was reported. It lives on the conversation rather than the
+   * service so a concurrent turn in another conversation cannot be attributed
+   * to this one's settlement.
+   */
+  lastReportedUsage: AiDemoTurnUsage | null;
 }
 
 export class ReceptionistConversationService {
@@ -223,6 +230,7 @@ export class ReceptionistConversationService {
       handoffAvailable: false,
       turn: 0,
       nextMessageId: 1,
+      lastReportedUsage: null,
     };
     this.addMessage(runtime, "assistant", INITIAL_GREETING);
     this.conversations.set(key, runtime);
@@ -296,6 +304,7 @@ export class ReceptionistConversationService {
       handoffAvailable: input.handoffAvailable,
       turn: input.turn,
       nextMessageId: input.nextMessageId,
+      lastReportedUsage: null,
     });
     return this.registerHandle(key);
   }
@@ -318,6 +327,18 @@ export class ReceptionistConversationService {
       turn: runtime.turn,
       nextMessageId: runtime.nextMessageId,
     });
+  }
+
+  /**
+   * Usage the provider reported for the turn just executed on this handle, or
+   * null when it reported none. Server-only, and it carries no conversation
+   * text: only the two token counts the settlement needs.
+   */
+  takeReportedUsage(handle: unknown): AiDemoTurnUsage | null {
+    const runtime = this.resolveHandle(handle);
+    if (!runtime) return null;
+    const usage = runtime.lastReportedUsage;
+    return usage ? Object.freeze({ ...usage }) : null;
   }
 
   handleForScope(businessId: unknown, conversationId: unknown): string | null {
@@ -411,6 +432,9 @@ export class ReceptionistConversationService {
       }
 
       const result = await this.runSimulatedTurn(runtime, message);
+      // Recorded before any outcome branch so a settlement reads this turn's
+      // usage and never a stale record from an earlier turn.
+      runtime.lastReportedUsage = result.usage;
       if (!result.performed) {
         this.addMessage(runtime, "assistant", "No simulated AI task applies to this fictional turn.");
         return this.ok(runtime, "not-performed", startIndex);

@@ -4,6 +4,7 @@ import { fictionalBusinessProfile } from "../fixtures/business-profile";
 import { fictionalKnowledgeRecords } from "../fixtures/knowledge";
 import { createFakeProvider, type FakeProviderMode } from "../ai/providers/fake-local-provider";
 import {
+  actualCostMicros,
   estimateTurnCost,
   listProviderPricing,
   resolveProviderPricing,
@@ -38,6 +39,21 @@ const PRICING: ProviderModelPricing = Object.freeze({
 const ESTIMATE_RESULT = estimateTurnCost(PRICING);
 if (ESTIMATE_RESULT === null) throw new Error("fixture pricing is invalid");
 const ESTIMATE: EstimatedTurnCost = ESTIMATE_RESULT;
+
+/**
+ * Since B2.4B.2B the turn result carries the provider's reported usage into
+ * settlement, so a settled turn is charged that reported amount rather than the
+ * reservation estimate. The fake's usage is derived from the rendered prompt, so
+ * the expected charge is computed from what it actually reported instead of a
+ * fixed constant.
+ */
+function settledMicrosFor(fake: ReturnType<typeof createFakeProvider>): number {
+  const reported = fake.reportedUsage();
+  if (!reported) throw new Error("the fake provider reported no usage");
+  const cost = actualCostMicros(PRICING, reported.inputUnits, reported.outputUnits);
+  if (cost === null) throw new Error("the reported usage cannot be priced");
+  return cost;
+}
 
 async function run(): Promise<void> {
   await verifyPricingAllowlist();
@@ -94,8 +110,10 @@ async function verifyReservationPrecedesProviderCall(): Promise<void> {
 
   const usage = await harness.persistence.monthlyUsageMicros(BUSINESS_A, "2026-01");
   assert(usage !== null && usage.reservedMicros === 0, "no reservation remains after settlement");
-  assert(usage.settledMicros === ESTIMATE.estimatedCostMicros,
-    "the settled cost equals the reserved estimate");
+  assert(usage.settledMicros === settledMicrosFor(harness.fake),
+    "the settled cost equals the cost of the usage the provider reported");
+  assert(usage.settledMicros < ESTIMATE.estimatedCostMicros,
+    "reported usage replaces the reservation estimate instead of being ignored");
 }
 
 async function verifyBudgetRefusalPrecedesProviderCall(): Promise<void> {
@@ -151,7 +169,7 @@ async function verifyDuplicateTurnReservesOnce(): Promise<void> {
     "the duplicate never reaches the provider a second time");
 
   const usage = await harness.persistence.monthlyUsageMicros(BUSINESS_A, "2026-01");
-  assert(usage !== null && usage.settledMicros === ESTIMATE.estimatedCostMicros,
+  assert(usage !== null && usage.settledMicros === settledMicrosFor(harness.fake),
     "the duplicate is charged exactly once");
 }
 
@@ -254,15 +272,16 @@ async function verifyBillingMonthBoundaries(): Promise<void> {
   });
   const january = await submit(harness, "project help");
   assert(january.status === "ok", "the January turn commits");
+  const januaryCharge = settledMicrosFor(harness.fake);
   assert((await harness.persistence.monthlyUsageMicros(BUSINESS_A, "2026-01"))?.settledMicros
-    === ESTIMATE.estimatedCostMicros, "January usage is recorded in January");
+    === januaryCharge, "January usage is recorded in January");
 
   clock = FEBRUARY;
   const february = await submit(harness, "project help");
   assert(february.status === "ok",
     "February is not charged for January spending");
   const februaryUsage = await harness.persistence.monthlyUsageMicros(BUSINESS_A, "2026-02");
-  assert(februaryUsage !== null && februaryUsage.settledMicros === ESTIMATE.estimatedCostMicros,
+  assert(februaryUsage !== null && februaryUsage.settledMicros === settledMicrosFor(harness.fake),
     "February usage is recorded separately");
   assert(utcBillingMonth(JANUARY) === "2026-01" && utcBillingMonth(FEBRUARY) === "2026-02",
     "billing months are derived in UTC");
@@ -272,6 +291,7 @@ async function verifyCrossBusinessIsolation(): Promise<void> {
   const harness = await createHarness({ budgetMicros: ESTIMATE.estimatedCostMicros });
   const outcome = await submit(harness, "project help");
   assert(outcome.status === "ok", "business A spends its budget");
+  const businessACharge = settledMicrosFor(harness.fake);
 
   const handleB = await harness.service.begin(BUSINESS_B, `conversation-${randomBytes(6).toString("hex")}`);
   assert(handleB !== null, "the second business has its own conversation");
@@ -284,10 +304,10 @@ async function verifyCrossBusinessIsolation(): Promise<void> {
 
   const usageA = await harness.persistence.monthlyUsageMicros(BUSINESS_A, "2026-01");
   const usageB = await harness.persistence.monthlyUsageMicros(BUSINESS_B, "2026-01");
-  assert(usageA !== null && usageB !== null
-    && usageA.settledMicros === ESTIMATE.estimatedCostMicros
-    && usageB.settledMicros === ESTIMATE.estimatedCostMicros,
-    "each business keeps its own accounting");
+  assert(usageA !== null && usageA.settledMicros === businessACharge,
+    "business A is charged for its own turn");
+  assert(usageB !== null && usageB.settledMicros === settledMicrosFor(harness.fake),
+    "business B is charged for its own turn");
 }
 
 async function verifyProviderFailureCannotMutateState(): Promise<void> {

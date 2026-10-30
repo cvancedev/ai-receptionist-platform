@@ -141,3 +141,99 @@ Nothing changed in the reservation design, and the adapter gets no bypass:
   loosened adapter.
 - The adapter is unit-verified against a faithful fake, not against OpenAI. The
   first live call remains unproven until an authorized stage runs it.
+
+## Stage B2.4B.2B — model selection and usage settlement
+
+Readiness only. Network execution is still `disabled`; nothing here enables a
+provider, spends money, or contacts OpenAI.
+
+### Model choice and verified pricing
+
+Prices below were read from the official OpenAI documentation on 2026-10-30.
+They are a dated snapshot, not a contractual rate, and every allowlist entry is
+marked `provisional: true` for that reason.
+
+| Model | Input / 1M | Output / 1M | Structured outputs | Role |
+|---|---:|---:|---|---|
+| `gpt-6-luna` | $0.10 | $0.50 | Supported | **Recommended** |
+| `gpt-5.6-luna` | $0.20 | $1.20 | Supported | Approved alternative |
+| `gpt-5.6-sol` | $4.00 | $20.00 | Supported | Not allowlisted |
+| `gpt-6-astra` | $10.00 | $50.00 | Supported | Not allowlisted |
+
+`gpt-6-luna` is the recommendation because it is the cheapest current model that
+still supports strict JSON schema output on the Responses API, and this workload
+is short, grounded question answering rather than open-ended reasoning. The
+GPT-5.6 flagship costs roughly forty times as much per turn and nothing in the
+brief needs it, so the earlier assumption that GPT-5.6 was required does not
+hold. An unlisted model resolves to no price at all, which fails closed: a turn
+cannot reserve spending for it and therefore cannot reach a provider.
+
+Per-turn cost at the application's 4,000 input / 512 output token budgets, with
+the 25% safety margin:
+
+- `gpt-6-luna`: 820 micro-units (≈$0.00082) reserved per turn, so the $10 monthly
+  pilot cap covers 12,195 worst-case turns.
+- `gpt-5.6-luna`: 1,769 micro-units (≈$0.0018) reserved per turn, or 5,652 turns.
+
+Actual usage is normally far below the budget, so real cost per turn is lower
+still; the reservation is deliberately the worst case.
+
+The provider bills double input and 1.5× output above 272,000 input tokens. The
+application's 4,000-token input budget and 200,000-token estimate ceiling both
+stay below that threshold, so no estimate can under-price a surcharged request.
+The suite asserts this rather than leaving it as an assumption.
+
+### Usage accounting
+
+The turn result now carries the usage the provider reported. The conversation
+service holds it on the conversation, not on the service, so a turn running
+concurrently in another conversation cannot have its usage attributed to this
+one's settlement; the durable layer reads it and settles that cost. Behavior:
+
+- Reported usage settles the reported cost.
+- A missing usage record settles the conservative reservation estimate.
+- A missing usage record **never** settles zero. The transport collapses an
+  absent record to zero units, and a real request always consumes at least one
+  input token, so zero input units is treated as "not reported" rather than as a
+  free turn.
+- A duplicate `turnId` replays from its receipt and is charged exactly once.
+- A confirmed provider failure releases nothing that might still have been
+  billed: the reservation is held for reconciliation, and the turn charges zero.
+
+Because reported usage now settles, the B2.4A budget suite asserts the reported
+charge rather than the estimate. Its fake provider reports the token counts the
+simulated transport derives from the rendered prompt, so the suite prices
+exactly what was billed instead of assuming a constant.
+
+### Provider configuration
+
+`src/server/pilot/pilot-provider-configuration.ts` validates the only endpoint
+and models the application has verified. It authorizes nothing:
+
+- `mode` must be the literal `"disabled"`, and must be stated. It is never
+  defaulted, because it is the authorization switch.
+- The origin must be exactly `https://api.openai.com`; a lookalike, an alternate
+  host, or plaintext HTTP is refused.
+- The model must be one of the two approved, priced models.
+- The credential is supplied as the **name** of a server-side variable. A
+  key-shaped value is refused rather than stored, so a pasted secret cannot reach
+  source control or a log through this path.
+- Output budget and timeout are bounded.
+
+The adapter itself is unchanged from B2.4B.2A except for the usage plumbing above,
+and no runtime module references it. The suite enforces that with a static scan,
+so a future wiring change that forgets the guard fails verification instead of
+production.
+
+### What remains before a live call (updated)
+
+1. Wire the configured model into a pilot provider mode that is still disabled by
+   default, with its own verification and a single acceptance question.
+2. Set a dedicated project key into the named variable outside chat, plus an
+   independent provider-side project spend limit. The application cap cannot
+   constrain OpenAI's own billing.
+3. Re-verify the price on the official page immediately before activation, since
+   the snapshot is provisional and the flagship's promotional pricing is
+   time-limited.
+4. Run one authorized acceptance call and reconcile the settled charge against the
+   provider dashboard.

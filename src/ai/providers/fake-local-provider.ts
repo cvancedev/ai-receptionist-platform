@@ -44,6 +44,12 @@ export interface FakeProviderController {
   readonly transport: OfflineTransport;
   /** Number of attempts the application made against this fake. */
   invocationCount(): number;
+  /**
+   * Token units the fake reported on its most recent response, or null when it
+   * reported none. It lets a verification suite price exactly what the
+   * application settled rather than assuming a fixed count.
+   */
+  reportedUsage(): { readonly inputUnits: number; readonly outputUnits: number } | null;
   setMode(mode: FakeProviderMode): void;
   /** Replace the per-attempt observer, or clear it with null. */
   setOnInvoke(
@@ -62,9 +68,10 @@ export function createFakeProvider(
   let invocations = 0;
   let observer: ((request: OfflineTransportRequest) => void | Promise<void>) | null =
     options.onInvoke ?? null;
+  let lastUsage: { readonly inputUnits: number; readonly outputUnits: number } | null = null;
   const simulated = createSimulatedModelTransport();
 
-  const transport: OfflineTransport = async (
+  const respond: OfflineTransport = async (
     request: OfflineTransportRequest,
   ): Promise<OfflineTransportResponse> => {
     invocations += 1;
@@ -180,10 +187,24 @@ export function createFakeProvider(
     };
   }
 
+  const transport: OfflineTransport = async (
+    request: OfflineTransportRequest,
+  ): Promise<OfflineTransportResponse> => {
+    const response = await respond(request);
+    lastUsage = response.usage === undefined || response.usage === null
+      ? null
+      : {
+          inputUnits: response.usage.inputUnits ?? 0,
+          outputUnits: response.usage.outputUnits ?? 0,
+        };
+    return response;
+  };
+
   return Object.freeze({
     providerIdentifier: FAKE_PROVIDER_ID,
     transport,
     invocationCount: () => invocations,
+    reportedUsage: () => lastUsage,
     setMode: (next: FakeProviderMode) => {
       mode = next;
     },

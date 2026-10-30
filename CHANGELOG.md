@@ -4,6 +4,35 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Stage B2.4B.2B - Provider Readiness and Usage Settlement
+
+- Added an approved provider configuration that names the production origin
+  (`https://api.openai.com`) and the two verified models. It authorizes nothing:
+  `mode` must be the literal `"disabled"` and must be stated, the origin and
+  model must be approved, budgets are bounded, and a credential is accepted only
+  as a variable name. A key-shaped value is refused rather than stored.
+- Verified pricing from the official OpenAI documentation on 2026-10-30.
+  `gpt-6-luna` ($0.10 / $0.50 per million tokens) is the recommendation and is
+  already allowlisted; `gpt-5.6-luna` ($0.20 / $1.20) was added as a priced
+  alternative. The GPT-5.6 flagship is deliberately not allowlisted at roughly
+  forty times the cost per turn. Unlisted models still resolve to no price and
+  fail closed.
+- Wired provider-reported usage into durable settlement. The turn result carries
+  the reported counts, the conversation service holds them per conversation so a
+  concurrent turn cannot be misattributed, and the durable layer settles that
+  cost. A missing usage record settles the conservative estimate instead of a
+  zero charge.
+- Added `verify:pilot-provider-readiness`, covering verified pricing and its
+  safety margin, the unreachable surcharge threshold, configuration rejection
+  paths, credential-reference handling, reported-usage settlement, estimate
+  fallback, single-charge duplicates, budget refusal before the provider, an
+  unpriced model failing closed, and a static scan proving no runtime module
+  references the OpenAI adapter.
+- Updated the B2.4A budget suite to assert the reported charge rather than the
+  reservation estimate, now that settlement uses the provider's usage. Its fake
+  provider exposes the usage it reported so the expected amount is computed, not
+  hardcoded.
+
 ### Stage B2.4B.2A - Offline OpenAI Responses Adapter
 
 - Added a server-only adapter that translates the provider envelope into the

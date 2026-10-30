@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file. The format 
 
 ## Unreleased
 
+### Stage B2.4B.1 - Business Knowledge Integration
+
+- Added deterministic approved-knowledge selection: business scope, active
+  lifecycle, customer audience, effective date, duplicate and size limits are
+  enforced before any model work, with a recorded reason for every exclusion.
+- Extended the context package and the provider instruction renderer to carry
+  the selected knowledge text and the business's hours resolved in the business's
+  own time zone. Renderer `v3`, context contract `v2`.
+- Added the `knowledge_grounded_answer` route: a recognized hours question is
+  answered from approved material instead of being interpreted as a service
+  request, and it changes no conversation state.
+- Added deterministic grounding validation and an application-owned release
+  gate. Invented times, unsupported holiday closures, wrong business names,
+  inactive services, promises, and citations of unselected or foreign knowledge
+  are rejected, and the customer receives the application's limitation sentence.
+- Added `verify:business-knowledge` (12 check groups) and documented the
+  selection rules, hours handling, grounding behaviour, and remaining work in
+  `docs/BUSINESS_KNOWLEDGE_AND_GROUNDING.md`. Provider network execution, paid
+  services, and telephony remain disabled.
+
 ### Stage B2.4A - Provider Foundation and Spending Protection
 
 - Added pre-call spending reservations with atomic settlement in the turn

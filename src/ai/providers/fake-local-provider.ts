@@ -27,7 +27,11 @@ export type FakeProviderMode =
   | "invalid-output"
   | "transport-error"
   | "timeout"
-  | "cancelled";
+  | "cancelled"
+  /** A contract-shaped hours answer that states times the business never approved. */
+  | "grounding-unsupported-time"
+  /** A contract-shaped hours answer that cites another business's knowledge. */
+  | "grounding-foreign-source";
 
 export interface FakeProviderOptions {
   readonly mode?: FakeProviderMode;
@@ -69,6 +73,18 @@ export function createFakeProvider(
     switch (mode) {
       case "success":
         return simulated(request);
+      case "grounding-unsupported-time":
+        return groundedOverride(request, {
+          customerFacingText: "The business is open today from 7:00 AM to 11:00 PM.",
+          insufficientKnowledge: false,
+        });
+      case "grounding-foreign-source":
+        return groundedOverride(request, {
+          customerFacingText:
+            "I cannot confirm the hours from the approved information available to me, so a person should review this.",
+          insufficientKnowledge: true,
+          knowledgeSourceReferences: ["other-business-regular-hours"],
+        });
       case "reject":
         return {
           status: "refused",
@@ -111,6 +127,58 @@ export function createFakeProvider(
         });
     }
   };
+
+  /**
+   * Return a plausible-looking proposal that the application must refuse. The
+   * proposal copies this request's scope identity and cites whatever knowledge
+   * the prompt actually contained, so only the claim checks can catch it.
+   */
+  function groundedOverride(
+    request: OfflineTransportRequest,
+    payload: Readonly<Record<string, unknown>>,
+  ): OfflineTransportResponse {
+    let identity: Record<string, unknown> = {};
+    let sourceIds: string[] = [];
+    try {
+      const parsed: unknown = JSON.parse(request.input);
+      if (parsed !== null && typeof parsed === "object" && !Array.isArray(parsed)) {
+        const record = parsed as Record<string, unknown>;
+        if (record.identity !== null && typeof record.identity === "object") {
+          identity = record.identity as Record<string, unknown>;
+        }
+        if (Array.isArray(record.approvedKnowledge)) {
+          sourceIds = record.approvedKnowledge
+            .map((entry) => (entry !== null && typeof entry === "object"
+              ? (entry as Record<string, unknown>).id
+              : null))
+            .filter((id): id is string => typeof id === "string");
+        }
+      }
+    } catch {
+      return {
+        status: "failed",
+        rawOutput: null,
+        usage: { inputUnits: 0, outputUnits: 0 },
+        finishReason: null,
+        error: {
+          category: "invalid-request",
+          message: "The fake provider could not read the request.",
+        },
+      };
+    }
+    const rawOutput = JSON.stringify({
+      ...identity,
+      knowledgeSourceReferences: payload.knowledgeSourceReferences ?? sourceIds.slice(0, 1),
+      ...payload,
+    });
+    return {
+      status: "completed",
+      rawOutput,
+      usage: { inputUnits: 1, outputUnits: 1 },
+      finishReason: "stop",
+      error: null,
+    };
+  }
 
   return Object.freeze({
     providerIdentifier: FAKE_PROVIDER_ID,

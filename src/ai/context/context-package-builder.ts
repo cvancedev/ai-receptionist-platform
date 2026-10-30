@@ -4,11 +4,14 @@ import type { KnowledgeRecord } from "../../domain/knowledge-record";
 import type { AiFailureCategory, ModelTaskDefinition } from "../contracts/catalog";
 import type { AiOperationIdentity } from "../contracts/identities";
 import type {
+  ContextBusinessHours,
   ContextConversationEntry,
   ContextPackage,
   PolicyVersions,
 } from "../contracts/packages";
 import type { OperationResult } from "../contracts/results";
+import type { BusinessHoursReference } from "../grounding/business-hours";
+import { selectApprovedKnowledge } from "../grounding/knowledge-selection";
 import { deepFreeze } from "../shared/immutable";
 
 const CONTEXT_SIZE_LIMIT = 12_000;
@@ -21,6 +24,12 @@ export interface ContextPackageBuildInput {
   conversationState: ConversationState;
   task: ModelTaskDefinition;
   knowledge: readonly KnowledgeRecord[];
+  /**
+   * The business's hours resolved by the application for this turn. When it is
+   * supplied, the package carries the resolved hours and excludes knowledge that
+   * is not yet effective on the business-local day.
+   */
+  businessHours?: BusinessHoursReference | null;
   conversationEntries: readonly ContextConversationEntry[];
   currentCustomerInput: ContextConversationEntry;
   policyVersions: PolicyVersions;
@@ -31,18 +40,24 @@ export class PrototypeContextPackageBuilder {
     const failures = validateInput(input);
     if (failures.length > 0) return { status: "failure", failures };
 
-    const approvedKnowledge = input.knowledge
-      .filter((record) =>
-        record.businessProfileId === input.identity.businessId
-        && record.lifecycleState === "active"
-        && (record.audience === "customer" || record.audience === "both"))
-      .map((record) => ({
-        id: record.id,
-        version: record.version,
-        businessId: record.businessProfileId,
-        category: record.category,
-        sensitivity: "customer" as const,
-      }));
+    // The application chooses the knowledge. Scope, lifecycle, audience, and
+    // effective date are enforced by the selector, which also reports what it
+    // excluded so the boundaries can be verified rather than assumed.
+    const selection = selectApprovedKnowledge({
+      businessId: input.identity.businessId,
+      knowledge: input.knowledge,
+      asOfDate: input.businessHours?.status === "available"
+        ? input.businessHours.asOfDate
+        : null,
+    });
+    const approvedKnowledge = selection.selected.map((record) => ({
+      id: record.id,
+      version: record.version,
+      businessId: record.businessId,
+      category: record.category,
+      sensitivity: "customer" as const,
+    }));
+    const businessHours = toContextBusinessHours(input.businessHours ?? null);
 
     const packageWithoutBudget = {
       ...input.identity,
@@ -60,6 +75,13 @@ export class PrototypeContextPackageBuilder {
       customerClaims: structuredClone(input.conversationState.customerClaims),
       corrections: structuredClone(input.conversationState.corrections),
       approvedKnowledge,
+      approvedKnowledgeExcerpts: selection.selected.map((record) => ({ ...record })),
+      knowledgeSelection: {
+        includedIds: selection.selected.map((record) => record.id),
+        excluded: selection.excluded.map((entry) => ({ ...entry })),
+        totalCharacters: selection.totalCharacters,
+      },
+      businessHours,
       eligibleConversationEntries: input.conversationEntries.map((entry) => ({ ...entry })),
       currentCustomerInput: { ...input.currentCustomerInput },
       policyVersions: { ...input.policyVersions },
@@ -91,6 +113,37 @@ export class PrototypeContextPackageBuilder {
     };
     return { status: "success", value: deepFreeze(contextPackage) };
   }
+}
+
+function toContextBusinessHours(
+  reference: BusinessHoursReference | null,
+): ContextBusinessHours | null {
+  if (!reference) return null;
+  if (reference.status === "unavailable") {
+    return { status: "unavailable", reason: reference.reason };
+  }
+  return {
+    status: "available",
+    version: reference.version,
+    timeZone: reference.timeZone,
+    asOfDate: reference.asOfDate,
+    weekday: reference.weekday,
+    todayStatus: reference.todayStatus,
+    todaySchedule: reference.todaySchedule,
+    todayOpensAt: reference.todayOpensAt,
+    todayClosesAt: reference.todayClosesAt,
+    weekly: reference.weekly.map((entry) => ({
+      day: entry.day,
+      schedule: entry.schedule,
+      status: entry.status,
+      opensAt: entry.opensAt,
+      closesAt: entry.closesAt,
+    })),
+    openWeekdays: [...reference.openWeekdays],
+    closedWeekdays: [...reference.closedWeekdays],
+    approvedTimeTokens: [...reference.approvedTimeTokens],
+    sourceKnowledgeIds: [...reference.sourceKnowledgeIds],
+  };
 }
 
 function validateInput(input: ContextPackageBuildInput): AiFailureCategory[] {

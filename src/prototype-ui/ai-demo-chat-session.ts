@@ -53,6 +53,8 @@ export interface AiDemoChatView extends PrototypeChatView {
 
 export interface AiDemoChatSessionOptions {
   readonly transport?: OfflineTransport;
+  /** The clock used to resolve the business-local day for hours questions. */
+  readonly now?: () => number;
 }
 
 /**
@@ -67,6 +69,7 @@ export interface AiDemoChatSessionOptions {
  */
 export class AiDemoChatSession {
   private readonly transport: OfflineTransport | undefined;
+  private readonly clock: () => number;
   private foundation = createPrototypeFoundation();
   private orchestrator = this.createOrchestrator();
   private readModelIntegration: PrototypeReadModelIntegration;
@@ -83,6 +86,7 @@ export class AiDemoChatSession {
 
   constructor(options: AiDemoChatSessionOptions = {}) {
     this.transport = options.transport;
+    this.clock = typeof options.now === "function" ? options.now : Date.now;
     this.readModelIntegration = new PrototypeReadModelIntegration(
       this.foundation.businessProfile,
     );
@@ -155,6 +159,20 @@ export class AiDemoChatSession {
         this.commitAudit({
           decision: "not-performed",
           taskIdentifier: result.taskIdentifier,
+          revisionBefore,
+          applied: false,
+        });
+        return this.view();
+      }
+      // A business-information answer is released only after the application's
+      // own grounding check; `text` is the verified answer or the limitation
+      // sentence, so raw model output never reaches the demonstration.
+      if (result.groundedAnswer) {
+        this.addAssistant(result.groundedAnswer.text);
+        this.commitAudit({
+          decision: result.groundedAnswer.verdict === "supported" ? "answered" : "answer-withheld",
+          taskIdentifier: result.taskIdentifier,
+          failures: result.groundedAnswer.failures,
           revisionBefore,
           applied: false,
         });
@@ -270,6 +288,7 @@ export class AiDemoChatSession {
         contextPackageId: `ai-demo-context-${this.turn + 1}`,
         promptPackageId: `ai-demo-prompt-${this.turn + 1}`,
       },
+      businessHoursNowMs: this.clock(),
       transport: this.transport,
     });
   }

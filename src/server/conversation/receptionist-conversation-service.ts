@@ -92,6 +92,7 @@ export interface SanitizedConversation {
 
 export type ReceptionistDecision =
   | "accepted"
+  | "answered"
   | "clarification"
   | "confirmation"
   | "escalation"
@@ -119,6 +120,8 @@ export type ReceptionistTurnOutcome =
 export interface ReceptionistConversationServiceOptions {
   readonly transport?: OfflineTransport;
   readonly maximumConversations?: number;
+  /** The clock used to resolve the business-local day for hours questions. */
+  readonly now?: () => number;
 }
 
 interface InternalMessage {
@@ -150,6 +153,7 @@ export class ReceptionistConversationService {
   private readonly queues = new Map<string, Promise<void>>();
   private readonly transport: OfflineTransport | undefined;
   private readonly maximumConversations: number;
+  private readonly clock: () => number;
 
   constructor(
     businesses: readonly ReceptionistBusiness[],
@@ -165,6 +169,7 @@ export class ReceptionistConversationService {
     }
     if (this.businesses.size === 0) throw new Error("At least one receptionist business is required.");
     this.transport = options.transport;
+    this.clock = typeof options.now === "function" ? options.now : Date.now;
     this.maximumConversations = boundedInteger(
       options.maximumConversations ?? MAXIMUM_CONVERSATIONS,
       1,
@@ -410,6 +415,13 @@ export class ReceptionistConversationService {
         this.addMessage(runtime, "assistant", "No simulated AI task applies to this fictional turn.");
         return this.ok(runtime, "not-performed", startIndex);
       }
+      // A business-information answer: the application releases text only after
+      // its own grounding check. `groundedAnswer.text` is already the verified
+      // answer or the application's limitation sentence, never raw model output.
+      if (result.groundedAnswer) {
+        this.addMessage(runtime, "assistant", result.groundedAnswer.text);
+        return this.ok(runtime, "answered", startIndex);
+      }
       // A completed but invalid proposal carries a decision and no proposal;
       // that is an application rejection, not a provider transport failure.
       if (!result.decision) {
@@ -465,6 +477,7 @@ export class ReceptionistConversationService {
         contextPackageId: `server-context-${turnLabel}`,
         promptPackageId: `server-prompt-${turnLabel}`,
       },
+      businessHoursNowMs: this.nowMs(),
       transport: this.transport ?? createSimulatedModelTransport(runtime.business.profile),
     });
   }
@@ -747,6 +760,15 @@ export class ReceptionistConversationService {
     const key = this.handles.get(digestConversationHandle(handle));
     if (!key) return null;
     return this.conversations.get(key) ?? null;
+  }
+
+  private nowMs(): number {
+    try {
+      const value = this.clock();
+      return Number.isFinite(value) && Number.isInteger(value) ? value : Date.now();
+    } catch {
+      return Date.now();
+    }
   }
 
   private lastCustomerText(runtime: ConversationRuntime): string {

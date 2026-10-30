@@ -50,7 +50,7 @@ export interface RenderedProviderPrompt {
 }
 
 export const PROVIDER_INSTRUCTION_RENDERER_VERSION =
-  "provider-instruction-renderer/v2" as const;
+  "provider-instruction-renderer/v3" as const;
 
 export const PROVIDER_INSTRUCTION_CHARACTER_LIMIT = 24_000;
 
@@ -188,6 +188,8 @@ function renderInstructions(
     "8. Reference only message identifiers and knowledge identifiers that appear in the input. Never invent an identifier.",
     "9. If approved knowledge text is not present in the input, set insufficientKnowledge to true instead of guessing.",
     "10. Do not request tools, browsing, retrieval, files, credentials, or outside facts.",
+    "11. When answering a business-information question, use only approvedKnowledge text and the businessHours block. Copy every opening time, closing time, day, and open-or-closed statement from those fields. Never restate a time, a date, a holiday, or an exception that is not present there.",
+    "12. Cite each knowledge identifier whose text supports the answer in knowledgeSourceReferences. If the approved material does not answer the question, set insufficientKnowledge to true and cite nothing.",
     "",
     `Task: ${task.identifier} v${task.version}`,
     `Proposal type: ${task.compatibleProposalType}`,
@@ -256,11 +258,21 @@ function renderInput(
       correctedValue: correction.correctedValue,
       reason: correction.reason ?? null,
     })),
-    approvedKnowledge: context.approvedKnowledge.map((record) => ({
-      id: record.id,
-      version: record.version,
-      category: record.category,
-    })),
+    approvedKnowledge: context.approvedKnowledge.map((record) => {
+      const excerpt = context.approvedKnowledgeExcerpts.find(
+        (candidate) => candidate.id === record.id,
+      );
+      return {
+        id: record.id,
+        version: record.version,
+        category: record.category,
+        title: excerpt?.title ?? null,
+        effectiveDate: excerpt?.effectiveDate ?? null,
+        source: excerpt?.source ?? null,
+        content: excerpt?.content ?? null,
+      };
+    }),
+    businessHours: context.businessHours,
     conversationHistory: context.eligibleConversationEntries.map((entry) => ({
       messageId: entry.messageId,
       source: entry.source,

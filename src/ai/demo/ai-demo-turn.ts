@@ -20,6 +20,13 @@ import { OutputContractRegistry } from "../registries/output-contract-registry";
 import { TaskRegistry } from "../registries/task-registry";
 import { deepFreeze } from "../shared/immutable";
 import { PrototypeProposalValidator } from "../validation/proposal-validator";
+import { detectBusinessInformationQuestion } from "../grounding/business-question-router";
+import { resolveBusinessHours, type BusinessHoursReference } from "../grounding/business-hours";
+import {
+  GROUNDED_ANSWER_FALLBACK,
+  validateGroundedAnswer,
+  type GroundedAnswerVerdict,
+} from "../grounding/grounded-answer-validation";
 import { createSimulatedModelTransport } from "./simulated-model-transport";
 import { selectAiDemoTask } from "./turn-task-router";
 
@@ -54,6 +61,21 @@ export interface AiDemoTurnInput {
     readonly promptPackageId: string;
   };
   readonly transport?: OfflineTransport;
+  /**
+   * The instant used to resolve the business's local day for hours questions.
+   * Supplying it keeps a turn reproducible in verification; callers in the demo
+   * and server runtimes pass the current time.
+   */
+  readonly businessHoursNowMs?: number;
+}
+
+/** The application's verdict on one model-drafted business answer. */
+export interface AiDemoGroundedAnswer {
+  readonly verdict: GroundedAnswerVerdict;
+  readonly failures: readonly string[];
+  /** Always safe to display: supported text, or the application's fallback. */
+  readonly text: string;
+  readonly sourceReferences: readonly string[];
 }
 
 export interface AiDemoTurnResult {
@@ -65,6 +87,7 @@ export interface AiDemoTurnResult {
   readonly acceptedFields: readonly string[];
   readonly rejectedFields: readonly string[];
   readonly proposal: Readonly<Record<string, unknown>> | null;
+  readonly groundedAnswer: AiDemoGroundedAnswer | null;
   readonly failureReason: string | null;
 }
 
@@ -72,9 +95,16 @@ export async function runAiDemoTurn(
   input: AiDemoTurnInput,
 ): Promise<AiDemoTurnResult> {
   const state = input.conversationState;
+  const businessQuestion = detectBusinessInformationQuestion(input.currentCustomerInput.content);
+  const businessHours: BusinessHoursReference = resolveBusinessHours({
+    profile: input.businessProfile,
+    nowMs: input.businessHoursNowMs ?? Date.now(),
+    knowledge: input.knowledge,
+  });
   const taskIdentifier = selectAiDemoTask({
     stage: state.stage,
     pendingFieldId: input.pendingFieldId,
+    businessQuestion,
   });
   if (!taskIdentifier) return settled({ performed: false });
 
@@ -114,6 +144,7 @@ export async function runAiDemoTurn(
     conversationState: state,
     task,
     knowledge: input.knowledge,
+    businessHours,
     conversationEntries: input.conversationEntries,
     currentCustomerInput: input.currentCustomerInput,
     policyVersions: AI_POLICY_VERSIONS,
@@ -187,16 +218,48 @@ export async function runAiDemoTurn(
   const decision = new ApplicationDecisionEngine().decide(validation, contract);
   const accepted = validation.status === "valid";
 
+  // A business answer is released only after the application has checked it
+  // against its own approved material. The model's text never reaches a customer
+  // on its own authority. When the proposal itself is rejected, the application
+  // still answers the question with its own limitation sentence rather than
+  // leaving the customer without a reply.
+  const grounding = taskIdentifier === "knowledge_grounded_answer"
+    ? accepted
+      ? validateGroundedAnswer({
+          proposal: parseResult.value,
+          contextPackage: contextResult.value,
+          businessHours,
+          businessProfile: input.businessProfile,
+        })
+      : {
+          verdict: "rejected" as const,
+          failures: validation.failures,
+          authorizedText: GROUNDED_ANSWER_FALLBACK,
+          sourceReferences: [] as readonly string[],
+        }
+    : null;
+  const released = grounding === null || grounding.verdict === "supported";
+
   return settled({
     performed: true,
     taskIdentifier,
     decision,
     validationStatus: validation.status,
-    failures: validation.failures,
+    failures: accepted ? grounding?.failures ?? [] : validation.failures,
     acceptedFields: validation.acceptedFields,
     rejectedFields: validation.rejectedFields,
-    proposal: accepted ? parseResult.value : null,
-    failureReason: accepted ? null : (validation.failures[0] ?? validation.status),
+    proposal: accepted && released ? parseResult.value : null,
+    groundedAnswer: grounding
+      ? {
+          verdict: grounding.verdict,
+          failures: grounding.failures,
+          text: grounding.authorizedText,
+          sourceReferences: grounding.sourceReferences,
+        }
+      : null,
+    failureReason: accepted
+      ? released ? null : (grounding?.failures[0] ?? "KnowledgeGroundingFailure")
+      : (validation.failures[0] ?? validation.status),
   });
 }
 
@@ -209,6 +272,7 @@ interface PartialResult {
   readonly acceptedFields?: readonly string[];
   readonly rejectedFields?: readonly string[];
   readonly proposal?: Readonly<Record<string, unknown>> | null;
+  readonly groundedAnswer?: AiDemoGroundedAnswer | null;
   readonly failureReason?: string | null;
 }
 
@@ -222,6 +286,7 @@ function settled(result: PartialResult): AiDemoTurnResult {
     acceptedFields: result.acceptedFields ?? [],
     rejectedFields: result.rejectedFields ?? [],
     proposal: result.proposal ?? null,
+    groundedAnswer: result.groundedAnswer ?? null,
     failureReason: result.failureReason ?? null,
   });
 }

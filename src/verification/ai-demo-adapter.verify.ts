@@ -662,7 +662,7 @@ function verifyDeterminismAndBudget(prepared: readonly PreparedCase[]): void {
     assert(entry.rendered.instructions.includes("JSON")
       && entry.rendered.instructions.includes(entry.transcript.task),
     `${entry.transcript.id} instructions name the task and the response format`);
-    assert(entry.rendered.rendererVersion === "provider-instruction-renderer/v2",
+    assert(entry.rendered.rendererVersion === "provider-instruction-renderer/v3",
       `${entry.transcript.id} records the renderer version`);
     assert(entry.rendered.taskIdentifier === entry.transcript.task
       && entry.rendered.taskVersion === 1,

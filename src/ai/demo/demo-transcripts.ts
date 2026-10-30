@@ -159,10 +159,10 @@ const transcripts: readonly DemoTranscriptCase[] = [
         "I cannot confirm the fictional hours from the approved material available to me, so a person should review this.",
       knowledgeSourceReferences: [],
       insufficientKnowledge: true,
-      limitationNote: "Approved knowledge text is not included in this context package.",
+      limitationNote: "The included hours do not cover this question, so it is referred to a person.",
     },
     notes:
-      "The context package carries knowledge identifiers only, so the correct answer is insufficiency.",
+      "Declaring insufficiency stays valid even when approved text is present: the model may not guess, and the application replaces any unsupported answer.",
   },
   {
     id: "escalation-request",

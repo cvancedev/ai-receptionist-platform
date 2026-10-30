@@ -27,6 +27,23 @@ interface SimulatedPrompt {
     readonly messageId?: unknown;
     readonly content?: unknown;
   };
+  readonly approvedKnowledge?: readonly unknown[];
+  readonly businessHours?: unknown;
+}
+
+interface SimulatedHoursDay {
+  readonly day: string;
+  readonly schedule: string;
+  readonly status: "open" | "closed";
+  readonly opensAt: string | null;
+  readonly closesAt: string | null;
+}
+
+interface SimulatedHours {
+  readonly weekday: string;
+  readonly todayStatus: "open" | "closed";
+  readonly weekly: readonly SimulatedHoursDay[];
+  readonly sourceKnowledgeIds: readonly string[];
 }
 
 export function createSimulatedModelTransport(
@@ -50,7 +67,9 @@ export function createSimulatedModelTransport(
       ? interpretIntent(content, messageId, profile)
       : schema.proposalType === "candidate_fact"
         ? extractCandidateFact(content, messageId, prompt, profile)
-        : null;
+        : schema.proposalType === "knowledge_grounded_answer"
+          ? answerFromApprovedKnowledge(content, prompt, profile)
+          : null;
 
     if (!payload) return failure("unsupported-proposal-type");
 
@@ -101,6 +120,144 @@ function extractCandidateFact(
     sourceMessageReference: messageId,
     uncertaintyClassification: "stated-by-customer",
   };
+}
+
+/**
+ * Answer a hours question from the approved material in the prompt only.
+ *
+ * The simulated model is a stand-in for a language model, so it must be given
+ * the same discipline: every time it states is copied from the resolved
+ * `businessHours` block or the approved knowledge text, and it cites the record
+ * those values came from. When the prompt carries no resolved hours it declares
+ * insufficiency instead of guessing.
+ */
+function answerFromApprovedKnowledge(
+  content: string,
+  prompt: SimulatedPrompt,
+  profile: BusinessProfile,
+): Readonly<Record<string, unknown>> {
+  const hours = readHours(prompt.businessHours);
+  const knowledgeIds = approvedKnowledgeIds(prompt.approvedKnowledge);
+  const source = hours?.sourceKnowledgeIds.find((id) => knowledgeIds.includes(id))
+    ?? knowledgeIds.find((id) => id.length > 0);
+
+  if (!hours || !source) {
+    return {
+      customerFacingText:
+        "I cannot confirm the hours from the approved information available to me, so a person should review this.",
+      knowledgeSourceReferences: [],
+      insufficientKnowledge: true,
+      limitationNote: "No approved hours text is included in this request.",
+    };
+  }
+
+  const text = content.toLowerCase();
+  const named = (["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] as const)
+    .find((day) => new RegExp(`\\b${day}\\b`).test(text));
+  const weekend = /\bweekends?\b/.test(text);
+  const today = /\b(today|tonight|right now|currently)\b/.test(text);
+
+  const sentences: string[] = [];
+  if (today) {
+    const day = hours.weekly.find((entry) => entry.day === hours.weekday);
+    if (day) sentences.push(describeDay(profile.businessName, day, "today", sentences.length === 0));
+  } else if (weekend) {
+    for (const dayName of ["saturday", "sunday"] as const) {
+      const day = hours.weekly.find((entry) => entry.day === dayName);
+      if (day) sentences.push(describeDay(profile.businessName, day, `on ${capitalize(dayName)}`, sentences.length === 0));
+    }
+  } else if (named) {
+    const day = hours.weekly.find((entry) => entry.day === named);
+    if (day) sentences.push(describeDay(profile.businessName, day, `on ${capitalize(named)}`, true));
+  } else {
+    sentences.push(describeWeek(profile.businessName, hours));
+  }
+
+  if (sentences.length === 0) {
+    return {
+      customerFacingText:
+        "I cannot confirm the hours from the approved information available to me, so a person should review this.",
+      knowledgeSourceReferences: [],
+      insufficientKnowledge: true,
+      limitationNote: "The approved schedule does not cover that day.",
+    };
+  }
+
+  return {
+    customerFacingText: sentences.join(" "),
+    knowledgeSourceReferences: [source],
+    insufficientKnowledge: false,
+  };
+}
+
+function describeDay(
+  businessName: string,
+  day: SimulatedHoursDay,
+  when: string,
+  leading: boolean,
+): string {
+  const subject = leading ? businessName : "The business";
+  return day.status === "closed" || !day.opensAt || !day.closesAt
+    ? `${subject} is closed ${when}.`
+    : `${subject} is open ${when} from ${day.opensAt} to ${day.closesAt}.`;
+}
+
+function describeWeek(businessName: string, hours: SimulatedHours): string {
+  const open = hours.weekly.filter((entry) => entry.status === "open" && entry.opensAt && entry.closesAt);
+  const closed = hours.weekly.filter((entry) => entry.status === "closed").map((entry) => entry.day);
+  if (open.length === 0) return `${businessName} has no published opening hours.`;
+  const first = open[0];
+  const last = open[open.length - 1];
+  const sameSchedule = open.every(
+    (entry) => entry.opensAt === first.opensAt && entry.closesAt === first.closesAt,
+  );
+  const days = open.length === 1
+    ? `on ${capitalize(first.day)}`
+    : `on ${capitalize(first.day)} through ${capitalize(last.day)}`;
+  const opening = sameSchedule
+    ? `from ${first.opensAt} to ${first.closesAt}`
+    : "at varying times";
+  const closedText = closed.length > 0
+    ? ` and closed on ${closed.map(capitalize).join(" and ")}`
+    : "";
+  return `${businessName} is open ${days} ${opening}${closedText}.`;
+}
+
+function readHours(value: unknown): SimulatedHours | null {
+  if (!isRecord(value) || value.status !== "available") return null;
+  const weekly = Array.isArray(value.weekly) ? value.weekly : [];
+  const days: SimulatedHoursDay[] = [];
+  for (const entry of weekly) {
+    if (!isRecord(entry) || typeof entry.day !== "string") continue;
+    if (entry.status !== "open" && entry.status !== "closed") continue;
+    days.push({
+      day: entry.day,
+      schedule: typeof entry.schedule === "string" ? entry.schedule : "",
+      status: entry.status,
+      opensAt: typeof entry.opensAt === "string" ? entry.opensAt : null,
+      closesAt: typeof entry.closesAt === "string" ? entry.closesAt : null,
+    });
+  }
+  if (days.length === 0 || typeof value.weekday !== "string") return null;
+  if (value.todayStatus !== "open" && value.todayStatus !== "closed") return null;
+  const sourceKnowledgeIds = Array.isArray(value.sourceKnowledgeIds)
+    ? value.sourceKnowledgeIds.filter((id): id is string => typeof id === "string")
+    : [];
+  return {
+    weekday: value.weekday,
+    todayStatus: value.todayStatus,
+    weekly: days,
+    sourceKnowledgeIds,
+  };
+}
+
+function approvedKnowledgeIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((entry) => (isRecord(entry) && typeof entry.id === "string" ? entry.id : ""));
+}
+
+function capitalize(value: string): string {
+  return value.length === 0 ? value : `${value[0].toUpperCase()}${value.slice(1)}`;
 }
 
 function fieldForQuestion(
@@ -195,6 +352,8 @@ function parsePrompt(input: string): SimulatedPrompt | null {
       identity: parsed.identity,
       conversationState: parsed.conversationState,
       currentCustomerInput: parsed.currentCustomerInput,
+      ...(Array.isArray(parsed.approvedKnowledge) ? { approvedKnowledge: parsed.approvedKnowledge } : {}),
+      ...(parsed.businessHours !== undefined ? { businessHours: parsed.businessHours } : {}),
     };
   } catch {
     return null;

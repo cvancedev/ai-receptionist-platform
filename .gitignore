@@ -43,3 +43,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# unrelated scratch work, never part of the platform product
+/website-repair-lab-20261013/
+/prospect-audit-20261013/

@@ -84,8 +84,8 @@ async function run(): Promise<void> {
 
 async function verifyMigrationRegistration(): Promise<void> {
   const last = CERTIFIED_POSTGRESQL_MIGRATIONS.at(-1);
-  assert(last?.version === 10 && last.name === "receptionist_billing_month",
-    "migration 010 is registered in the certified manifest");
+  assert(last?.version === 11 && last.name === "telephone_calls",
+    "migration 011 is registered in the certified manifest");
   assert(CERTIFIED_POSTGRESQL_MIGRATIONS.slice(0, 7).every((migration, index) =>
     migration.version === index + 1),
   "the certified 001-007 prefix is unchanged");

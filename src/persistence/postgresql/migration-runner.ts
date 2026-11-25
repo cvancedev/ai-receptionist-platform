@@ -69,6 +69,12 @@ const POSTGRESQL_MIGRATIONS = [
     fileName: "010_receptionist_billing_month.sql",
     sha256: "bc81f314563cd90d9b76b628c475621edd93f896e665a002f95d9bad093007c1",
   },
+  {
+    version: 11,
+    name: "telephone_calls",
+    fileName: "011_telephone_calls.sql",
+    sha256: "582d020c012964a58f9eb84ac65117cb57cda0f2e6086a1bdefd6c339fed15ce",
+  },
 ] as const;
 
 export async function applyPostgresqlMigrations(

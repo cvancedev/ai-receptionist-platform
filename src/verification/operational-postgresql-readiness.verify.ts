@@ -16,8 +16,8 @@ run().then(() => {
 async function run(): Promise<void> {
   assert(
     CERTIFIED_POSTGRESQL_MIGRATIONS.map(({ version }) => version).join(",")
-      === "1,2,3,4,5,6,7,8,9,10",
-    "certified history remains exactly 001 through 008",
+      === "1,2,3,4,5,6,7,8,9,10,11",
+    "certified history remains exactly 001 through 011",
   );
   assert(
     CERTIFIED_POSTGRESQL_MIGRATIONS.every((migration, index) =>

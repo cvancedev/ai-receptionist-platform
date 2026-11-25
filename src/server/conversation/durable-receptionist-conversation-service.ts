@@ -140,13 +140,27 @@ export class DurableReceptionistConversationService {
     return typeof businessId === "string" && this.businesses.has(businessId);
   }
 
-  async begin(businessId: unknown, conversationId: unknown): Promise<string | null> {
+  /**
+   * Open a conversation and return its handle.
+   *
+   * `greeting` is optional and defaults to the local demonstration's text. A
+   * telephone call passes the business's spoken greeting instead, so the stored
+   * transcript opens with what the caller actually heard rather than with a
+   * screen-oriented line about a simulated demo.
+   */
+  async begin(
+    businessId: unknown,
+    conversationId: unknown,
+    greeting: string = INITIAL_GREETING,
+  ): Promise<string | null> {
     if (typeof businessId !== "string" || typeof conversationId !== "string") return null;
     const business = this.businesses.get(businessId);
     if (!business || business.profile.status !== "active") return null;
     if (conversationId.length < 1 || conversationId.length > 128) return null;
     if (this.service.handleForScope(businessId, conversationId) !== null) return null;
+    if (typeof greeting !== "string" || greeting.trim().length === 0) return null;
 
+    const openingGreeting = greeting.trim();
     const state = createInitialConversationState(business, conversationId);
     if (!state) return null;
 
@@ -157,7 +171,7 @@ export class DurableReceptionistConversationService {
       messages: [{
         messageId: 1,
         role: "assistant",
-        content: INITIAL_GREETING,
+        content: openingGreeting,
       }],
       pendingFieldId: null,
       handoffAvailable: false,
@@ -174,7 +188,7 @@ export class DurableReceptionistConversationService {
       },
       handleHash: digestConversationHandle(handle),
       state,
-      greeting: { messageId: 1, role: "assistant", content: INITIAL_GREETING },
+      greeting: { messageId: 1, role: "assistant", content: openingGreeting },
     });
     if (created !== "created") {
       this.service.discard(handle);
